@@ -76,7 +76,7 @@ export const SignUpForm = () => {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4">
+    <form onSubmit={handleSubmit} className="space-y-5">
       {/* Error display */}
       {error && (
         <div className="rounded-md bg-destructive/10 p-3 text-sm text-destructive">
@@ -85,8 +85,11 @@ export const SignUpForm = () => {
       )}
 
       {/* Email field */}
-      <div className="space-y-2">
-        <label htmlFor="email" className="text-sm font-medium text-foreground">
+      <div className="space-y-1.5">
+        <label
+          htmlFor="email"
+          className="block text-sm font-normal text-muted-foreground"
+        >
           Correo electrónico
         </label>
         <Input
@@ -97,15 +100,15 @@ export const SignUpForm = () => {
           placeholder="tu@email.com"
           required
           disabled={loading}
-          className="w-full"
+          className="w-full h-10 text-base rounded-[4px] border-input"
         />
       </div>
 
       {/* Password field */}
-      <div className="space-y-2">
+      <div className="space-y-1.5">
         <label
           htmlFor="password"
-          className="text-sm font-medium text-foreground"
+          className="block text-sm font-normal text-muted-foreground"
         >
           Contraseña
         </label>
@@ -117,15 +120,15 @@ export const SignUpForm = () => {
           placeholder="Tu contraseña"
           required
           disabled={loading}
-          className="w-full"
+          className="w-full h-10 text-base rounded-[4px] border-input"
         />
       </div>
 
       {/* Confirm password field */}
-      <div className="space-y-2">
+      <div className="space-y-1.5">
         <label
           htmlFor="confirmPassword"
-          className="text-sm font-medium text-foreground"
+          className="block text-sm font-normal text-muted-foreground"
         >
           Confirmar contraseña
         </label>
@@ -137,7 +140,7 @@ export const SignUpForm = () => {
           placeholder="Confirma tu contraseña"
           required
           disabled={loading}
-          className="w-full"
+          className="w-full h-10 text-base rounded-[4px] border-input"
         />
       </div>
 
@@ -145,7 +148,8 @@ export const SignUpForm = () => {
       <Button
         type="submit"
         disabled={loading}
-        className="w-full bg-primary text-primary-foreground hover:bg-primary/90"
+        size="lg"
+        className="w-full mt-6 rounded-[4px] bg-primary text-primary-foreground hover:bg-primary/90"
       >
         {loading ? 'Creando cuenta...' : 'Crear cuenta'}
       </Button>

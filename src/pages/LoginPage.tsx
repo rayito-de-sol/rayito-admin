@@ -79,6 +79,11 @@ export const LoginPage = () => {
                       },
                     },
                   },
+                  style: {
+                    anchor: {
+                      display: 'none', // Hide the default "Don't have an account? Sign up" link
+                    },
+                  },
                 }}
                 localization={{
                   variables: {
