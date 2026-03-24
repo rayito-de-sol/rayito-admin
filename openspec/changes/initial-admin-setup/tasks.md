@@ -33,8 +33,8 @@
 
 ## 5. Zustand Stores
 
-- [ ] 5.1 Create auth store (src/stores/useAuthStore.ts with user state, setUser, clearUser, isAuthenticated)
-- [ ] 5.2 Create UI store (src/stores/useUIStore.ts with isLoading, setLoading, error, setError, clearError)
+- [x] 5.1 Create auth store (src/stores/useAuthStore.ts with user state, setUser, clearUser, isAuthenticated)
+- [x] 5.2 Create UI store (src/stores/useUIStore.ts with isLoading, setLoading, error, setError, clearError)
 
 ## 6. Supabase Integration
 
