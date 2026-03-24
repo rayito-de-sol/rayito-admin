@@ -12,11 +12,11 @@ interface LayoutProps {
  */
 export const Layout = ({ children }: LayoutProps) => {
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-white">
       <Header />
       <div className="flex">
         <Navigation />
-        <main className="flex-1 p-6">{children}</main>
+        <main className="flex-1 bg-gray-50 p-6">{children}</main>
       </div>
     </div>
   )

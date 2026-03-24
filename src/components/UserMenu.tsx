@@ -21,14 +21,14 @@ export const UserMenu = () => {
   return (
     <div className="flex items-center gap-4">
       <div className="text-right">
-        <p className="text-sm font-medium text-foreground">
+        <p className="text-sm font-medium text-gray-900">
           {user.fullName || user.email}
         </p>
-        <p className="text-xs text-muted-foreground">{user.role}</p>
+        <p className="text-xs text-gray-600">{user.role}</p>
       </div>
       <button
         onClick={handleSignOut}
-        className="flex items-center gap-2 rounded-md px-3 py-2 text-sm font-medium text-foreground hover:bg-accent hover:text-accent-foreground"
+        className="flex items-center gap-2 rounded-md px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100"
         title="Cerrar sesión"
       >
         <LogOut className="h-4 w-4" />

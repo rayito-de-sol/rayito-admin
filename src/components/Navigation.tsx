@@ -9,12 +9,15 @@ export const Navigation = () => {
   const linkClass = ({ isActive }: { isActive: boolean }) =>
     `flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors ${
       isActive
-        ? 'bg-primary text-primary-foreground'
-        : 'text-muted-foreground hover:bg-accent hover:text-accent-foreground'
+        ? 'bg-[var(--color-sidebar-active)] text-white'
+        : 'text-white/90 hover:bg-white/10 hover:text-white'
     }`
 
   return (
-    <nav className="w-64 border-r border-border bg-card p-4">
+    <nav
+      className="w-64 p-4"
+      style={{ backgroundColor: 'var(--color-sidebar)' }}
+    >
       <ul className="space-y-2">
         <li>
           <NavLink to="/dashboard" className={linkClass}>
