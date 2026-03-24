@@ -35,7 +35,12 @@ export const LoginPage = () => {
     <div className="flex min-h-screen items-center justify-center bg-background px-4">
       <div className="w-full max-w-md">
         <div className="mb-8 text-center">
-          <h1 className="text-3xl font-bold text-foreground">Rayito Admin</h1>
+          <img
+            src="/logo.png"
+            alt="Rayito Logo"
+            className="mx-auto mb-6 h-24 w-auto object-contain"
+          />
+          <h1 className="text-3xl font-bold">Rayito Admin</h1>
           <p className="mt-2 text-sm text-muted-foreground">
             Ingresa tus credenciales para acceder
           </p>
@@ -49,7 +54,7 @@ export const LoginPage = () => {
             </div>
           )}
 
-          {/* Supabase Auth UI with Spanish localization */}
+          {/* Supabase Auth UI with Spanish localization and brand colors */}
           <Auth
             supabaseClient={supabase}
             appearance={{
@@ -57,8 +62,11 @@ export const LoginPage = () => {
               variables: {
                 default: {
                   colors: {
-                    brand: 'hsl(222.2 47.4% 11.2%)',
-                    brandAccent: 'hsl(222.2 47.4% 20%)',
+                    brand: '#7a605d',
+                    brandAccent: '#c4b098',
+                    brandButtonText: 'white',
+                    defaultButtonBackground: '#7a605d',
+                    defaultButtonBackgroundHover: '#6a5050',
                   },
                 },
               },
