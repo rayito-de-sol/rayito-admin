@@ -27,9 +27,9 @@
 
 ## 4. Type Definitions
 
-- [ ] 4.1 Create user types (src/types/user.ts with User, UserRole)
-- [ ] 4.2 Create API response types (src/types/api.ts with ApiError, ApiResponse)
-- [ ] 4.3 Extend ImportMetaEnv interface for Vite environment variables (src/vite-env.d.ts)
+- [x] 4.1 Create user types (src/types/user.ts with User, UserRole)
+- [x] 4.2 Create API response types (src/types/api.ts with ApiError, ApiResponse)
+- [x] 4.3 Extend ImportMetaEnv interface for Vite environment variables (src/vite-env.d.ts)
 
 ## 5. Zustand Stores
 
