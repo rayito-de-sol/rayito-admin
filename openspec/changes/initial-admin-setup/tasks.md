@@ -62,11 +62,11 @@
 
 ## 9. Layout Components
 
-- [ ] 9.1 Create Layout component (src/components/Layout.tsx) with header, navigation, and content area
-- [ ] 9.2 Create Header component (src/components/Header.tsx) with app title and user menu
-- [ ] 9.3 Create Navigation component (src/components/Navigation.tsx) with links and active state highlighting
-- [ ] 9.4 Create UserMenu component (src/components/UserMenu.tsx) with user name, email, and sign out button
-- [ ] 9.5 Apply Layout to all protected routes
+- [x] 9.1 Create Layout component (src/components/Layout.tsx) with header, navigation, and content area
+- [x] 9.2 Create Header component (src/components/Header.tsx) with app title and user menu
+- [x] 9.3 Create Navigation component (src/components/Navigation.tsx) with links and active state highlighting
+- [x] 9.4 Create UserMenu component (src/components/UserMenu.tsx) with user name, email, and sign out button
+- [x] 9.5 Apply Layout to all protected routes
 
 ## 10. Authentication Pages
 
