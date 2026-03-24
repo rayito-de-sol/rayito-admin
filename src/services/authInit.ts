@@ -8,23 +8,37 @@ import { useAuthStore } from '@/stores/useAuthStore'
  */
 export const initAuth = () => {
   // Check initial session
-  authService.getCurrentUser().then((user) => {
-    useAuthStore.getState().setUser(user)
-  })
+  authService
+    .getCurrentUser()
+    .then((user) => {
+      console.log('Initial user session:', user)
+      useAuthStore.getState().setUser(user)
+    })
+    .catch((error) => {
+      console.error('Error getting initial user:', error)
+    })
 
   // Listen for auth state changes
   const {
     data: { subscription },
   } = supabase.auth.onAuthStateChange(async (event, session) => {
-    console.log('Auth state changed:', event)
+    console.log('Auth state changed:', event, session?.user?.email)
 
-    if (session?.user) {
-      // User signed in or session refreshed
-      const user = await authService.getCurrentUser()
-      useAuthStore.getState().setUser(user)
-    } else {
-      // User signed out or session expired
-      useAuthStore.getState().clearUser()
+    try {
+      if (session?.user) {
+        // User signed in or session refreshed
+        console.log('Getting user from session...')
+        const user = await authService.getCurrentUser()
+        console.log('User mapped:', user)
+        useAuthStore.getState().setUser(user)
+        console.log('Auth store updated, isAuthenticated:', useAuthStore.getState().isAuthenticated)
+      } else {
+        // User signed out or session expired
+        console.log('Clearing user session')
+        useAuthStore.getState().clearUser()
+      }
+    } catch (error) {
+      console.error('Error in auth state change handler:', error)
     }
   })
 
