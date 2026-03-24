@@ -8,13 +8,13 @@
 
 ## 2. Dependencies Installation
 
-- [ ] 2.1 Install React Router v6 (react-router-dom)
-- [ ] 2.2 Install Zustand for state management
-- [ ] 2.3 Install Supabase client (@supabase/supabase-js)
-- [ ] 2.4 Install Axios for HTTP client
-- [ ] 2.5 Install Tailwind CSS and configure
-- [ ] 2.6 Initialize shadcn/ui and install initial components (Button, Input, Card, Alert)
-- [ ] 2.7 Install development dependencies (ESLint, Prettier, TypeScript plugins)
+- [x] 2.1 Install React Router v6 (react-router-dom)
+- [x] 2.2 Install Zustand for state management
+- [x] 2.3 Install Supabase client (@supabase/supabase-js)
+- [x] 2.4 Install Axios for HTTP client
+- [x] 2.5 Install Tailwind CSS and configure
+- [x] 2.6 Initialize shadcn/ui and install initial components (Button, Input, Card, Alert)
+- [x] 2.7 Install development dependencies (ESLint, Prettier, TypeScript plugins)
 
 ## 3. Configuration Files
 
