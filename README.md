@@ -49,7 +49,7 @@ VITE_API_URL=http://localhost:8080/api/v1
 
 # Configuración de Supabase (obtén estos valores de tu proyecto en Supabase)
 VITE_SUPABASE_URL=https://tu-proyecto.supabase.co
-VITE_SUPABASE_ANON_KEY=tu-clave-anon-aqui
+VITE_SUPABASE_PUBLISHABLE_DEFAULT_KEY=tu-clave-publica-aqui
 ```
 
 ### 3. Iniciar servidor de desarrollo

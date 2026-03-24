@@ -246,7 +246,7 @@ src/
 ```
 VITE_API_URL=http://localhost:8080/api/v1
 VITE_SUPABASE_URL=https://xxx.supabase.co
-VITE_SUPABASE_ANON_KEY=xxx
+VITE_SUPABASE_PUBLISHABLE_DEFAULT_KEY=xxx
 ```
 
 **Rationale:**
