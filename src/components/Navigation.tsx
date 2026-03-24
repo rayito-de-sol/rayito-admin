@@ -15,7 +15,7 @@ export const Navigation = () => {
 
   return (
     <nav
-      className="w-64 p-4"
+      className="w-64 overflow-auto p-4"
       style={{ backgroundColor: 'var(--color-sidebar)' }}
     >
       <ul className="space-y-2">
