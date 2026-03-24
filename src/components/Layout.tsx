@@ -1,8 +1,9 @@
+import { ReactNode } from 'react'
 import { Header } from './Header'
 import { Navigation } from './Navigation'
 
 interface LayoutProps {
-  children: React.ReactNode
+  children: ReactNode
 }
 
 /**

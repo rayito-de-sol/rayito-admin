@@ -117,15 +117,15 @@
 
 ## 17. Testing & Validation
 
-- [ ] 17.1 Verify successful sign in flow with valid credentials
-- [ ] 17.2 Verify invalid credentials show error message
-- [ ] 17.3 Verify protected routes redirect to login when not authenticated
-- [ ] 17.4 Verify authenticated users can access dashboard
-- [ ] 17.5 Verify sign out clears session and redirects to login
-- [ ] 17.6 Verify token auto-refresh works (check console logs)
-- [ ] 17.7 Verify 401 error triggers automatic sign out
-- [ ] 17.8 Verify error boundary catches rendering errors
-- [ ] 17.9 Verify loading spinner displays during auth operations
-- [ ] 17.10 Verify returnTo parameter works after login
-- [ ] 17.11 Run linter and fix any warnings
-- [ ] 17.12 Test in different browsers (Chrome, Firefox)
+- [x] 17.1 Verify successful sign in flow with valid credentials
+- [x] 17.2 Verify invalid credentials show error message
+- [x] 17.3 Verify protected routes redirect to login when not authenticated
+- [x] 17.4 Verify authenticated users can access dashboard
+- [x] 17.5 Verify sign out clears session and redirects to login
+- [x] 17.6 Verify token auto-refresh works (check console logs)
+- [x] 17.7 Verify 401 error triggers automatic sign out
+- [x] 17.8 Verify error boundary catches rendering errors
+- [x] 17.9 Verify loading spinner displays during auth operations
+- [x] 17.10 Verify returnTo parameter works after login
+- [x] 17.11 Run linter and fix any warnings
+- [x] 17.12 Test in different browsers (Chrome, Firefox)
