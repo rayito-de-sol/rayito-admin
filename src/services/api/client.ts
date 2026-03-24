@@ -45,8 +45,7 @@ apiClient.interceptors.response.use(
   async (error) => {
     // Network error (no response)
     if (!error.response) {
-      error.message =
-        'Error de conexión. Verifique su red e intente nuevamente'
+      error.message = 'Error de conexión. Verifique su red e intente nuevamente'
       return Promise.reject(error)
     }
 

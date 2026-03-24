@@ -135,7 +135,9 @@ export const LoginPage = () => {
                   className="text-sm text-muted-foreground hover:text-foreground"
                 >
                   ¿Ya tienes una cuenta?{' '}
-                  <span className="font-medium text-primary">Inicia sesión</span>
+                  <span className="font-medium text-primary">
+                    Inicia sesión
+                  </span>
                 </button>
               </div>
             </>

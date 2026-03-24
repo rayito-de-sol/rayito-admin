@@ -9,6 +9,7 @@ import { Input } from '@/components/ui/input'
  * Prevents orphaned Supabase accounts for non-whitelisted emails
  */
 export const SignUpForm = () => {
+  const [fullName, setFullName] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
@@ -23,6 +24,12 @@ export const SignUpForm = () => {
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault()
     setError('')
+
+    // Client-side validation: name required
+    if (!fullName.trim()) {
+      setError('El nombre es requerido')
+      return
+    }
 
     // Client-side validation: email format
     if (!validateEmail(email)) {
@@ -58,6 +65,11 @@ export const SignUpForm = () => {
       const { error: signUpError } = await supabase.auth.signUp({
         email,
         password,
+        options: {
+          data: {
+            full_name: fullName.trim(),
+          },
+        },
       })
 
       if (signUpError) {
@@ -83,6 +95,26 @@ export const SignUpForm = () => {
           {error}
         </div>
       )}
+
+      {/* Name field */}
+      <div className="space-y-1.5">
+        <label
+          htmlFor="fullName"
+          className="block text-sm font-normal text-muted-foreground"
+        >
+          Nombre
+        </label>
+        <Input
+          id="fullName"
+          type="text"
+          value={fullName}
+          onChange={(e) => setFullName(e.target.value)}
+          placeholder="Mi hermano Ander el mejor"
+          required
+          disabled={loading}
+          className="w-full h-10 text-base rounded-[4px] border-input"
+        />
+      </div>
 
       {/* Email field */}
       <div className="space-y-1.5">
@@ -149,7 +181,7 @@ export const SignUpForm = () => {
         type="submit"
         disabled={loading}
         size="lg"
-        className="w-full mt-6 rounded-[4px] bg-primary text-primary-foreground hover:bg-primary/90"
+        className="w-full mt-6 py-6 rounded-[4px] bg-primary text-primary-foreground hover:bg-primary/90"
       >
         {loading ? 'Creando cuenta...' : 'Crear cuenta'}
       </Button>
