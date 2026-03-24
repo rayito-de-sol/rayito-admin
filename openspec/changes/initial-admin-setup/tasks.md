@@ -45,12 +45,12 @@
 
 ## 7. API Client
 
-- [ ] 7.1 Create Axios client instance (src/services/api/client.ts) with baseURL and timeout
-- [ ] 7.2 Add request interceptor to inject JWT token from Supabase session
-- [ ] 7.3 Add response interceptor to handle errors (401, 403, 404, 500, network errors) with Spanish messages
-- [ ] 7.4 Create API error handler utility (src/utils/apiError.ts)
-- [ ] 7.5 Create user API endpoints (src/services/api/endpoints/users.ts) with typed functions
-- [ ] 7.6 Export centralized API module (src/services/api/index.ts)
+- [x] 7.1 Create Axios client instance (src/services/api/client.ts) with baseURL and timeout
+- [x] 7.2 Add request interceptor to inject JWT token from Supabase session
+- [x] 7.3 Add response interceptor to handle errors (401, 403, 404, 500, network errors) with Spanish messages
+- [x] 7.4 Create API error handler utility (src/utils/apiError.ts)
+- [x] 7.5 Create user API endpoints (src/services/api/endpoints/users.ts) with typed functions
+- [x] 7.6 Export centralized API module (src/services/api/index.ts)
 
 ## 8. Routing Setup
 
