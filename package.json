@@ -6,7 +6,9 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "lint": "eslint .",
+    "format": "prettier --write \"src/**/*.{ts,tsx,css,md}\""
   },
   "dependencies": {
     "@supabase/auth-ui-react": "^0.4.7",

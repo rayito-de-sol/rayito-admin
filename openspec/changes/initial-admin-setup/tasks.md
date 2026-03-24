@@ -103,11 +103,11 @@
 
 ## 15. Package.json Scripts
 
-- [ ] 15.1 Add dev script (vite)
-- [ ] 15.2 Add build script (tsc && vite build)
-- [ ] 15.3 Add preview script (vite preview)
-- [ ] 15.4 Add lint script (eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0)
-- [ ] 15.5 Add format script (prettier --write \"src/**/*.{ts,tsx,css,md}\")
+- [x] 15.1 Add dev script (vite)
+- [x] 15.2 Add build script (tsc && vite build)
+- [x] 15.3 Add preview script (vite preview)
+- [x] 15.4 Add lint script (eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0)
+- [x] 15.5 Add format script (prettier --write \"src/**/*.{ts,tsx,css,md}\")
 
 ## 16. Documentation
 
