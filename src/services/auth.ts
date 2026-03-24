@@ -35,8 +35,14 @@ export const authService = {
    * Get current session
    */
   async getCurrentSession() {
+    console.log('authService.getCurrentSession: Calling supabase.auth.getSession()...')
     const { data, error } = await supabase.auth.getSession()
-    if (error) throw error
+    console.log('authService.getCurrentSession: Response received, error:', error, 'session exists:', !!data.session)
+    if (error) {
+      console.error('authService.getCurrentSession: Error getting session:', error)
+      throw error
+    }
+    console.log('authService.getCurrentSession: Returning session')
     return data.session
   },
 
@@ -44,17 +50,37 @@ export const authService = {
    * Get current user from session
    */
   async getCurrentUser(): Promise<User | null> {
+    console.log('authService.getCurrentUser: Starting...')
+
+    console.log('authService.getCurrentUser: Calling getCurrentSession()...')
     const session = await this.getCurrentSession()
-    if (!session?.user) return null
+    console.log('authService.getCurrentUser: Session retrieved:', !!session, 'User exists:', !!session?.user)
+
+    if (!session?.user) {
+      console.log('authService.getCurrentUser: No session or user, returning null')
+      return null
+    }
+
+    console.log('authService.getCurrentUser: Mapping Supabase user to User type...')
+    console.log('authService.getCurrentUser: User data:', {
+      id: session.user.id,
+      email: session.user.email,
+      metadata: session.user.user_metadata,
+      created_at: session.user.created_at,
+      updated_at: session.user.updated_at,
+    })
 
     // Map Supabase user to our User type
-    return {
+    const user: User = {
       id: session.user.id,
       email: session.user.email!,
-      role: 'analyst', // Default role, will be fetched from backend
+      role: 'analyst' as const, // Default role, will be fetched from backend
       fullName: session.user.user_metadata?.full_name || null,
       createdAt: new Date(session.user.created_at),
       updatedAt: new Date(session.user.updated_at || session.user.created_at),
     }
+
+    console.log('authService.getCurrentUser: User mapped successfully:', user)
+    return user
   },
 }
