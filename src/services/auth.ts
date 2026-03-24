@@ -25,25 +25,16 @@ export const authService = {
    * Sign out current user
    */
   async signOut() {
-    console.log('authService.signOut: Calling supabase.auth.signOut()...')
     const { error } = await supabase.auth.signOut()
-    console.log('authService.signOut: Supabase signOut completed, error:', error)
     if (error) throw error
-    console.log('authService.signOut: Successfully signed out')
   },
 
   /**
    * Get current session
    */
   async getCurrentSession() {
-    console.log('authService.getCurrentSession: Calling supabase.auth.getSession()...')
     const { data, error } = await supabase.auth.getSession()
-    console.log('authService.getCurrentSession: Response received, error:', error, 'session exists:', !!data.session)
-    if (error) {
-      console.error('authService.getCurrentSession: Error getting session:', error)
-      throw error
-    }
-    console.log('authService.getCurrentSession: Returning session')
+    if (error) throw error
     return data.session
   },
 
@@ -52,34 +43,12 @@ export const authService = {
    * @param providedSession - Optional session to use instead of fetching
    */
   async getCurrentUser(providedSession?: Session | null): Promise<User | null> {
-    console.log('authService.getCurrentUser: Starting...', 'providedSession:', !!providedSession)
+    const session = providedSession || (await this.getCurrentSession())
 
-    let session = providedSession
-
-    if (!session) {
-      console.log('authService.getCurrentUser: No session provided, calling getCurrentSession()...')
-      session = await this.getCurrentSession()
-      console.log('authService.getCurrentUser: Session retrieved:', !!session, 'User exists:', !!session?.user)
-    } else {
-      console.log('authService.getCurrentUser: Using provided session, User exists:', !!session?.user)
-    }
-
-    if (!session?.user) {
-      console.log('authService.getCurrentUser: No session or user, returning null')
-      return null
-    }
-
-    console.log('authService.getCurrentUser: Mapping Supabase user to User type...')
-    console.log('authService.getCurrentUser: User data:', {
-      id: session.user.id,
-      email: session.user.email,
-      metadata: session.user.user_metadata,
-      created_at: session.user.created_at,
-      updated_at: session.user.updated_at,
-    })
+    if (!session?.user) return null
 
     // Map Supabase user to our User type
-    const user: User = {
+    return {
       id: session.user.id,
       email: session.user.email!,
       role: 'analyst' as const, // Default role, will be fetched from backend
@@ -87,8 +56,5 @@ export const authService = {
       createdAt: new Date(session.user.created_at),
       updatedAt: new Date(session.user.updated_at || session.user.created_at),
     }
-
-    console.log('authService.getCurrentUser: User mapped successfully:', user)
-    return user
   },
 }

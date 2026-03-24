@@ -21,9 +21,7 @@ export const LoginPage = () => {
 
   // Redirect authenticated users away from login page
   useEffect(() => {
-    console.log('LoginPage: isAuthenticated changed:', isAuthenticated)
     if (isAuthenticated) {
-      console.log('LoginPage: Redirecting to:', returnTo)
       navigate(returnTo, { replace: true })
     }
   }, [isAuthenticated, navigate, returnTo])

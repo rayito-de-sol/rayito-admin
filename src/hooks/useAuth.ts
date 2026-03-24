@@ -27,26 +27,17 @@ export const useAuth = () => {
   }
 
   const signOut = async () => {
-    console.log('useAuth.signOut: Starting logout...')
     try {
       setLoading(true)
       setError(null)
-
-      console.log('useAuth.signOut: Calling authService.signOut()...')
       await authService.signOut()
-      console.log('useAuth.signOut: authService.signOut() completed')
-
-      console.log('useAuth.signOut: Clearing user from store...')
       clearUser()
-      console.log('useAuth.signOut: User cleared, isAuthenticated:', useAuthStore.getState().isAuthenticated)
     } catch (error) {
-      console.error('useAuth.signOut: Error during logout:', error)
       const message =
         error instanceof Error ? error.message : 'Error al cerrar sesión'
       setError(message)
       throw error
     } finally {
-      console.log('useAuth.signOut: Setting loading to false')
       setLoading(false)
     }
   }

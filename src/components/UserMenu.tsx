@@ -11,13 +11,10 @@ export const UserMenu = () => {
   if (!user) return null
 
   const handleSignOut = async () => {
-    console.log('UserMenu.handleSignOut: Logout button clicked')
     try {
-      console.log('UserMenu.handleSignOut: Calling signOut()...')
       await signOut()
-      console.log('UserMenu.handleSignOut: signOut() completed successfully')
     } catch (error) {
-      console.error('UserMenu.handleSignOut: Error signing out:', error)
+      console.error('Error signing out:', error)
     }
   }
 
