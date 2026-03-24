@@ -70,11 +70,11 @@
 
 ## 10. Authentication Pages
 
-- [ ] 10.1 Create LoginPage component (src/pages/LoginPage.tsx) with Supabase Auth UI
-- [ ] 10.2 Configure Supabase Auth UI for Spanish localization
-- [ ] 10.3 Handle authentication success and redirect to dashboard (or returnTo URL)
-- [ ] 10.4 Display authentication errors inline (invalid credentials, network error, non-whitelisted email)
-- [ ] 10.5 Redirect authenticated users away from login page
+- [x] 10.1 Create LoginPage component (src/pages/LoginPage.tsx) with Supabase Auth UI
+- [x] 10.2 Configure Supabase Auth UI for Spanish localization
+- [x] 10.3 Handle authentication success and redirect to dashboard (or returnTo URL)
+- [x] 10.4 Display authentication errors inline (invalid credentials, network error, non-whitelisted email)
+- [x] 10.5 Redirect authenticated users away from login page
 
 ## 11. Dashboard Page
 
