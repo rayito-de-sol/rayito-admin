@@ -43,7 +43,8 @@ export const initAuth = () => {
         // User signed in or session refreshed
         console.log(`[${timestamp}] Session exists, getting user from session...`)
         try {
-          const user = await authService.getCurrentUser()
+          // Pass the session from the event to avoid calling getSession() again
+          const user = await authService.getCurrentUser(session)
           console.log(`[${timestamp}] User mapped:`, user)
           useAuthStore.getState().setUser(user)
           console.log(`[${timestamp}] Auth store updated, isAuthenticated:`, useAuthStore.getState().isAuthenticated)

@@ -1,5 +1,6 @@
 import { supabase } from './supabase'
 import type { User } from '@/types/user'
+import type { Session } from '@supabase/supabase-js'
 
 /**
  * Authentication service
@@ -48,13 +49,20 @@ export const authService = {
 
   /**
    * Get current user from session
+   * @param providedSession - Optional session to use instead of fetching
    */
-  async getCurrentUser(): Promise<User | null> {
-    console.log('authService.getCurrentUser: Starting...')
+  async getCurrentUser(providedSession?: Session | null): Promise<User | null> {
+    console.log('authService.getCurrentUser: Starting...', 'providedSession:', !!providedSession)
 
-    console.log('authService.getCurrentUser: Calling getCurrentSession()...')
-    const session = await this.getCurrentSession()
-    console.log('authService.getCurrentUser: Session retrieved:', !!session, 'User exists:', !!session?.user)
+    let session = providedSession
+
+    if (!session) {
+      console.log('authService.getCurrentUser: No session provided, calling getCurrentSession()...')
+      session = await this.getCurrentSession()
+      console.log('authService.getCurrentUser: Session retrieved:', !!session, 'User exists:', !!session?.user)
+    } else {
+      console.log('authService.getCurrentUser: Using provided session, User exists:', !!session?.user)
+    }
 
     if (!session?.user) {
       console.log('authService.getCurrentUser: No session or user, returning null')
