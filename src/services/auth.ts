@@ -24,8 +24,11 @@ export const authService = {
    * Sign out current user
    */
   async signOut() {
+    console.log('authService.signOut: Calling supabase.auth.signOut()...')
     const { error } = await supabase.auth.signOut()
+    console.log('authService.signOut: Supabase signOut completed, error:', error)
     if (error) throw error
+    console.log('authService.signOut: Successfully signed out')
   },
 
   /**
