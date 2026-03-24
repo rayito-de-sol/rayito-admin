@@ -15,6 +15,6 @@ export const config = {
   apiUrl: getEnvVar('VITE_API_URL'),
   supabase: {
     url: getEnvVar('VITE_SUPABASE_URL'),
-    anonKey: getEnvVar('VITE_SUPABASE_PUBLISHABLE_DEFAULT_KEY'),
+    publishableKey: getEnvVar('VITE_SUPABASE_PUBLISHABLE_DEFAULT_KEY'),
   },
 } as const
