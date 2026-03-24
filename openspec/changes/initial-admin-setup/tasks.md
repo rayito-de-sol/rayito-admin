@@ -98,8 +98,8 @@
 
 ## 14. Utility Functions
 
-- [ ] 14.1 Create className utility (src/lib/utils.ts) with cn() function for merging Tailwind classes
-- [ ] 14.2 Create date formatting utilities (src/utils/date.ts) for consistent date display
+- [x] 14.1 Create className utility (src/lib/utils.ts) with cn() function for merging Tailwind classes
+- [x] 14.2 Create date formatting utilities (src/utils/date.ts) for consistent date display
 
 ## 15. Package.json Scripts
 
