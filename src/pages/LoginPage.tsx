@@ -38,12 +38,9 @@ export const LoginPage = () => {
           <img
             src="/logo.png"
             alt="Rayito Logo"
-            className="mx-auto mb-6 h-24 w-auto object-contain"
+            className="mx-auto mb-6 h-40 w-auto object-contain"
           />
           <h1 className="text-3xl font-bold">Rayito Admin</h1>
-          <p className="mt-2 text-sm text-muted-foreground">
-            Ingresa tus credenciales para acceder
-          </p>
         </div>
 
         <div className="rounded-lg border border-border bg-card p-6 shadow-sm">
@@ -107,10 +104,6 @@ export const LoginPage = () => {
             redirectTo={window.location.origin}
           />
         </div>
-
-        <p className="mt-4 text-center text-xs text-muted-foreground">
-          Solo usuarios autorizados pueden acceder
-        </p>
       </div>
     </div>
   )
