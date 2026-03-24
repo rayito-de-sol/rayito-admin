@@ -1,9 +1,51 @@
+import { useEffect } from 'react'
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
+import { ProtectedRoute } from '@/components/ProtectedRoute'
+import { LoginPage } from '@/pages/LoginPage'
+import { DashboardPage } from '@/pages/DashboardPage'
+import { NotFoundPage } from '@/pages/NotFoundPage'
+import { initAuth } from '@/services/authInit'
+import { useAuthStore } from '@/stores/useAuthStore'
+
+/**
+ * Root redirect component
+ * Redirects to dashboard if authenticated, login otherwise
+ */
+const RootRedirect = () => {
+  const { isAuthenticated } = useAuthStore()
+  return <Navigate to={isAuthenticated ? '/dashboard' : '/login'} replace />
+}
+
 function App() {
+  useEffect(() => {
+    // Initialize authentication state listener
+    const cleanup = initAuth()
+    return cleanup
+  }, [])
+
   return (
-    <div>
-      <h1>Rayito Admin</h1>
-      <p>Configuración inicial en progreso...</p>
-    </div>
+    <BrowserRouter>
+      <Routes>
+        {/* Root redirect */}
+        <Route path="/" element={<RootRedirect />} />
+
+        {/* Public routes */}
+        <Route path="/login" element={<LoginPage />} />
+
+        {/* Protected routes */}
+        <Route
+          path="/dashboard"
+          element={
+            <ProtectedRoute>
+              <DashboardPage />
+            </ProtectedRoute>
+          }
+        />
+
+        {/* 404 Not Found */}
+        <Route path="*" element={<NotFoundPage />} />
+      </Routes>
+    </BrowserRouter>
   )
 }
 

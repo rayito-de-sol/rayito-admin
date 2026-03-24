@@ -54,11 +54,11 @@
 
 ## 8. Routing Setup
 
-- [ ] 8.1 Create ProtectedRoute component (src/components/ProtectedRoute.tsx) that checks auth and redirects
-- [ ] 8.2 Create App.tsx with React Router configuration
-- [ ] 8.3 Define route structure (/ → redirect, /login, /dashboard protected)
-- [ ] 8.4 Create 404 Not Found page (src/pages/NotFoundPage.tsx) in Spanish
-- [ ] 8.5 Implement returnTo query parameter handling in login redirect
+- [x] 8.1 Create ProtectedRoute component (src/components/ProtectedRoute.tsx) that checks auth and redirects
+- [x] 8.2 Create App.tsx with React Router configuration
+- [x] 8.3 Define route structure (/ → redirect, /login, /dashboard protected)
+- [x] 8.4 Create 404 Not Found page (src/pages/NotFoundPage.tsx) in Spanish
+- [x] 8.5 Implement returnTo query parameter handling in login redirect
 
 ## 9. Layout Components
 
