@@ -4,4 +4,5 @@
  */
 
 export { apiClient } from './client'
+export { authApi } from './endpoints/auth'
 export { usersApi } from './endpoints/users'
