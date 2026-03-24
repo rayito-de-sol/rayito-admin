@@ -18,12 +18,12 @@
 
 ## 3. Configuration Files
 
-- [ ] 3.1 Configure Tailwind CSS (tailwind.config.js with shadcn theme)
-- [ ] 3.2 Configure ESLint (.eslintrc.cjs with React and TypeScript rules)
-- [ ] 3.3 Configure Prettier (.prettierrc with project standards)
-- [ ] 3.4 Create .gitignore (node_modules, dist, .env.local, etc.)
-- [ ] 3.5 Create .env.example with required variables (VITE_API_URL, VITE_SUPABASE_URL, VITE_SUPABASE_ANON_KEY)
-- [ ] 3.6 Create environment config module (src/config.ts) to validate and export env vars
+- [x] 3.1 Configure Tailwind CSS (tailwind.config.js with shadcn theme)
+- [x] 3.2 Configure ESLint (.eslintrc.cjs with React and TypeScript rules)
+- [x] 3.3 Configure Prettier (.prettierrc with project standards)
+- [x] 3.4 Create .gitignore (node_modules, dist, .env.local, etc.)
+- [x] 3.5 Create .env.example with required variables (VITE_API_URL, VITE_SUPABASE_URL, VITE_SUPABASE_ANON_KEY)
+- [x] 3.6 Create environment config module (src/config.ts) to validate and export env vars
 
 ## 4. Type Definitions
 
