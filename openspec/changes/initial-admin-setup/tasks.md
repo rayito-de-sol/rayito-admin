@@ -84,10 +84,10 @@
 
 ## 12. Error Handling
 
-- [ ] 12.1 Create ErrorBoundary component (src/components/ErrorBoundary.tsx) to catch rendering errors
-- [ ] 12.2 Wrap App component with ErrorBoundary in main.tsx
-- [ ] 12.3 Display user-friendly error message in Spanish with reset button
-- [ ] 12.4 Log errors to console for debugging
+- [x] 12.1 Create ErrorBoundary component (src/components/ErrorBoundary.tsx) to catch rendering errors
+- [x] 12.2 Wrap App component with ErrorBoundary in main.tsx
+- [x] 12.3 Display user-friendly error message in Spanish with reset button
+- [x] 12.4 Log errors to console for debugging
 
 ## 13. Loading States
 
