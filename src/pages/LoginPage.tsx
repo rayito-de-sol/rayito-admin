@@ -33,24 +33,6 @@ export const LoginPage = () => {
     clearError()
   }, [clearError])
 
-  // Poll for auth state every second (backup mechanism if onAuthStateChange doesn't fire)
-  useEffect(() => {
-    const interval = setInterval(async () => {
-      const {
-        data: { session },
-      } = await supabase.auth.getSession()
-      if (session && !isAuthenticated) {
-        console.log(
-          'LoginPage: Found session via polling, triggering manual auth check'
-        )
-        // Force a manual check - the onAuthStateChange should pick this up
-        supabase.auth.refreshSession()
-      }
-    }, 1000)
-
-    return () => clearInterval(interval)
-  }, [isAuthenticated])
-
   return (
     <div className="flex min-h-screen items-center justify-center bg-background px-4">
       <div className="w-full max-w-md">
