@@ -38,10 +38,10 @@
 
 ## 6. Supabase Integration
 
-- [ ] 6.1 Create Supabase client module (src/services/supabase.ts)
-- [ ] 6.2 Create auth service (src/services/auth.ts) with signIn, signOut, getCurrentSession
-- [ ] 6.3 Integrate Supabase onAuthStateChange with Zustand auth store
-- [ ] 6.4 Create useAuth hook (src/hooks/useAuth.ts) to simplify auth state access
+- [x] 6.1 Create Supabase client module (src/services/supabase.ts)
+- [x] 6.2 Create auth service (src/services/auth.ts) with signIn, signOut, getCurrentSession
+- [x] 6.3 Integrate Supabase onAuthStateChange with Zustand auth store
+- [x] 6.4 Create useAuth hook (src/hooks/useAuth.ts) to simplify auth state access
 
 ## 7. API Client
 
