@@ -2,6 +2,7 @@ import { useEffect } from 'react'
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import { ProtectedRoute } from '@/components/ProtectedRoute'
 import { Layout } from '@/components/Layout'
+import { GlobalLoading } from '@/components/GlobalLoading'
 import { LoginPage } from '@/pages/LoginPage'
 import { DashboardPage } from '@/pages/DashboardPage'
 import { NotFoundPage } from '@/pages/NotFoundPage'
@@ -26,6 +27,7 @@ function App() {
 
   return (
     <BrowserRouter>
+      <GlobalLoading />
       <Routes>
         {/* Root redirect */}
         <Route path="/" element={<RootRedirect />} />

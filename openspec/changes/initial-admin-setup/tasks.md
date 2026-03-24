@@ -91,10 +91,10 @@
 
 ## 13. Loading States
 
-- [ ] 13.1 Create LoadingSpinner component (src/components/LoadingSpinner.tsx)
-- [ ] 13.2 Create GlobalLoading component (src/components/GlobalLoading.tsx) that reads from useUIStore
-- [ ] 13.3 Render GlobalLoading in App.tsx
-- [ ] 13.4 Use setLoading in auth store during sign in/sign out operations
+- [x] 13.1 Create LoadingSpinner component (src/components/LoadingSpinner.tsx)
+- [x] 13.2 Create GlobalLoading component (src/components/GlobalLoading.tsx) that reads from useUIStore
+- [x] 13.3 Render GlobalLoading in App.tsx
+- [x] 13.4 Use setLoading in auth store during sign in/sign out operations
 
 ## 14. Utility Functions
 
