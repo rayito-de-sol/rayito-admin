@@ -78,9 +78,9 @@
 
 ## 11. Dashboard Page
 
-- [ ] 11.1 Create DashboardPage component (src/pages/DashboardPage.tsx) with empty state
-- [ ] 11.2 Display welcome message with user name
-- [ ] 11.3 Add placeholder content ("Dashboard en construcción")
+- [x] 11.1 Create DashboardPage component (src/pages/DashboardPage.tsx) with empty state
+- [x] 11.2 Display welcome message with user name
+- [x] 11.3 Add placeholder content ("Dashboard en construcción")
 
 ## 12. Error Handling
 
