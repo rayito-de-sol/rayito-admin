@@ -290,7 +290,7 @@ export const StoresForm = ({
         <h3 className="mb-4 text-lg font-semibold">Información de Identidad</h3>
         <div className="grid gap-4 md:grid-cols-2">
           <div>
-            <Label htmlFor="identityNumber">
+            <Label htmlFor="identityNumber" className="mb-1.5">
               Número de Identificación <span className="text-destructive">*</span>
             </Label>
             <Input
@@ -305,7 +305,7 @@ export const StoresForm = ({
           </div>
 
           <div>
-            <Label htmlFor="identityType">
+            <Label htmlFor="identityType" className="mb-1.5">
               Tipo de Identificación <span className="text-destructive">*</span>
             </Label>
             <Select
@@ -330,7 +330,7 @@ export const StoresForm = ({
           </div>
 
           <div>
-            <Label htmlFor="name">
+            <Label htmlFor="name" className="mb-1.5">
               Nombre <span className="text-destructive">*</span>
             </Label>
             <Input
@@ -345,7 +345,7 @@ export const StoresForm = ({
           </div>
 
           <div>
-            <Label htmlFor="legalName">
+            <Label htmlFor="legalName" className="mb-1.5">
               Razón Social <span className="text-destructive">*</span>
             </Label>
             <Input
@@ -366,7 +366,7 @@ export const StoresForm = ({
         <h3 className="mb-4 text-lg font-semibold">Dirección</h3>
         <div className="grid gap-4 md:grid-cols-2">
           <div className="md:col-span-2">
-            <Label htmlFor="line1">
+            <Label htmlFor="line1" className="mb-1.5">
               Dirección Línea 1 <span className="text-destructive">*</span>
             </Label>
             <Input
@@ -381,7 +381,7 @@ export const StoresForm = ({
           </div>
 
           <div className="md:col-span-2">
-            <Label htmlFor="line2">Dirección Línea 2 (opcional)</Label>
+            <Label htmlFor="line2" className="mb-1.5">Dirección Línea 2 (opcional)</Label>
             <Input
               id="line2"
               value={line2}
@@ -391,7 +391,7 @@ export const StoresForm = ({
           </div>
 
           <div>
-            <Label htmlFor="city">
+            <Label htmlFor="city" className="mb-1.5">
               Ciudad <span className="text-destructive">*</span>
             </Label>
             <Input
@@ -406,7 +406,7 @@ export const StoresForm = ({
           </div>
 
           <div>
-            <Label htmlFor="state">
+            <Label htmlFor="state" className="mb-1.5">
               Departamento/Estado <span className="text-destructive">*</span>
             </Label>
             <Input
@@ -421,7 +421,7 @@ export const StoresForm = ({
           </div>
 
           <div>
-            <Label htmlFor="postalCode">
+            <Label htmlFor="postalCode" className="mb-1.5">
               Código Postal <span className="text-destructive">*</span>
             </Label>
             <Input
@@ -436,7 +436,7 @@ export const StoresForm = ({
           </div>
 
           <div>
-            <Label htmlFor="country">
+            <Label htmlFor="country" className="mb-1.5">
               País (código ISO 2 letras) <span className="text-destructive">*</span>
             </Label>
             <Input
@@ -459,7 +459,7 @@ export const StoresForm = ({
         <h3 className="mb-4 text-lg font-semibold">Datos de Contacto</h3>
         <div className="grid gap-4 md:grid-cols-2">
           <div>
-            <Label htmlFor="contactPersonName">
+            <Label htmlFor="contactPersonName" className="mb-1.5">
               Nombre del Contacto <span className="text-destructive">*</span>
             </Label>
             <Input
@@ -474,7 +474,7 @@ export const StoresForm = ({
           </div>
 
           <div>
-            <Label htmlFor="contactPhoneNumber">Teléfono</Label>
+            <Label htmlFor="contactPhoneNumber" className="mb-1.5">Teléfono</Label>
             <Input
               id="contactPhoneNumber"
               value={contactPhoneNumber}
@@ -484,7 +484,7 @@ export const StoresForm = ({
           </div>
 
           <div className="md:col-span-2">
-            <Label htmlFor="contactPersonEmail">
+            <Label htmlFor="contactPersonEmail" className="mb-1.5">
               Email del Contacto <span className="text-destructive">*</span>
             </Label>
             <Input
@@ -507,7 +507,7 @@ export const StoresForm = ({
         <div className="space-y-4">
           <div className="grid gap-4 md:grid-cols-2">
             <div>
-              <Label htmlFor="discountPercentage">Porcentaje de Descuento (%)</Label>
+              <Label htmlFor="discountPercentage" className="mb-1.5">Porcentaje de Descuento (%)</Label>
               <Input
                 id="discountPercentage"
                 type="number"
