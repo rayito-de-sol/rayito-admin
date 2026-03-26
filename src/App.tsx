@@ -5,6 +5,7 @@ import { Layout } from '@/components/Layout'
 import { GlobalLoading } from '@/components/GlobalLoading'
 import { LoginPage } from '@/pages/LoginPage'
 import { DashboardPage } from '@/pages/DashboardPage'
+import { StoresPage } from '@/pages/StoresPage'
 import { NotFoundPage } from '@/pages/NotFoundPage'
 import { initAuth } from '@/services/authInit'
 import { useAuthStore } from '@/stores/useAuthStore'
@@ -42,6 +43,17 @@ function App() {
             <ProtectedRoute>
               <Layout>
                 <DashboardPage />
+              </Layout>
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/tiendas"
+          element={
+            <ProtectedRoute>
+              <Layout>
+                <StoresPage />
               </Layout>
             </ProtectedRoute>
           }
