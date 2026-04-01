@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { Button } from '@/components/ui/button'
 import { ProductCard } from '@/components/ProductCard'
 import { ProductCreateModal } from '@/components/ProductCreateModal'
+import { ProductDetailModal } from '@/components/ProductDetailModal'
 import type { Product, ProductStatus, ProductCategory, ProductType } from '@/types/product'
 import { productService } from '@/services/productService'
 import { useAuth } from '@/hooks/useAuth'
@@ -25,6 +26,7 @@ export const ProductsPage = () => {
 
   // Modals state
   const [showCreateModal, setShowCreateModal] = useState(false)
+  const [showDetailModal, setShowDetailModal] = useState(false)
   const [selectedProductId, setSelectedProductId] = useState<string | null>(null)
 
   /**
@@ -61,6 +63,22 @@ export const ProductsPage = () => {
    */
   const handleProductClick = (productId: string) => {
     setSelectedProductId(productId)
+    setShowDetailModal(true)
+  }
+
+  /**
+   * Handle detail modal close
+   */
+  const handleDetailClose = () => {
+    setShowDetailModal(false)
+    setSelectedProductId(null)
+  }
+
+  /**
+   * Handle detail modal update
+   */
+  const handleDetailUpdate = () => {
+    fetchProducts()
   }
 
   /**
@@ -200,7 +218,15 @@ export const ProductsPage = () => {
         onSuccess={handleCreateSuccess}
       />
 
-      {/* TODO: Detail and Edit modals will be added in subsequent tasks */}
+      {/* Detail Modal */}
+      {selectedProductId && (
+        <ProductDetailModal
+          isOpen={showDetailModal}
+          onClose={handleDetailClose}
+          productId={selectedProductId}
+          onUpdate={handleDetailUpdate}
+        />
+      )}
     </div>
   )
 }
