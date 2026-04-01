@@ -16,7 +16,11 @@ interface StoresDetailProps {
  * StoresDetail component
  * Displays complete store information in read-only view
  */
-export const StoresDetail = ({ storeId, onEdit, onBack }: StoresDetailProps) => {
+export const StoresDetail = ({
+  storeId,
+  onEdit,
+  onBack,
+}: StoresDetailProps) => {
   const [store, setStore] = useState<Store | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -58,7 +62,9 @@ export const StoresDetail = ({ storeId, onEdit, onBack }: StoresDetailProps) => 
     return (
       <Card className="p-8">
         <div className="text-center">
-          <p className="mb-4 text-destructive">{error || 'Tienda no encontrada'}</p>
+          <p className="mb-4 text-destructive">
+            {error || 'Tienda no encontrada'}
+          </p>
           <Button onClick={onBack} variant="outline">
             Volver
           </Button>
@@ -116,7 +122,8 @@ export const StoresDetail = ({ storeId, onEdit, onBack }: StoresDetailProps) => 
               <p className="text-base">{store.address.line2}</p>
             )}
             <p className="text-base">
-              {store.address.city}, {store.address.state} {store.address.postal_code}
+              {store.address.city}, {store.address.state}{' '}
+              {store.address.postal_code}
             </p>
             <p className="text-base">{store.address.country}</p>
           </div>
@@ -225,7 +232,9 @@ export const StoresDetail = ({ storeId, onEdit, onBack }: StoresDetailProps) => 
                   ) : (
                     <X className="h-4 w-4 text-red-600" />
                   )}
-                  <span className="text-sm">Incluir nota legal de ingresos</span>
+                  <span className="text-sm">
+                    Incluir nota legal de ingresos
+                  </span>
                 </div>
               </div>
             </div>

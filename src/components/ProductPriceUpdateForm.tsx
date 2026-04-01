@@ -37,7 +37,9 @@ export const ProductPriceUpdateForm = ({
       setLoading(true)
       await onUpdate(priceValue)
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Error al actualizar el precio')
+      setError(
+        err instanceof Error ? err.message : 'Error al actualizar el precio'
+      )
     } finally {
       setLoading(false)
     }

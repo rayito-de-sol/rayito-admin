@@ -120,7 +120,10 @@ export const productService = {
    * @param data Partial update data
    * @returns Updated product
    */
-  async updateProduct(id: string, data: UpdateProductRequest): Promise<Product> {
+  async updateProduct(
+    id: string,
+    data: UpdateProductRequest
+  ): Promise<Product> {
     try {
       const response = await apiClient.put<Product>(`/products/${id}`, data)
       return response.data
@@ -138,9 +141,12 @@ export const productService = {
    */
   async updateStatus(id: string, status: ProductStatus): Promise<Product> {
     try {
-      const response = await apiClient.patch<Product>(`/products/${id}/status`, {
-        status,
-      })
+      const response = await apiClient.patch<Product>(
+        `/products/${id}/status`,
+        {
+          status,
+        }
+      )
       return response.data
     } catch (error) {
       const message = getProductErrorMessage(error)

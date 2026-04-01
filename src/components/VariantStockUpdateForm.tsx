@@ -36,7 +36,9 @@ export const VariantStockUpdateForm = ({
       setLoading(true)
       await onUpdate(stockValue)
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Error al actualizar el stock')
+      setError(
+        err instanceof Error ? err.message : 'Error al actualizar el stock'
+      )
     } finally {
       setLoading(false)
     }

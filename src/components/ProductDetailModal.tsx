@@ -52,7 +52,9 @@ export const ProductDetailModal = ({
     component_cost: number
     package_cost: number
   } | null>(null)
-  const [setStock, setSetStock] = useState<{ available_stock: number } | null>(null)
+  const [setStock, setSetStock] = useState<{ available_stock: number } | null>(
+    null
+  )
   const [loadingSetData, setLoadingSetData] = useState(false)
 
   // Sub-modals and forms state
@@ -81,7 +83,9 @@ export const ProductDetailModal = ({
         loadSetData(data.id)
       }
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Error al cargar el producto')
+      setError(
+        err instanceof Error ? err.message : 'Error al cargar el producto'
+      )
     } finally {
       setLoading(false)
     }
@@ -203,7 +207,10 @@ export const ProductDetailModal = ({
    * Handle add component to set
    * TODO: This requires backend endpoint POST /products/:id/components
    */
-  const handleAddSetComponent = async (variantId: string, quantity: number) => {
+  const handleAddSetComponent = async (
+    _variantId: string,
+    _quantity: number
+  ) => {
     if (!product) return
     // Placeholder - backend endpoint needed
     throw new Error(
@@ -216,7 +223,7 @@ export const ProductDetailModal = ({
    * Handle remove component from set
    * TODO: This requires backend endpoint DELETE /products/:id/components/:variant_id
    */
-  const handleRemoveSetComponent = async (variantId: string) => {
+  const handleRemoveSetComponent = async (_variantId: string) => {
     if (!product) return
     // Placeholder - backend endpoint needed
     throw new Error(
@@ -230,8 +237,8 @@ export const ProductDetailModal = ({
    * TODO: This requires backend endpoint PATCH /products/:id/components/:variant_id
    */
   const handleUpdateSetComponentQuantity = async (
-    variantId: string,
-    quantity: number
+    _variantId: string,
+    _quantity: number
   ) => {
     if (!product) return
     // Placeholder - backend endpoint needed
@@ -258,10 +265,7 @@ export const ProductDetailModal = ({
     <>
       <div className="fixed inset-0 z-50 overflow-y-auto">
         <div className="flex min-h-full items-center justify-center p-4">
-          <div
-            className="fixed inset-0 bg-black/50"
-            onClick={onClose}
-          />
+          <div className="fixed inset-0 bg-black/50" onClick={onClose} />
 
           <div className="relative z-10 w-full max-w-4xl rounded-lg bg-background p-6 shadow-lg">
             {/* Header */}
@@ -306,7 +310,9 @@ export const ProductDetailModal = ({
                       <p className="text-sm font-medium text-muted-foreground">
                         Categoría
                       </p>
-                      <p>{categoryLabels[product.category] || product.category}</p>
+                      <p>
+                        {categoryLabels[product.category] || product.category}
+                      </p>
                     </div>
                     <div>
                       <p className="text-sm font-medium text-muted-foreground">
@@ -458,7 +464,9 @@ export const ProductDetailModal = ({
                       ))}
                     </div>
                   ) : (
-                    <p className="text-muted-foreground">No hay tallas creadas</p>
+                    <p className="text-muted-foreground">
+                      No hay tallas creadas
+                    </p>
                   )}
                 </Card>
 
@@ -512,7 +520,9 @@ export const ProductDetailModal = ({
                     </div>
                   ) : (
                     !showVariantForm && (
-                      <p className="text-muted-foreground">No hay variantes creadas</p>
+                      <p className="text-muted-foreground">
+                        No hay variantes creadas
+                      </p>
                     )
                   )}
 
@@ -582,17 +592,23 @@ export const ProductDetailModal = ({
                                 <span className="text-muted-foreground">
                                   Componentes:
                                 </span>
-                                <span>{formatCurrency(setCost.component_cost)}</span>
+                                <span>
+                                  {formatCurrency(setCost.component_cost)}
+                                </span>
                               </div>
                               <div className="flex justify-between">
                                 <span className="text-muted-foreground">
                                   Empaque:
                                 </span>
-                                <span>{formatCurrency(setCost.package_cost)}</span>
+                                <span>
+                                  {formatCurrency(setCost.package_cost)}
+                                </span>
                               </div>
                               <div className="flex justify-between border-t pt-1 font-semibold">
                                 <span>Total:</span>
-                                <span>{formatCurrency(setCost.total_cost)}</span>
+                                <span>
+                                  {formatCurrency(setCost.total_cost)}
+                                </span>
                               </div>
                             </div>
                           </div>
@@ -631,9 +647,10 @@ export const ProductDetailModal = ({
 
                     <div className="mt-4 rounded-lg border border-yellow-200 bg-yellow-50 p-3">
                       <p className="text-sm text-yellow-800">
-                        <strong>Nota:</strong> La gestión de componentes requiere
-                        endpoints de backend pendientes de implementación (POST,
-                        DELETE, PATCH /products/:id/components).
+                        <strong>Nota:</strong> La gestión de componentes
+                        requiere endpoints de backend pendientes de
+                        implementación (POST, DELETE, PATCH
+                        /products/:id/components).
                       </p>
                     </div>
                   </Card>

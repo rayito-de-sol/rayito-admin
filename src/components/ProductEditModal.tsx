@@ -8,6 +8,9 @@ import { productService } from '@/services/productService'
 import { packageService } from '@/services/packageService'
 import { toast } from '@/utils/toast'
 
+/**
+ * Props for ProductEditModal component
+ */
 interface ProductEditModalProps {
   isOpen: boolean
   onClose: () => void
@@ -87,7 +90,9 @@ export const ProductEditModal = ({
    * Handle input change
    */
   const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
+    >
   ) => {
     const { name, value } = e.target
     setFormData((prev) => ({ ...prev, [name]: value }))
@@ -145,7 +150,9 @@ export const ProductEditModal = ({
       toast.success('Producto actualizado exitosamente')
       onSuccess()
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Error al actualizar el producto')
+      setError(
+        err instanceof Error ? err.message : 'Error al actualizar el producto'
+      )
     } finally {
       setLoading(false)
     }

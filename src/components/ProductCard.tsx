@@ -3,8 +3,13 @@ import { StatusBadge } from './StatusBadge'
 import type { Product } from '@/types/product'
 import { formatCurrency } from '@/utils/currency'
 
+/**
+ * Props for ProductCard component
+ */
 interface ProductCardProps {
+  /** Product to display */
   product: Product
+  /** Callback when card is clicked */
   onClick: (productId: string) => void
 }
 

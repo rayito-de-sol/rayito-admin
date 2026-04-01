@@ -5,6 +5,9 @@ import { Label } from './ui/label'
 import { packageService } from '@/services/packageService'
 import { toast } from '@/utils/toast'
 
+/**
+ * Props for PackageCreateForm component
+ */
 interface PackageCreateFormProps {
   onSuccess: () => void
   onCancel: () => void

@@ -55,7 +55,9 @@ export const CostHistoryModal = ({
       const data = await fetchHistory(entityId)
       setHistory(data)
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Error al cargar el historial')
+      setError(
+        err instanceof Error ? err.message : 'Error al cargar el historial'
+      )
     } finally {
       setLoading(false)
     }

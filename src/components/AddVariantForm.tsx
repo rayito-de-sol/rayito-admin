@@ -5,6 +5,9 @@ import { Label } from './ui/label'
 import type { Size } from '@/types/size'
 import type { VariantImage } from '@/types/variant'
 
+/**
+ * Props for AddVariantForm component
+ */
 interface AddVariantFormProps {
   productId: string
   sizes: Size[]
@@ -24,7 +27,6 @@ interface AddVariantFormProps {
  * Form for creating product variants with image management
  */
 export const AddVariantForm = ({
-  productId,
   sizes,
   onAdd,
   onCancel,
@@ -92,8 +94,8 @@ export const AddVariantForm = ({
     setImages((prev) => {
       const updated = prev.filter((_, i) => i !== index)
       // If removed image was primary, make first image primary
-      if (prev[index].is_primary && updated.length > 0) {
-        updated[0].is_primary = true
+      if (prev[index]?.is_primary && updated.length > 0) {
+        updated[0]!.is_primary = true
       }
       return updated
     })
@@ -146,7 +148,9 @@ export const AddVariantForm = ({
         images: validImages,
       })
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Error al crear la variante')
+      setError(
+        err instanceof Error ? err.message : 'Error al crear la variante'
+      )
     } finally {
       setLoading(false)
     }

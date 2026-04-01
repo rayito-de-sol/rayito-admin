@@ -5,6 +5,9 @@ import { ImageGalleryModal } from './ImageGalleryModal'
 import type { Variant } from '@/types/variant'
 import { formatCurrency } from '@/utils/currency'
 
+/**
+ * Props for VariantCard component
+ */
 interface VariantCardProps {
   variant: Variant
   canEdit: boolean
@@ -27,7 +30,8 @@ export const VariantCard = ({
   const [showImageGallery, setShowImageGallery] = useState(false)
 
   // Get primary image or first image
-  const primaryImage = variant.images.find((img) => img.is_primary) || variant.images[0]
+  const primaryImage =
+    variant.images.find((img) => img.is_primary) || variant.images[0]
 
   // Placeholder image for variants without images
   const placeholderImage =
@@ -40,7 +44,9 @@ export const VariantCard = ({
           {/* Image */}
           <div
             className="h-24 w-24 flex-shrink-0 cursor-pointer overflow-hidden rounded-lg border"
-            onClick={() => variant.images.length > 0 && setShowImageGallery(true)}
+            onClick={() =>
+              variant.images.length > 0 && setShowImageGallery(true)
+            }
           >
             <img
               src={primaryImage?.url || placeholderImage}
@@ -59,7 +65,9 @@ export const VariantCard = ({
               <p className="text-sm text-muted-foreground">
                 {variant.size?.label || 'Sin talla'}
               </p>
-              <p className="text-xs text-muted-foreground">SKU: {variant.sku}</p>
+              <p className="text-xs text-muted-foreground">
+                SKU: {variant.sku}
+              </p>
             </div>
 
             <div className="mb-2 flex gap-4 text-sm">

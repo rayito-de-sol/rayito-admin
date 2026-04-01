@@ -11,6 +11,9 @@ interface SetComponent {
   quantity: number
 }
 
+/**
+ * Props for SetCompositionForm component
+ */
 interface SetCompositionFormProps {
   components: SetComponent[]
   availableVariants: Variant[]
@@ -30,7 +33,7 @@ export const SetCompositionForm = ({
   canEdit,
   onAddComponent,
   onRemoveComponent,
-  onUpdateQuantity,
+  onUpdateQuantity: _onUpdateQuantity,
 }: SetCompositionFormProps) => {
   const [showAddForm, setShowAddForm] = useState(false)
   const [selectedVariantId, setSelectedVariantId] = useState('')
@@ -71,7 +74,9 @@ export const SetCompositionForm = ({
       setSelectedVariantId('')
       setQuantity('1')
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Error al agregar componente')
+      setError(
+        err instanceof Error ? err.message : 'Error al agregar componente'
+      )
     } finally {
       setLoading(false)
     }
@@ -170,7 +175,10 @@ export const SetCompositionForm = ({
           )}
 
           {showAddForm && (
-            <form onSubmit={handleAddComponent} className="rounded-lg border p-4">
+            <form
+              onSubmit={handleAddComponent}
+              className="rounded-lg border p-4"
+            >
               <h4 className="mb-3 font-semibold">Agregar Componente</h4>
 
               {availableForAdd.length === 0 ? (

@@ -89,6 +89,35 @@ src/
 └── config.ts       # Configuración y validación de env vars
 ```
 
+## Funcionalidades
+
+### Gestión de Productos
+- **Catálogo de productos**: Lista completa con filtros por estado, categoría y tipo
+- **Productos simples y sets**: Soporte para productos individuales y conjuntos
+- **Categorías**: Set, turbante, cintillo, pinza, maximono, mono, diadema, otro
+- **Variantes**: Gestión de colores, tallas, SKU, stock e imágenes
+- **Tallas**: Creación de tallas específicas por producto
+- **Precios**: Actualización de precios con historial completo
+- **Costos**: Gestión de costos de variantes con historial
+
+### Sets y Composición
+- **Composición de sets**: Definir sets como conjuntos de variantes
+- **Costo calculado**: Costo total = SUM(componentes) + empaque
+- **Stock calculado**: Stock disponible = MIN(stock_variante ÷ cantidad)
+
+### Empaques
+- **Empaques reutilizables**: Gestión centralizada de empaques
+- **Costos de empaque**: Actualización con historial
+- **Uso de empaques**: Ver qué productos usan cada empaque
+
+### Tiendas
+- **Gestión de tiendas**: CRUD completo para tiendas
+- **Información detallada**: Nombre, dirección, contacto, propietario
+
+### Control de Acceso
+- **Roles**: Admin, Manager, Analyst
+- **Permisos**: Admin y Manager pueden crear/editar, Analyst solo visualiza
+
 ## Autenticación
 
 La aplicación usa Supabase para la autenticación:
@@ -104,7 +133,10 @@ La aplicación usa Supabase para la autenticación:
 |------|-----------|-------------|
 | `/` | No | Redirige a `/dashboard` o `/login` según estado de auth |
 | `/login` | No | Página de inicio de sesión |
-| `/dashboard` | Sí | Panel principal (requiere autenticación) |
+| `/dashboard` | Sí | Panel principal |
+| `/tiendas` | Sí | Gestión de tiendas |
+| `/productos` | Sí | Catálogo de productos con filtros y CRUD |
+| `/empaques` | Sí | Gestión de empaques reutilizables |
 | `*` | No | Página 404 |
 
 ## Convenciones de Código

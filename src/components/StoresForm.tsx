@@ -139,7 +139,10 @@ export const StoresForm = ({
     }
 
     // Email format validation
-    if (contactPersonEmail && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(contactPersonEmail)) {
+    if (
+      contactPersonEmail &&
+      !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(contactPersonEmail)
+    ) {
       newErrors.contactPersonEmail = 'Formato de email inválido'
     }
 
@@ -239,25 +242,42 @@ export const StoresForm = ({
         if (contactPersonEmail !== initialData?.contact_person_email) {
           data.contact_person_email = contactPersonEmail.trim().toLowerCase()
         }
-        if (parseFloat(discountPercentage) !== initialData?.discount_percentage) {
+        if (
+          parseFloat(discountPercentage) !== initialData?.discount_percentage
+        ) {
           data.discount_percentage = parseFloat(discountPercentage)
         }
         if (deductVat !== initialData?.deduct_vat) {
           data.deduct_vat = deductVat
         }
-        if (includeProductsDetail !== initialData?.collection_doc_config?.include_products_detail) {
+        if (
+          includeProductsDetail !==
+          initialData?.collection_doc_config?.include_products_detail
+        ) {
           data.include_products_detail = includeProductsDetail
         }
-        if (includeUnitValue !== initialData?.collection_doc_config?.include_unit_value) {
+        if (
+          includeUnitValue !==
+          initialData?.collection_doc_config?.include_unit_value
+        ) {
           data.include_unit_value = includeUnitValue
         }
-        if (includeSKUInDetail !== initialData?.collection_doc_config?.include_sku_in_detail) {
+        if (
+          includeSKUInDetail !==
+          initialData?.collection_doc_config?.include_sku_in_detail
+        ) {
           data.include_sku_in_detail = includeSKUInDetail
         }
-        if (detailInAppendix !== initialData?.collection_doc_config?.detail_in_appendix) {
+        if (
+          detailInAppendix !==
+          initialData?.collection_doc_config?.detail_in_appendix
+        ) {
           data.detail_in_appendix = detailInAppendix
         }
-        if (includeLegalIncomeNote !== initialData?.collection_doc_config?.include_legal_income_note) {
+        if (
+          includeLegalIncomeNote !==
+          initialData?.collection_doc_config?.include_legal_income_note
+        ) {
           data.include_legal_income_note = includeLegalIncomeNote
         }
 
@@ -291,7 +311,8 @@ export const StoresForm = ({
         <div className="grid gap-4 md:grid-cols-2">
           <div>
             <Label htmlFor="identityNumber" className="mb-1.5">
-              Número de Identificación <span className="text-destructive">*</span>
+              Número de Identificación{' '}
+              <span className="text-destructive">*</span>
             </Label>
             <Input
               id="identityNumber"
@@ -300,7 +321,9 @@ export const StoresForm = ({
               disabled={submitting}
             />
             {errors.identityNumber && (
-              <p className="mt-1 text-sm text-destructive">{errors.identityNumber}</p>
+              <p className="mt-1 text-sm text-destructive">
+                {errors.identityNumber}
+              </p>
             )}
           </div>
 
@@ -325,7 +348,9 @@ export const StoresForm = ({
               </SelectContent>
             </Select>
             {errors.identityType && (
-              <p className="mt-1 text-sm text-destructive">{errors.identityType}</p>
+              <p className="mt-1 text-sm text-destructive">
+                {errors.identityType}
+              </p>
             )}
           </div>
 
@@ -355,7 +380,9 @@ export const StoresForm = ({
               disabled={submitting}
             />
             {errors.legalName && (
-              <p className="mt-1 text-sm text-destructive">{errors.legalName}</p>
+              <p className="mt-1 text-sm text-destructive">
+                {errors.legalName}
+              </p>
             )}
           </div>
         </div>
@@ -381,7 +408,9 @@ export const StoresForm = ({
           </div>
 
           <div className="md:col-span-2">
-            <Label htmlFor="line2" className="mb-1.5">Dirección Línea 2 (opcional)</Label>
+            <Label htmlFor="line2" className="mb-1.5">
+              Dirección Línea 2 (opcional)
+            </Label>
             <Input
               id="line2"
               value={line2}
@@ -431,13 +460,16 @@ export const StoresForm = ({
               disabled={submitting}
             />
             {errors.postalCode && (
-              <p className="mt-1 text-sm text-destructive">{errors.postalCode}</p>
+              <p className="mt-1 text-sm text-destructive">
+                {errors.postalCode}
+              </p>
             )}
           </div>
 
           <div>
             <Label htmlFor="country" className="mb-1.5">
-              País (código ISO 2 letras) <span className="text-destructive">*</span>
+              País (código ISO 2 letras){' '}
+              <span className="text-destructive">*</span>
             </Label>
             <Input
               id="country"
@@ -469,12 +501,16 @@ export const StoresForm = ({
               disabled={submitting}
             />
             {errors.contactPersonName && (
-              <p className="mt-1 text-sm text-destructive">{errors.contactPersonName}</p>
+              <p className="mt-1 text-sm text-destructive">
+                {errors.contactPersonName}
+              </p>
             )}
           </div>
 
           <div>
-            <Label htmlFor="contactPhoneNumber" className="mb-1.5">Teléfono</Label>
+            <Label htmlFor="contactPhoneNumber" className="mb-1.5">
+              Teléfono
+            </Label>
             <Input
               id="contactPhoneNumber"
               value={contactPhoneNumber}
@@ -495,7 +531,9 @@ export const StoresForm = ({
               disabled={submitting}
             />
             {errors.contactPersonEmail && (
-              <p className="mt-1 text-sm text-destructive">{errors.contactPersonEmail}</p>
+              <p className="mt-1 text-sm text-destructive">
+                {errors.contactPersonEmail}
+              </p>
             )}
           </div>
         </div>
@@ -507,7 +545,9 @@ export const StoresForm = ({
         <div className="space-y-4">
           <div className="grid gap-4 md:grid-cols-2">
             <div>
-              <Label htmlFor="discountPercentage" className="mb-1.5">Porcentaje de Descuento (%)</Label>
+              <Label htmlFor="discountPercentage" className="mb-1.5">
+                Porcentaje de Descuento (%)
+              </Label>
               <Input
                 id="discountPercentage"
                 type="number"
@@ -519,7 +559,9 @@ export const StoresForm = ({
                 disabled={submitting}
               />
               {errors.discountPercentage && (
-                <p className="mt-1 text-sm text-destructive">{errors.discountPercentage}</p>
+                <p className="mt-1 text-sm text-destructive">
+                  {errors.discountPercentage}
+                </p>
               )}
             </div>
 
@@ -550,7 +592,10 @@ export const StoresForm = ({
                   }
                   disabled={submitting}
                 />
-                <Label htmlFor="includeProductsDetail" className="cursor-pointer">
+                <Label
+                  htmlFor="includeProductsDetail"
+                  className="cursor-pointer"
+                >
                   Incluir detalle de productos
                 </Label>
               </div>
@@ -606,7 +651,10 @@ export const StoresForm = ({
                   }
                   disabled={submitting}
                 />
-                <Label htmlFor="includeLegalIncomeNote" className="cursor-pointer">
+                <Label
+                  htmlFor="includeLegalIncomeNote"
+                  className="cursor-pointer"
+                >
                   Incluir nota legal de ingresos
                 </Label>
               </div>

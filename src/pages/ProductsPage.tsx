@@ -3,7 +3,12 @@ import { Button } from '@/components/ui/button'
 import { ProductCard } from '@/components/ProductCard'
 import { ProductCreateModal } from '@/components/ProductCreateModal'
 import { ProductDetailModal } from '@/components/ProductDetailModal'
-import type { Product, ProductStatus, ProductCategory, ProductType } from '@/types/product'
+import type {
+  Product,
+  ProductStatus,
+  ProductCategory,
+  ProductType,
+} from '@/types/product'
 import { productService } from '@/services/productService'
 import { useAuth } from '@/hooks/useAuth'
 
@@ -21,13 +26,17 @@ export const ProductsPage = () => {
 
   // Filters
   const [statusFilter, setStatusFilter] = useState<ProductStatus | 'all'>('all')
-  const [categoryFilter, setCategoryFilter] = useState<ProductCategory | 'all'>('all')
+  const [categoryFilter, setCategoryFilter] = useState<ProductCategory | 'all'>(
+    'all'
+  )
   const [typeFilter, setTypeFilter] = useState<ProductType | 'all'>('all')
 
   // Modals state
   const [showCreateModal, setShowCreateModal] = useState(false)
   const [showDetailModal, setShowDetailModal] = useState(false)
-  const [selectedProductId, setSelectedProductId] = useState<string | null>(null)
+  const [selectedProductId, setSelectedProductId] = useState<string | null>(
+    null
+  )
 
   /**
    * Fetch products with filters
@@ -45,7 +54,9 @@ export const ProductsPage = () => {
       const data = await productService.listProducts(filters)
       setProducts(data)
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Error al cargar los productos')
+      setError(
+        err instanceof Error ? err.message : 'Error al cargar los productos'
+      )
     } finally {
       setLoading(false)
     }
@@ -188,10 +199,7 @@ export const ProductsPage = () => {
             No hay productos registrados
           </p>
           {canEdit && (
-            <Button
-              className="mt-4"
-              onClick={() => setShowCreateModal(true)}
-            >
+            <Button className="mt-4" onClick={() => setShowCreateModal(true)}>
               Crear Primer Producto
             </Button>
           )}

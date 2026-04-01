@@ -33,7 +33,9 @@ export const PackagesPage = () => {
       const data = await packageService.listPackages()
       setPackages(data)
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Error al cargar los empaques')
+      setError(
+        err instanceof Error ? err.message : 'Error al cargar los empaques'
+      )
     } finally {
       setLoading(false)
     }
@@ -134,10 +136,7 @@ export const PackagesPage = () => {
             No hay empaques registrados
           </p>
           {canEdit && (
-            <Button
-              className="mt-4"
-              onClick={() => setShowCreateForm(true)}
-            >
+            <Button className="mt-4" onClick={() => setShowCreateForm(true)}>
               Crear Primer Empaque
             </Button>
           )}

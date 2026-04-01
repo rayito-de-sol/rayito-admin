@@ -50,7 +50,9 @@ export const PriceHistoryModal = ({
       const data = await fetchHistory(productId)
       setHistory(data)
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Error al cargar el historial')
+      setError(
+        err instanceof Error ? err.message : 'Error al cargar el historial'
+      )
     } finally {
       setLoading(false)
     }

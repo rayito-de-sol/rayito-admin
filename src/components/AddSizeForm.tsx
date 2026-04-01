@@ -3,6 +3,9 @@ import { Button } from './ui/button'
 import { Input } from './ui/input'
 import { Label } from './ui/label'
 
+/**
+ * Props for AddSizeForm component
+ */
 interface AddSizeFormProps {
   onAdd: (label: string) => Promise<void>
   onCancel: () => void

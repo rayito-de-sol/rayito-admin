@@ -37,7 +37,9 @@ export const VariantCostUpdateForm = ({
       setLoading(true)
       await onUpdate(costValue)
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Error al actualizar el costo')
+      setError(
+        err instanceof Error ? err.message : 'Error al actualizar el costo'
+      )
     } finally {
       setLoading(false)
     }

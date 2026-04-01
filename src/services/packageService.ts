@@ -106,7 +106,10 @@ export const packageService = {
    * @param data Partial update data
    * @returns Updated package
    */
-  async updatePackage(id: string, data: UpdatePackageRequest): Promise<Package> {
+  async updatePackage(
+    id: string,
+    data: UpdatePackageRequest
+  ): Promise<Package> {
     try {
       const response = await apiClient.put<Package>(`/packages/${id}`, data)
       return response.data

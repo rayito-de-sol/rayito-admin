@@ -5,6 +5,9 @@ import type { Product } from '@/types/product'
 import { productService } from '@/services/productService'
 import { formatCurrency } from '@/utils/currency'
 
+/**
+ * Props for PackageUsageModal component
+ */
 interface PackageUsageModalProps {
   isOpen: boolean
   onClose: () => void
@@ -135,7 +138,9 @@ export const PackageUsageModal = ({
                           {product.current_price !== undefined && (
                             <>
                               <span>•</span>
-                              <span>{formatCurrency(product.current_price)}</span>
+                              <span>
+                                {formatCurrency(product.current_price)}
+                              </span>
                             </>
                           )}
                         </div>

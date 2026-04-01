@@ -3,6 +3,9 @@ import { Button } from './ui/button'
 import type { Package } from '@/types/package'
 import { formatCurrency } from '@/utils/currency'
 
+/**
+ * Props for PackageCard component
+ */
 interface PackageCardProps {
   package: Package
   canEdit: boolean
@@ -27,7 +30,9 @@ export const PackageCard = ({
       <div className="mb-3">
         <h3 className="text-lg font-semibold">{pkg.name}</h3>
         {pkg.description && (
-          <p className="mt-1 text-sm text-muted-foreground">{pkg.description}</p>
+          <p className="mt-1 text-sm text-muted-foreground">
+            {pkg.description}
+          </p>
         )}
       </div>
 

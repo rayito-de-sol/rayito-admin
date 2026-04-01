@@ -9,6 +9,9 @@ import { formatCurrency } from '@/utils/currency'
 import { useAuth } from '@/hooks/useAuth'
 import { toast } from '@/utils/toast'
 
+/**
+ * Props for PackageEditModal component
+ */
 interface PackageEditModalProps {
   isOpen: boolean
   onClose: () => void
@@ -97,7 +100,9 @@ export const PackageEditModal = ({
       toast.success('Empaque actualizado exitosamente')
       onSuccess()
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Error al actualizar el empaque')
+      setError(
+        err instanceof Error ? err.message : 'Error al actualizar el empaque'
+      )
     } finally {
       setLoading(false)
     }
@@ -123,7 +128,9 @@ export const PackageEditModal = ({
       setShowCostForm(false)
       onSuccess()
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Error al actualizar el costo')
+      setError(
+        err instanceof Error ? err.message : 'Error al actualizar el costo'
+      )
     } finally {
       setCostLoading(false)
     }

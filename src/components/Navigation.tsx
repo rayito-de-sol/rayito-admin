@@ -1,5 +1,13 @@
 import { NavLink } from 'react-router-dom'
-import { Home, Users, Store, Package, Box, ChevronLeft, ChevronRight } from 'lucide-react'
+import {
+  Home,
+  Users,
+  Store,
+  Package,
+  Box,
+  ChevronLeft,
+  ChevronRight,
+} from 'lucide-react'
 
 interface NavigationProps {
   isCollapsed: boolean

@@ -1,5 +1,9 @@
 import { apiClient } from './api/client'
-import type { Variant, CreateVariantRequest, VariantCost } from '@/types/variant'
+import type {
+  Variant,
+  CreateVariantRequest,
+  VariantCost,
+} from '@/types/variant'
 import { AxiosError } from 'axios'
 
 /**

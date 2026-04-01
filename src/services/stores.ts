@@ -1,5 +1,9 @@
 import { apiClient } from './api/client'
-import type { Store, CreateStoreRequest, UpdateStoreRequest } from '@/types/store'
+import type {
+  Store,
+  CreateStoreRequest,
+  UpdateStoreRequest,
+} from '@/types/store'
 import { AxiosError } from 'axios'
 
 /**

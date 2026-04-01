@@ -8,9 +8,15 @@ import { productService } from '@/services/productService'
 import { packageService } from '@/services/packageService'
 import { toast } from '@/utils/toast'
 
+/**
+ * Props for ProductCreateModal component
+ */
 interface ProductCreateModalProps {
+  /** Whether the modal is open */
   isOpen: boolean
+  /** Callback to close the modal */
   onClose: () => void
+  /** Callback on successful product creation */
   onSuccess: () => void
 }
 
@@ -78,7 +84,9 @@ export const ProductCreateModal = ({
    * Handle input change
    */
   const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
+    >
   ) => {
     const { name, value } = e.target
     setFormData((prev) => ({ ...prev, [name]: value }))
@@ -148,7 +156,9 @@ export const ProductCreateModal = ({
       onSuccess()
       resetForm()
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Error al crear el producto')
+      setError(
+        err instanceof Error ? err.message : 'Error al crear el producto'
+      )
     } finally {
       setLoading(false)
     }
@@ -163,8 +173,8 @@ export const ProductCreateModal = ({
       slug: '',
       description: '',
       sku_prefix: '',
-      category: 'mono',
-      type: 'single',
+      category: 'mono' as ProductCategory,
+      type: 'single' as ProductType,
       tags: '',
       package_id: '',
       initial_price: '',
