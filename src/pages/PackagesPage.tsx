@@ -3,6 +3,7 @@ import { Button } from '@/components/ui/button'
 import { PackageCard } from '@/components/PackageCard'
 import { PackageCreateForm } from '@/components/PackageCreateForm'
 import { PackageEditModal } from '@/components/PackageEditModal'
+import { PackageUsageModal } from '@/components/PackageUsageModal'
 import type { Package } from '@/types/package'
 import { packageService } from '@/services/packageService'
 import { useAuth } from '@/hooks/useAuth'
@@ -20,6 +21,7 @@ export const PackagesPage = () => {
   const [error, setError] = useState<string | null>(null)
   const [showCreateForm, setShowCreateForm] = useState(false)
   const [selectedPackage, setSelectedPackage] = useState<Package | null>(null)
+  const [usagePackage, setUsagePackage] = useState<Package | null>(null)
 
   /**
    * Fetch packages
@@ -65,6 +67,13 @@ export const PackagesPage = () => {
   const handleEditSuccess = () => {
     setSelectedPackage(null)
     fetchPackages()
+  }
+
+  /**
+   * Handle view usage
+   */
+  const handleViewUsage = (pkg: Package) => {
+    setUsagePackage(pkg)
   }
 
   return (
@@ -144,6 +153,7 @@ export const PackagesPage = () => {
               package={pkg}
               canEdit={canEdit}
               onEdit={handleEdit}
+              onViewUsage={handleViewUsage}
             />
           ))}
         </div>
@@ -156,6 +166,15 @@ export const PackagesPage = () => {
           onClose={() => setSelectedPackage(null)}
           onSuccess={handleEditSuccess}
           package={selectedPackage}
+        />
+      )}
+
+      {/* Usage Modal */}
+      {usagePackage && (
+        <PackageUsageModal
+          isOpen={!!usagePackage}
+          onClose={() => setUsagePackage(null)}
+          package={usagePackage}
         />
       )}
     </div>

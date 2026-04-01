@@ -125,7 +125,7 @@
 - [x] 11.5 Add "Crear Empaque" button with role-based visibility (admin/manager only)
 - [x] 11.6 Add empty state message "No hay empaques registrados"
 - [x] 11.7 Add "Editar" button on each card with role-based visibility (admin/manager only)
-- [ ] 11.8 Add clickable usage count to view products using the package
+- [x] 11.8 Add clickable usage count to view products using the package
 
 ## 12. Packages - Create & Edit
 
