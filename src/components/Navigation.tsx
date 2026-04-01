@@ -1,5 +1,5 @@
 import { NavLink } from 'react-router-dom'
-import { Home, Users, Store, ChevronLeft, ChevronRight } from 'lucide-react'
+import { Home, Users, Store, Package, Box, ChevronLeft, ChevronRight } from 'lucide-react'
 
 interface NavigationProps {
   isCollapsed: boolean
@@ -70,6 +70,26 @@ export const Navigation = ({ isCollapsed, onToggle }: NavigationProps) => {
           >
             <Store className="h-4 w-4 flex-shrink-0" />
             {!isCollapsed && <span>Tiendas</span>}
+          </NavLink>
+        </li>
+        <li>
+          <NavLink
+            to="/productos"
+            className={linkClass}
+            title={isCollapsed ? 'Productos' : undefined}
+          >
+            <Package className="h-4 w-4 flex-shrink-0" />
+            {!isCollapsed && <span>Productos</span>}
+          </NavLink>
+        </li>
+        <li>
+          <NavLink
+            to="/empaques"
+            className={linkClass}
+            title={isCollapsed ? 'Empaques' : undefined}
+          >
+            <Box className="h-4 w-4 flex-shrink-0" />
+            {!isCollapsed && <span>Empaques</span>}
           </NavLink>
         </li>
       </ul>

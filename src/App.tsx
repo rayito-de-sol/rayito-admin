@@ -6,6 +6,8 @@ import { GlobalLoading } from '@/components/GlobalLoading'
 import { LoginPage } from '@/pages/LoginPage'
 import { DashboardPage } from '@/pages/DashboardPage'
 import { StoresPage } from '@/pages/StoresPage'
+import { ProductsPage } from '@/pages/ProductsPage'
+import { PackagesPage } from '@/pages/PackagesPage'
 import { NotFoundPage } from '@/pages/NotFoundPage'
 import { initAuth } from '@/services/authInit'
 import { useAuthStore } from '@/stores/useAuthStore'
@@ -54,6 +56,28 @@ function App() {
             <ProtectedRoute>
               <Layout>
                 <StoresPage />
+              </Layout>
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/productos"
+          element={
+            <ProtectedRoute>
+              <Layout>
+                <ProductsPage />
+              </Layout>
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/empaques"
+          element={
+            <ProtectedRoute>
+              <Layout>
+                <PackagesPage />
               </Layout>
             </ProtectedRoute>
           }
