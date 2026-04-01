@@ -3,6 +3,7 @@ import { Button } from './ui/button'
 import { Input } from './ui/input'
 import { Label } from './ui/label'
 import { packageService } from '@/services/packageService'
+import { toast } from '@/utils/toast'
 
 interface PackageCreateFormProps {
   onSuccess: () => void
@@ -54,6 +55,7 @@ export const PackageCreateForm = ({
         description: formData.description || undefined,
         initial_cost: cost,
       })
+      toast.success('Empaque creado exitosamente')
       onSuccess()
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Error al crear el empaque')

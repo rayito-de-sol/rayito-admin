@@ -7,6 +7,7 @@ import type { Package } from '@/types/package'
 import { packageService } from '@/services/packageService'
 import { formatCurrency } from '@/utils/currency'
 import { useAuth } from '@/hooks/useAuth'
+import { toast } from '@/utils/toast'
 
 interface PackageEditModalProps {
   isOpen: boolean
@@ -80,6 +81,7 @@ export const PackageEditModal = ({
         name: formData.name,
         description: formData.description || undefined,
       })
+      toast.success('Empaque actualizado exitosamente')
       onSuccess()
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Error al actualizar el empaque')
@@ -104,6 +106,7 @@ export const PackageEditModal = ({
     try {
       setCostLoading(true)
       await packageService.updateCost(pkg.id, cost)
+      toast.success('Costo del empaque actualizado exitosamente')
       setShowCostForm(false)
       onSuccess()
     } catch (err) {

@@ -6,6 +6,7 @@ import type { Product, ProductCategory, ProductStatus } from '@/types/product'
 import type { Package } from '@/types/package'
 import { productService } from '@/services/productService'
 import { packageService } from '@/services/packageService'
+import { toast } from '@/utils/toast'
 
 interface ProductEditModalProps {
   isOpen: boolean
@@ -128,6 +129,7 @@ export const ProductEditModal = ({
       })
 
       // Success
+      toast.success('Producto actualizado exitosamente')
       onSuccess()
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Error al actualizar el producto')

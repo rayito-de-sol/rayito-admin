@@ -1,5 +1,6 @@
 import { useEffect } from 'react'
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
+import { Toaster } from 'sonner'
 import { ProtectedRoute } from '@/components/ProtectedRoute'
 import { Layout } from '@/components/Layout'
 import { GlobalLoading } from '@/components/GlobalLoading'
@@ -31,6 +32,7 @@ function App() {
   return (
     <BrowserRouter>
       <GlobalLoading />
+      <Toaster richColors position="top-right" />
       <Routes>
         {/* Root redirect */}
         <Route path="/" element={<RootRedirect />} />

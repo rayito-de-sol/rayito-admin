@@ -20,6 +20,7 @@ import { sizeService } from '@/services/sizeService'
 import { variantService } from '@/services/variantService'
 import { formatCurrency } from '@/utils/currency'
 import { useAuth } from '@/hooks/useAuth'
+import { toast } from '@/utils/toast'
 
 interface ProductDetailModalProps {
   isOpen: boolean
@@ -117,6 +118,7 @@ export const ProductDetailModal = ({
   const handlePriceUpdate = async (price: number) => {
     if (!product) return
     await productService.updatePrice(product.id, price)
+    toast.success('Precio actualizado exitosamente')
     setShowPriceForm(false)
     await loadProduct()
     onUpdate?.()
@@ -128,6 +130,7 @@ export const ProductDetailModal = ({
   const handleSizeAdd = async (label: string) => {
     if (!product) return
     await sizeService.createSize(product.id, { label })
+    toast.success('Talla creada exitosamente')
     setShowSizeForm(false)
     await loadProduct()
   }
@@ -154,6 +157,7 @@ export const ProductDetailModal = ({
   }) => {
     if (!product) return
     await variantService.createVariant(product.id, data)
+    toast.success('Variante creada exitosamente')
     setShowVariantForm(false)
     await loadProduct()
   }
@@ -164,6 +168,7 @@ export const ProductDetailModal = ({
   const handleVariantStockUpdate = async (stock: number) => {
     if (!selectedVariant) return
     await variantService.updateStock(selectedVariant.id, stock)
+    toast.success('Stock actualizado exitosamente')
     setShowVariantStockForm(false)
     setSelectedVariant(null)
     await loadProduct()
@@ -175,6 +180,7 @@ export const ProductDetailModal = ({
   const handleVariantCostUpdate = async (cost: number) => {
     if (!selectedVariant) return
     await variantService.updateCost(selectedVariant.id, cost)
+    toast.success('Costo actualizado exitosamente')
     setShowVariantCostForm(false)
     setSelectedVariant(null)
     await loadProduct()

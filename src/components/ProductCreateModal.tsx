@@ -6,6 +6,7 @@ import type { ProductCategory, ProductType } from '@/types/product'
 import type { Package } from '@/types/package'
 import { productService } from '@/services/productService'
 import { packageService } from '@/services/packageService'
+import { toast } from '@/utils/toast'
 
 interface ProductCreateModalProps {
   isOpen: boolean
@@ -130,6 +131,7 @@ export const ProductCreateModal = ({
       })
 
       // Success
+      toast.success('Producto creado exitosamente')
       onSuccess()
       resetForm()
     } catch (err) {
