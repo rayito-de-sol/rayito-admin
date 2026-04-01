@@ -199,7 +199,7 @@
 - [x] 18.3 Verify date formatting uses Spanish locale (DD/MM/YYYY)
 - [x] 18.4 Verify currency formatting displays as "$X,XXX COP"
 - [x] 18.5 Add success toast messages for all create/update operations
-- [ ] 18.6 Verify all modals have proper close buttons and ESC key support
+- [x] 18.6 Verify all modals have proper close buttons and ESC key support
 - [x] 18.7 Verify all forms have proper loading states and disabled submit during submission
 - [ ] 18.8 Test mobile responsiveness of all pages and modals
 
