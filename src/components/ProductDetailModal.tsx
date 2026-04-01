@@ -6,10 +6,17 @@ import { ProductEditModal } from './ProductEditModal'
 import { ProductPriceUpdateForm } from './ProductPriceUpdateForm'
 import { PriceHistoryModal } from './PriceHistoryModal'
 import { AddSizeForm } from './AddSizeForm'
+import { VariantCard } from './VariantCard'
+import { AddVariantForm } from './AddVariantForm'
+import { VariantStockUpdateForm } from './VariantStockUpdateForm'
+import { VariantCostUpdateForm } from './VariantCostUpdateForm'
+import { CostHistoryModal } from './CostHistoryModal'
 import type { Product } from '@/types/product'
 import type { Size } from '@/types/size'
+import type { Variant } from '@/types/variant'
 import { productService } from '@/services/productService'
 import { sizeService } from '@/services/sizeService'
+import { variantService } from '@/services/variantService'
 import { formatCurrency } from '@/utils/currency'
 import { useAuth } from '@/hooks/useAuth'
 
@@ -42,6 +49,11 @@ export const ProductDetailModal = ({
   const [showPriceForm, setShowPriceForm] = useState(false)
   const [showPriceHistory, setShowPriceHistory] = useState(false)
   const [showSizeForm, setShowSizeForm] = useState(false)
+  const [showVariantForm, setShowVariantForm] = useState(false)
+  const [selectedVariant, setSelectedVariant] = useState<Variant | null>(null)
+  const [showVariantStockForm, setShowVariantStockForm] = useState(false)
+  const [showVariantCostForm, setShowVariantCostForm] = useState(false)
+  const [showVariantCostHistory, setShowVariantCostHistory] = useState(false)
 
   /**
    * Load product details
@@ -93,6 +105,45 @@ export const ProductDetailModal = ({
     setShowEditModal(false)
     await loadProduct()
     onUpdate?.()
+  }
+
+  /**
+   * Handle variant creation
+   */
+  const handleVariantAdd = async (data: {
+    color: string
+    size_id: string
+    sku: string
+    stock: number
+    initial_cost: number
+    images: any[]
+  }) => {
+    if (!product) return
+    await variantService.createVariant(product.id, data)
+    setShowVariantForm(false)
+    await loadProduct()
+  }
+
+  /**
+   * Handle variant stock update
+   */
+  const handleVariantStockUpdate = async (stock: number) => {
+    if (!selectedVariant) return
+    await variantService.updateStock(selectedVariant.id, stock)
+    setShowVariantStockForm(false)
+    setSelectedVariant(null)
+    await loadProduct()
+  }
+
+  /**
+   * Handle variant cost update
+   */
+  const handleVariantCostUpdate = async (cost: number) => {
+    if (!selectedVariant) return
+    await variantService.updateCost(selectedVariant.id, cost)
+    setShowVariantCostForm(false)
+    setSelectedVariant(null)
+    await loadProduct()
   }
 
   if (!isOpen) return null
@@ -316,19 +367,95 @@ export const ProductDetailModal = ({
                   )}
                 </Card>
 
-                {/* Variants - Placeholder */}
+                {/* Variants */}
                 <Card className="p-4">
                   <div className="mb-4 flex items-center justify-between">
                     <h3 className="text-lg font-semibold">Variantes</h3>
-                    {canEdit && (
-                      <Button size="sm" variant="outline" disabled>
+                    {canEdit && !showVariantForm && (
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() => setShowVariantForm(true)}
+                      >
                         Agregar Variante
                       </Button>
                     )}
                   </div>
-                  <p className="text-muted-foreground">
-                    Variantes (próximamente)
-                  </p>
+
+                  {showVariantForm && (
+                    <div className="mb-4">
+                      <AddVariantForm
+                        productId={product.id}
+                        sizes={product.sizes || []}
+                        onAdd={handleVariantAdd}
+                        onCancel={() => setShowVariantForm(false)}
+                      />
+                    </div>
+                  )}
+
+                  {product.variants && product.variants.length > 0 ? (
+                    <div className="space-y-3">
+                      {product.variants.map((variant: Variant) => (
+                        <VariantCard
+                          key={variant.id}
+                          variant={variant}
+                          canEdit={canEdit}
+                          onUpdateStock={(v) => {
+                            setSelectedVariant(v)
+                            setShowVariantStockForm(true)
+                          }}
+                          onUpdateCost={(v) => {
+                            setSelectedVariant(v)
+                            setShowVariantCostForm(true)
+                          }}
+                          onViewCostHistory={(v) => {
+                            setSelectedVariant(v)
+                            setShowVariantCostHistory(true)
+                          }}
+                        />
+                      ))}
+                    </div>
+                  ) : (
+                    !showVariantForm && (
+                      <p className="text-muted-foreground">No hay variantes creadas</p>
+                    )
+                  )}
+
+                  {/* Variant Stock Update Form */}
+                  {showVariantStockForm && selectedVariant && (
+                    <div className="mt-4 rounded-lg border p-4">
+                      <h4 className="mb-3 font-semibold">
+                        Actualizar Stock - {selectedVariant.color}
+                      </h4>
+                      <VariantStockUpdateForm
+                        currentStock={selectedVariant.stock}
+                        onUpdate={handleVariantStockUpdate}
+                        onCancel={() => {
+                          setShowVariantStockForm(false)
+                          setSelectedVariant(null)
+                        }}
+                      />
+                    </div>
+                  )}
+
+                  {/* Variant Cost Update Form */}
+                  {showVariantCostForm &&
+                    selectedVariant &&
+                    selectedVariant.current_cost !== undefined && (
+                      <div className="mt-4 rounded-lg border p-4">
+                        <h4 className="mb-3 font-semibold">
+                          Actualizar Costo - {selectedVariant.color}
+                        </h4>
+                        <VariantCostUpdateForm
+                          currentCost={selectedVariant.current_cost}
+                          onUpdate={handleVariantCostUpdate}
+                          onCancel={() => {
+                            setShowVariantCostForm(false)
+                            setSelectedVariant(null)
+                          }}
+                        />
+                      </div>
+                    )}
                 </Card>
               </div>
             )}
@@ -353,6 +480,20 @@ export const ProductDetailModal = ({
         productId={productId}
         fetchHistory={productService.getPriceHistory}
       />
+
+      {/* Variant Cost History Modal */}
+      {selectedVariant && (
+        <CostHistoryModal
+          isOpen={showVariantCostHistory}
+          onClose={() => {
+            setShowVariantCostHistory(false)
+            setSelectedVariant(null)
+          }}
+          entityType="variant"
+          entityId={selectedVariant.id}
+          fetchHistory={variantService.getCostHistory}
+        />
+      )}
     </>
   )
 }
