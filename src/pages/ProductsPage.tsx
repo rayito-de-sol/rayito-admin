@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { Button } from '@/components/ui/button'
 import { ProductCard } from '@/components/ProductCard'
+import { ProductCreateModal } from '@/components/ProductCreateModal'
 import type { Product, ProductStatus, ProductCategory, ProductType } from '@/types/product'
 import { productService } from '@/services/productService'
 import { useAuth } from '@/hooks/useAuth'
@@ -192,7 +193,14 @@ export const ProductsPage = () => {
         </div>
       )}
 
-      {/* TODO: Modals will be added in subsequent tasks */}
+      {/* Create Modal */}
+      <ProductCreateModal
+        isOpen={showCreateModal}
+        onClose={() => setShowCreateModal(false)}
+        onSuccess={handleCreateSuccess}
+      />
+
+      {/* TODO: Detail and Edit modals will be added in subsequent tasks */}
     </div>
   )
 }
