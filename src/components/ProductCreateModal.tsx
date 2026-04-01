@@ -49,6 +49,19 @@ export const ProductCreateModal = ({
     }
   }, [isOpen])
 
+  /**
+   * Handle ESC key to close modal
+   */
+  useEffect(() => {
+    const handleEsc = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && isOpen) {
+        onClose()
+      }
+    }
+    document.addEventListener('keydown', handleEsc)
+    return () => document.removeEventListener('keydown', handleEsc)
+  }, [isOpen, onClose])
+
   const loadPackages = async () => {
     try {
       setLoadingPackages(true)

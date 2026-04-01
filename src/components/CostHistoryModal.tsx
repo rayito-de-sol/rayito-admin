@@ -35,6 +35,19 @@ export const CostHistoryModal = ({
     }
   }, [isOpen, entityId])
 
+  /**
+   * Handle ESC key to close modal
+   */
+  useEffect(() => {
+    const handleEsc = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && isOpen) {
+        onClose()
+      }
+    }
+    document.addEventListener('keydown', handleEsc)
+    return () => document.removeEventListener('keydown', handleEsc)
+  }, [isOpen, onClose])
+
   const loadHistory = async () => {
     try {
       setLoading(true)

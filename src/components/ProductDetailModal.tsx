@@ -113,6 +113,19 @@ export const ProductDetailModal = ({
   }, [isOpen, productId])
 
   /**
+   * Handle ESC key to close modal
+   */
+  useEffect(() => {
+    const handleEsc = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && isOpen) {
+        onClose()
+      }
+    }
+    document.addEventListener('keydown', handleEsc)
+    return () => document.removeEventListener('keydown', handleEsc)
+  }, [isOpen, onClose])
+
+  /**
    * Handle price update
    */
   const handlePriceUpdate = async (price: number) => {
