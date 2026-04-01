@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { Button } from '@/components/ui/button'
 import { PackageCard } from '@/components/PackageCard'
 import { PackageCreateForm } from '@/components/PackageCreateForm'
+import { PackageEditModal } from '@/components/PackageEditModal'
 import type { Package } from '@/types/package'
 import { packageService } from '@/services/packageService'
 import { useAuth } from '@/hooks/useAuth'
@@ -148,14 +149,14 @@ export const PackagesPage = () => {
         </div>
       )}
 
-      {/* Edit Modal - TODO: Add PackageEditModal */}
+      {/* Edit Modal */}
       {selectedPackage && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-          <div className="rounded-lg bg-background p-6">
-            <p>Edit modal para {selectedPackage.name} (próximamente)</p>
-            <Button onClick={() => setSelectedPackage(null)}>Cerrar</Button>
-          </div>
-        </div>
+        <PackageEditModal
+          isOpen={!!selectedPackage}
+          onClose={() => setSelectedPackage(null)}
+          onSuccess={handleEditSuccess}
+          package={selectedPackage}
+        />
       )}
     </div>
   )
