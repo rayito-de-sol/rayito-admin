@@ -11,6 +11,7 @@ import { AddVariantForm } from './AddVariantForm'
 import { VariantStockUpdateForm } from './VariantStockUpdateForm'
 import { VariantCostUpdateForm } from './VariantCostUpdateForm'
 import { CostHistoryModal } from './CostHistoryModal'
+import { SetCompositionForm } from './SetCompositionForm'
 import type { Product } from '@/types/product'
 import type { Size } from '@/types/size'
 import type { Variant } from '@/types/variant'
@@ -44,6 +45,15 @@ export const ProductDetailModal = ({
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
+  // Set product data
+  const [setCost, setSetCost] = useState<{
+    total_cost: number
+    component_cost: number
+    package_cost: number
+  } | null>(null)
+  const [setStock, setSetStock] = useState<{ available_stock: number } | null>(null)
+  const [loadingSetData, setLoadingSetData] = useState(false)
+
   // Sub-modals and forms state
   const [showEditModal, setShowEditModal] = useState(false)
   const [showPriceForm, setShowPriceForm] = useState(false)
@@ -64,10 +74,34 @@ export const ProductDetailModal = ({
       setError(null)
       const data = await productService.getProduct(productId)
       setProduct(data)
+
+      // Load set data if product is a set
+      if (data.type === 'set') {
+        loadSetData(data.id)
+      }
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Error al cargar el producto')
     } finally {
       setLoading(false)
+    }
+  }
+
+  /**
+   * Load set cost and stock data
+   */
+  const loadSetData = async (id: string) => {
+    try {
+      setLoadingSetData(true)
+      const [costData, stockData] = await Promise.all([
+        productService.getSetCost(id),
+        productService.getSetStock(id),
+      ])
+      setSetCost(costData)
+      setSetStock(stockData)
+    } catch (err) {
+      console.error('Error loading set data:', err)
+    } finally {
+      setLoadingSetData(false)
     }
   }
 
@@ -144,6 +178,48 @@ export const ProductDetailModal = ({
     setShowVariantCostForm(false)
     setSelectedVariant(null)
     await loadProduct()
+  }
+
+  /**
+   * Handle add component to set
+   * TODO: This requires backend endpoint POST /products/:id/components
+   */
+  const handleAddSetComponent = async (variantId: string, quantity: number) => {
+    if (!product) return
+    // Placeholder - backend endpoint needed
+    throw new Error(
+      'Endpoint no implementado: POST /products/:id/components. ' +
+        'Contacte al equipo de backend para agregar esta funcionalidad.'
+    )
+  }
+
+  /**
+   * Handle remove component from set
+   * TODO: This requires backend endpoint DELETE /products/:id/components/:variant_id
+   */
+  const handleRemoveSetComponent = async (variantId: string) => {
+    if (!product) return
+    // Placeholder - backend endpoint needed
+    throw new Error(
+      'Endpoint no implementado: DELETE /products/:id/components/:variant_id. ' +
+        'Contacte al equipo de backend para agregar esta funcionalidad.'
+    )
+  }
+
+  /**
+   * Handle update component quantity
+   * TODO: This requires backend endpoint PATCH /products/:id/components/:variant_id
+   */
+  const handleUpdateSetComponentQuantity = async (
+    variantId: string,
+    quantity: number
+  ) => {
+    if (!product) return
+    // Placeholder - backend endpoint needed
+    throw new Error(
+      'Endpoint no implementado: PATCH /products/:id/components/:variant_id. ' +
+        'Contacte al equipo de backend para agregar esta funcionalidad.'
+    )
   }
 
   if (!isOpen) return null
@@ -457,6 +533,92 @@ export const ProductDetailModal = ({
                       </div>
                     )}
                 </Card>
+
+                {/* Set Composition - Only for set products */}
+                {product.type === 'set' && (
+                  <Card className="p-4">
+                    <div className="mb-4">
+                      <h3 className="text-lg font-semibold">
+                        Composición del Set
+                      </h3>
+                    </div>
+
+                    {/* Computed Cost and Stock Display */}
+                    {loadingSetData ? (
+                      <div className="mb-4 flex items-center justify-center py-8">
+                        <p className="text-sm text-muted-foreground">
+                          Calculando costo y stock...
+                        </p>
+                      </div>
+                    ) : (
+                      setCost &&
+                      setStock && (
+                        <div className="mb-4 space-y-3 rounded-lg border bg-muted/50 p-4">
+                          <div>
+                            <h4 className="mb-2 text-sm font-semibold">
+                              Costo Calculado
+                            </h4>
+                            <div className="space-y-1 text-sm">
+                              <div className="flex justify-between">
+                                <span className="text-muted-foreground">
+                                  Componentes:
+                                </span>
+                                <span>{formatCurrency(setCost.component_cost)}</span>
+                              </div>
+                              <div className="flex justify-between">
+                                <span className="text-muted-foreground">
+                                  Empaque:
+                                </span>
+                                <span>{formatCurrency(setCost.package_cost)}</span>
+                              </div>
+                              <div className="flex justify-between border-t pt-1 font-semibold">
+                                <span>Total:</span>
+                                <span>{formatCurrency(setCost.total_cost)}</span>
+                              </div>
+                            </div>
+                          </div>
+                          <div>
+                            <h4 className="mb-1 text-sm font-semibold">
+                              Stock Disponible
+                            </h4>
+                            <p className="text-sm text-muted-foreground">
+                              {setStock.available_stock} unidades
+                            </p>
+                            <p className="mt-1 text-xs text-muted-foreground">
+                              Calculado como: MIN(stock_variante ÷ cantidad)
+                            </p>
+                          </div>
+                        </div>
+                      )
+                    )}
+
+                    {/* Set Components Management */}
+                    <SetCompositionForm
+                      components={
+                        product.variants
+                          ? product.variants.map((v) => ({
+                              variant_id: v.id,
+                              variant: v,
+                              quantity: 1, // TODO: Get actual quantity from backend when component endpoints are ready
+                            }))
+                          : []
+                      }
+                      availableVariants={product.variants || []}
+                      canEdit={canEdit}
+                      onAddComponent={handleAddSetComponent}
+                      onRemoveComponent={handleRemoveSetComponent}
+                      onUpdateQuantity={handleUpdateSetComponentQuantity}
+                    />
+
+                    <div className="mt-4 rounded-lg border border-yellow-200 bg-yellow-50 p-3">
+                      <p className="text-sm text-yellow-800">
+                        <strong>Nota:</strong> La gestión de componentes requiere
+                        endpoints de backend pendientes de implementación (POST,
+                        DELETE, PATCH /products/:id/components).
+                      </p>
+                    </div>
+                  </Card>
+                )}
               </div>
             )}
           </div>
