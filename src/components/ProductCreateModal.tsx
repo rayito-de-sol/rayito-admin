@@ -271,16 +271,19 @@ export const ProductCreateModal = ({
   if (!isOpen) return null
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-      <div className="w-full max-w-2xl rounded-lg bg-background p-6 shadow-lg">
-        <div className="mb-4 flex items-center justify-between">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+      <div className="flex max-h-[90vh] w-full max-w-2xl flex-col rounded-lg bg-background shadow-lg">
+        {/* Header - Fixed */}
+        <div className="flex items-center justify-between border-b px-6 py-4">
           <h2 className="text-2xl font-bold">Crear Producto</h2>
           <Button variant="ghost" onClick={handleClose} disabled={loading}>
             ×
           </Button>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
+        {/* Form Content - Scrollable */}
+        <form onSubmit={handleSubmit} className="flex min-h-0 flex-1 flex-col">
+          <div className="flex-1 space-y-4 overflow-y-auto px-6 py-4">
           {/* Name */}
           <div>
             <Label htmlFor="name" className="mb-2">
@@ -551,9 +554,10 @@ export const ProductCreateModal = ({
               {error}
             </div>
           )}
+          </div>
 
-          {/* Actions */}
-          <div className="flex justify-end gap-3">
+          {/* Actions - Fixed at bottom */}
+          <div className="flex justify-end gap-3 border-t px-6 py-4">
             <Button
               type="button"
               variant="outline"
