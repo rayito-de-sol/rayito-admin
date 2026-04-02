@@ -2,10 +2,12 @@ import { useState, useEffect } from 'react'
 import { Button } from './ui/button'
 import { Input } from './ui/input'
 import { Label } from './ui/label'
-import type { ProductCategory, ProductType } from '@/types/product'
+import type { ProductCategory, ProductType, SetItemRequest } from '@/types/product'
 import type { Package } from '@/types/package'
+import type { Variant } from '@/types/variant'
 import { productService } from '@/services/productService'
 import { packageService } from '@/services/packageService'
+import { variantService } from '@/services/variantService'
 import { toast } from '@/utils/toast'
 
 /**
@@ -42,16 +44,20 @@ export const ProductCreateModal = ({
   })
 
   const [packages, setPackages] = useState<Package[]>([])
+  const [variants, setVariants] = useState<Variant[]>([])
+  const [setItems, setSetItems] = useState<SetItemRequest[]>([])
   const [loading, setLoading] = useState(false)
   const [loadingPackages, setLoadingPackages] = useState(false)
+  const [loadingVariants, setLoadingVariants] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
   /**
-   * Load packages on mount
+   * Load packages and variants on mount
    */
   useEffect(() => {
     if (isOpen) {
       loadPackages()
+      loadVariants()
     }
   }, [isOpen])
 
@@ -80,6 +86,18 @@ export const ProductCreateModal = ({
     }
   }
 
+  const loadVariants = async () => {
+    try {
+      setLoadingVariants(true)
+      const data = await variantService.listVariants()
+      setVariants(data)
+    } catch (err) {
+      console.error('Error loading variants:', err)
+    } finally {
+      setLoadingVariants(false)
+    }
+  }
+
   /**
    * Handle input change
    */
@@ -90,6 +108,49 @@ export const ProductCreateModal = ({
   ) => {
     const { name, value } = e.target
     setFormData((prev) => ({ ...prev, [name]: value }))
+
+    // Clear set items when switching away from "set" type
+    if (name === 'type' && value !== 'set') {
+      setSetItems([])
+    }
+  }
+
+  /**
+   * Add a new set item
+   */
+  const handleAddSetItem = () => {
+    if (variants.length > 0) {
+      setSetItems((prev) => [
+        ...prev,
+        { variant_id: variants[0].id, quantity: 1 },
+      ])
+    }
+  }
+
+  /**
+   * Update a set item
+   */
+  const handleUpdateSetItem = (
+    index: number,
+    field: 'variant_id' | 'quantity',
+    value: string | number
+  ) => {
+    setSetItems((prev) => {
+      const updated = [...prev]
+      if (field === 'variant_id') {
+        updated[index].variant_id = value as string
+      } else {
+        updated[index].quantity = Number(value)
+      }
+      return updated
+    })
+  }
+
+  /**
+   * Remove a set item
+   */
+  const handleRemoveSetItem = (index: number) => {
+    setSetItems((prev) => prev.filter((_, i) => i !== index))
   }
 
   /**
@@ -129,6 +190,21 @@ export const ProductCreateModal = ({
       return
     }
 
+    // Validate set items for set products
+    if (formData.type === 'set') {
+      if (setItems.length === 0) {
+        setError('Los productos tipo Set deben tener al menos un item')
+        return
+      }
+      // Validate quantities
+      for (const item of setItems) {
+        if (item.quantity < 1) {
+          setError('Las cantidades deben ser mayores a cero')
+          return
+        }
+      }
+    }
+
     try {
       setLoading(true)
 
@@ -149,6 +225,7 @@ export const ProductCreateModal = ({
         tags: tags.length > 0 ? tags : undefined,
         package_id: formData.package_id || null,
         initial_price: price,
+        set_items: formData.type === 'set' ? setItems : undefined,
       })
 
       // Success
@@ -179,6 +256,7 @@ export const ProductCreateModal = ({
       package_id: '',
       initial_price: '',
     })
+    setSetItems([])
     setError(null)
   }
 
@@ -312,6 +390,102 @@ export const ProductCreateModal = ({
               <option value="set">Set</option>
             </select>
           </div>
+
+          {/* Set Items (only for type "set") */}
+          {formData.type === 'set' && (
+            <div className="space-y-3 rounded-md border border-input p-4">
+              <div className="flex items-center justify-between">
+                <Label className="mb-0">
+                  Items del Set * {setItems.length > 0 && `(${setItems.length})`}
+                </Label>
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={handleAddSetItem}
+                  disabled={loading || loadingVariants || variants.length === 0}
+                >
+                  + Agregar Item
+                </Button>
+              </div>
+
+              {loadingVariants && (
+                <p className="text-sm text-muted-foreground">
+                  Cargando variantes...
+                </p>
+              )}
+
+              {!loadingVariants && variants.length === 0 && (
+                <p className="text-sm text-muted-foreground">
+                  No hay variantes disponibles. Crea productos con variantes primero.
+                </p>
+              )}
+
+              {setItems.length === 0 && !loadingVariants && variants.length > 0 && (
+                <p className="text-sm text-muted-foreground">
+                  Haz clic en "Agregar Item" para añadir variantes al set
+                </p>
+              )}
+
+              {setItems.map((item, index) => (
+                <div
+                  key={index}
+                  className="flex items-start gap-2 rounded-md border border-border p-3"
+                >
+                  <div className="flex-1">
+                    <Label htmlFor={`variant-${index}`} className="mb-2 text-xs">
+                      Variante
+                    </Label>
+                    <select
+                      id={`variant-${index}`}
+                      value={item.variant_id}
+                      onChange={(e) =>
+                        handleUpdateSetItem(index, 'variant_id', e.target.value)
+                      }
+                      className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
+                      disabled={loading}
+                    >
+                      {variants.map((variant) => (
+                        <option key={variant.id} value={variant.id}>
+                          {variant.product_name} - {variant.color} (SKU: {variant.sku})
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+
+                  <div className="w-24">
+                    <Label htmlFor={`quantity-${index}`} className="mb-2 text-xs">
+                      Cantidad
+                    </Label>
+                    <Input
+                      id={`quantity-${index}`}
+                      type="number"
+                      min="1"
+                      value={item.quantity}
+                      onChange={(e) =>
+                        handleUpdateSetItem(index, 'quantity', e.target.value)
+                      }
+                      disabled={loading}
+                      className="text-sm"
+                    />
+                  </div>
+
+                  <div className="pt-6">
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => handleRemoveSetItem(index)}
+                      disabled={loading}
+                      className="text-destructive hover:bg-destructive/10"
+                    >
+                      ×
+                    </Button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
 
           {/* Package */}
           <div>

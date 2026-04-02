@@ -56,6 +56,20 @@ const getVariantErrorMessage = (error: unknown): string => {
  */
 export const variantService = {
   /**
+   * List all variants with product info (for set creation)
+   * @returns Array of all variants
+   */
+  async listVariants(): Promise<Variant[]> {
+    try {
+      const response = await apiClient.get<Variant[]>('/variants')
+      return response.data
+    } catch (error) {
+      const message = getVariantErrorMessage(error)
+      throw new Error(message)
+    }
+  },
+
+  /**
    * Create new variant for a product
    * @param productId Product UUID
    * @param data Variant creation data

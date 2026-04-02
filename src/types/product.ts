@@ -62,6 +62,14 @@ export interface Product {
 }
 
 /**
+ * Set item for creating a set product
+ */
+export interface SetItemRequest {
+  variant_id: string
+  quantity: number
+}
+
+/**
  * Request body for creating a product
  */
 export interface CreateProductRequest {
@@ -74,6 +82,7 @@ export interface CreateProductRequest {
   tags?: string[]
   package_id?: string | null
   initial_price: number
+  set_items?: SetItemRequest[]
 }
 
 /**
