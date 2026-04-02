@@ -52,7 +52,7 @@ export const ProductsPage = () => {
       if (typeFilter !== 'all') filters.type = typeFilter
 
       const data = await productService.listProducts(filters)
-      setProducts(data)
+      setProducts(data || [])
     } catch (err) {
       setError(
         err instanceof Error ? err.message : 'Error al cargar los productos'

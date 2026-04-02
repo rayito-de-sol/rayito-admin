@@ -31,7 +31,7 @@ export const PackagesPage = () => {
       setLoading(true)
       setError(null)
       const data = await packageService.listPackages()
-      setPackages(data)
+      setPackages(data || [])
     } catch (err) {
       setError(
         err instanceof Error ? err.message : 'Error al cargar los empaques'

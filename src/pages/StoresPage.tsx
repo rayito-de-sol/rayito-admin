@@ -27,7 +27,7 @@ export const StoresPage = () => {
       setLoading(true)
       setError(null)
       const data = await storesService.listStores()
-      setStores(data)
+      setStores(data || [])
     } catch (err) {
       if (err instanceof Error) {
         setError(err.message)
