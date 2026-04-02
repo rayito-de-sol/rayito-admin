@@ -1,8 +1,7 @@
 import { useState, useEffect } from 'react'
-import { Button } from '@/components/ui/button'
-import { ProductCard } from '@/components/ProductCard'
+import { ProductsList } from '@/components/ProductsList'
+import { ProductsDetail } from '@/components/ProductsDetail'
 import { ProductCreateModal } from '@/components/ProductCreateModal'
-import { ProductDetailModal } from '@/components/ProductDetailModal'
 import type {
   Product,
   ProductStatus,
@@ -12,14 +11,20 @@ import type {
 import { productService } from '@/services/productService'
 import { useAuth } from '@/hooks/useAuth'
 
+type View = 'list' | 'create' | 'detail'
+
 /**
  * ProductsPage
- * Main page for managing products with filters and modals
+ * Main page for managing products with table view and detail pages
  */
 export const ProductsPage = () => {
   const { user } = useAuth()
   const canEdit = user?.role === 'admin' || user?.role === 'manager'
 
+  const [view, setView] = useState<View>('list')
+  const [selectedProductId, setSelectedProductId] = useState<string | null>(
+    null
+  )
   const [products, setProducts] = useState<Product[]>([])
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -31,12 +36,8 @@ export const ProductsPage = () => {
   )
   const [typeFilter, setTypeFilter] = useState<ProductType | 'all'>('all')
 
-  // Modals state
+  // Create modal state (still using modal for creation)
   const [showCreateModal, setShowCreateModal] = useState(false)
-  const [showDetailModal, setShowDetailModal] = useState(false)
-  const [selectedProductId, setSelectedProductId] = useState<string | null>(
-    null
-  )
 
   /**
    * Fetch products with filters
@@ -70,26 +71,18 @@ export const ProductsPage = () => {
   }, [statusFilter, categoryFilter, typeFilter])
 
   /**
-   * Handle product card click
+   * Handle product row click - show detail view
    */
   const handleProductClick = (productId: string) => {
     setSelectedProductId(productId)
-    setShowDetailModal(true)
+    setView('detail')
   }
 
   /**
-   * Handle detail modal close
+   * Handle create button click - show create modal
    */
-  const handleDetailClose = () => {
-    setShowDetailModal(false)
-    setSelectedProductId(null)
-  }
-
-  /**
-   * Handle detail modal update
-   */
-  const handleDetailUpdate = () => {
-    fetchProducts()
+  const handleCreateClick = () => {
+    setShowCreateModal(true)
   }
 
   /**
@@ -100,122 +93,52 @@ export const ProductsPage = () => {
     fetchProducts()
   }
 
+  /**
+   * Handle back button click - return to list view
+   */
+  const handleBackClick = () => {
+    setView('list')
+    setSelectedProductId(null)
+  }
+
   return (
     <div>
       <div className="mb-8">
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-3xl font-bold">Productos</h1>
-            <p className="mt-2 text-muted-foreground">
-              Gestiona el catálogo de productos
-            </p>
+        <h1 className="text-3xl font-bold">Productos</h1>
+        <p className="mt-2 text-muted-foreground">
+          Gestiona el catálogo de productos
+        </p>
+      </div>
+
+      {/* List View */}
+      {view === 'list' && (
+        <ProductsList
+          products={products}
+          loading={loading}
+          error={error}
+          onProductClick={handleProductClick}
+          onCreateClick={handleCreateClick}
+          onRetry={fetchProducts}
+          statusFilter={statusFilter}
+          categoryFilter={categoryFilter}
+          typeFilter={typeFilter}
+          onStatusFilterChange={setStatusFilter}
+          onCategoryFilterChange={setCategoryFilter}
+          onTypeFilterChange={setTypeFilter}
+          canEdit={canEdit}
+        />
+      )}
+
+      {/* Detail View */}
+      {view === 'detail' && selectedProductId && (
+        <div>
+          <div className="mb-6">
+            <h2 className="text-2xl font-semibold">Detalle del Producto</h2>
           </div>
-          {canEdit && (
-            <Button onClick={() => setShowCreateModal(true)}>
-              Crear Producto
-            </Button>
-          )}
-        </div>
-      </div>
-
-      {/* Filters */}
-      <div className="mb-6 flex flex-wrap gap-4">
-        {/* Status filter */}
-        <div>
-          <label className="mb-2 block text-sm font-medium">Estado</label>
-          <select
-            value={statusFilter}
-            onChange={(e) => setStatusFilter(e.target.value as any)}
-            className="rounded-md border border-input bg-background px-3 py-2"
-          >
-            <option value="all">Todos</option>
-            <option value="draft">Borrador</option>
-            <option value="active">Activo</option>
-            <option value="inactive">Inactivo</option>
-          </select>
-        </div>
-
-        {/* Category filter */}
-        <div>
-          <label className="mb-2 block text-sm font-medium">Categoría</label>
-          <select
-            value={categoryFilter}
-            onChange={(e) => setCategoryFilter(e.target.value as any)}
-            className="rounded-md border border-input bg-background px-3 py-2"
-          >
-            <option value="all">Todas</option>
-            <option value="set">Set</option>
-            <option value="turbante">Turbante</option>
-            <option value="cintillo">Cintillo</option>
-            <option value="pinza">Pinza</option>
-            <option value="maximono">Maximono</option>
-            <option value="mono">Mono</option>
-            <option value="diadema">Diadema</option>
-            <option value="otro">Otro</option>
-          </select>
-        </div>
-
-        {/* Type filter */}
-        <div>
-          <label className="mb-2 block text-sm font-medium">Tipo</label>
-          <select
-            value={typeFilter}
-            onChange={(e) => setTypeFilter(e.target.value as any)}
-            className="rounded-md border border-input bg-background px-3 py-2"
-          >
-            <option value="all">Todos</option>
-            <option value="single">Simple</option>
-            <option value="set">Set</option>
-          </select>
-        </div>
-      </div>
-
-      {/* Loading state */}
-      {loading && (
-        <div className="flex items-center justify-center py-12">
-          <p className="text-muted-foreground">Cargando productos...</p>
-        </div>
-      )}
-
-      {/* Error state */}
-      {error && (
-        <div className="rounded-md bg-destructive/10 p-4 text-destructive">
-          {error}
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={fetchProducts}
-            className="ml-4"
-          >
-            Reintentar
-          </Button>
-        </div>
-      )}
-
-      {/* Empty state */}
-      {!loading && !error && products.length === 0 && (
-        <div className="rounded-lg border border-dashed border-muted-foreground/25 bg-muted/50 p-12 text-center">
-          <p className="text-lg text-muted-foreground">
-            No hay productos registrados
-          </p>
-          {canEdit && (
-            <Button className="mt-4" onClick={() => setShowCreateModal(true)}>
-              Crear Primer Producto
-            </Button>
-          )}
-        </div>
-      )}
-
-      {/* Products grid */}
-      {!loading && !error && products.length > 0 && (
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-          {products.map((product) => (
-            <ProductCard
-              key={product.id}
-              product={product}
-              onClick={handleProductClick}
-            />
-          ))}
+          <ProductsDetail
+            productId={selectedProductId}
+            onBack={handleBackClick}
+          />
         </div>
       )}
 
@@ -225,16 +148,6 @@ export const ProductsPage = () => {
         onClose={() => setShowCreateModal(false)}
         onSuccess={handleCreateSuccess}
       />
-
-      {/* Detail Modal */}
-      {selectedProductId && (
-        <ProductDetailModal
-          isOpen={showDetailModal}
-          onClose={handleDetailClose}
-          productId={selectedProductId}
-          onUpdate={handleDetailUpdate}
-        />
-      )}
     </div>
   )
 }
