@@ -101,6 +101,15 @@ export const ProductsPage = () => {
     setSelectedProductId(null)
   }
 
+  /**
+   * Handle reset filters - reset all filters to 'all'
+   */
+  const handleResetFilters = () => {
+    setStatusFilter('all')
+    setCategoryFilter('all')
+    setTypeFilter('all')
+  }
+
   return (
     <div>
       <div className="mb-8">
@@ -125,6 +134,7 @@ export const ProductsPage = () => {
           onStatusFilterChange={setStatusFilter}
           onCategoryFilterChange={setCategoryFilter}
           onTypeFilterChange={setTypeFilter}
+          onResetFilters={handleResetFilters}
           canEdit={canEdit}
         />
       )}

@@ -11,7 +11,7 @@ import {
 } from '@/components/ui/table'
 import { LoadingSpinner } from '@/components/LoadingSpinner'
 import { StatusBadge } from '@/components/StatusBadge'
-import { Plus } from 'lucide-react'
+import { Plus, X } from 'lucide-react'
 import { formatCurrency } from '@/utils/currency'
 
 interface ProductsListProps {
@@ -28,6 +28,7 @@ interface ProductsListProps {
   onStatusFilterChange: (status: ProductStatus | 'all') => void
   onCategoryFilterChange: (category: ProductCategory | 'all') => void
   onTypeFilterChange: (type: ProductType | 'all') => void
+  onResetFilters: () => void
   canEdit: boolean
 }
 
@@ -48,6 +49,7 @@ export const ProductsList = ({
   onStatusFilterChange,
   onCategoryFilterChange,
   onTypeFilterChange,
+  onResetFilters,
   canEdit,
 }: ProductsListProps) => {
   const categoryLabels: Record<string, string> = {
@@ -60,6 +62,10 @@ export const ProductsList = ({
     diadema: 'Diadema',
     otro: 'Otro',
   }
+
+  // Check if any filter is active
+  const hasActiveFilters =
+    statusFilter !== 'all' || categoryFilter !== 'all' || typeFilter !== 'all'
 
   // Loading state
   if (loading) {
@@ -86,30 +92,10 @@ export const ProductsList = ({
     )
   }
 
-  // Empty state
-  if (products.length === 0) {
-    return (
-      <Card className="p-8">
-        <div className="text-center">
-          <p className="mb-4 text-muted-foreground">
-            No hay productos registrados
-          </p>
-          {canEdit && (
-            <Button onClick={onCreateClick}>
-              <Plus className="mr-2 h-4 w-4" />
-              Nuevo Producto
-            </Button>
-          )}
-        </div>
-      </Card>
-    )
-  }
-
-  // Table with products
   return (
     <div className="space-y-4">
       {/* Filters */}
-      <div className="flex flex-wrap gap-4">
+      <div className="flex flex-wrap items-end gap-4">
         {/* Status filter */}
         <div>
           <label className="mb-2 block text-sm font-medium">Estado</label>
@@ -158,6 +144,16 @@ export const ProductsList = ({
             <option value="set">Set</option>
           </select>
         </div>
+
+        {/* Reset Filters Button */}
+        {hasActiveFilters && (
+          <div>
+            <Button variant="outline" onClick={onResetFilters}>
+              <X className="mr-2 h-4 w-4" />
+              Limpiar Filtros
+            </Button>
+          </div>
+        )}
       </div>
 
       {/* Create Button */}
@@ -170,44 +166,79 @@ export const ProductsList = ({
         </div>
       )}
 
-      <Card>
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Nombre</TableHead>
-              <TableHead>Categoría</TableHead>
-              <TableHead>Tipo</TableHead>
-              <TableHead>Estado</TableHead>
-              <TableHead className="text-right">Precio</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {products.map((product) => (
-              <TableRow
-                key={product.id}
-                onClick={() => onProductClick(product.id)}
-                className="cursor-pointer hover:bg-muted/50"
-              >
-                <TableCell className="font-medium">{product.name}</TableCell>
-                <TableCell>
-                  {categoryLabels[product.category] || product.category}
-                </TableCell>
-                <TableCell>
-                  {product.type === 'set' ? 'Set' : 'Simple'}
-                </TableCell>
-                <TableCell>
-                  <StatusBadge status={product.status} />
-                </TableCell>
-                <TableCell className="text-right">
-                  {product.current_price !== undefined
-                    ? formatCurrency(product.current_price)
-                    : '-'}
-                </TableCell>
+      {/* Empty state - no products at all */}
+      {products.length === 0 && !hasActiveFilters && (
+        <Card className="p-8">
+          <div className="text-center">
+            <p className="mb-4 text-muted-foreground">
+              No hay productos registrados
+            </p>
+            {canEdit && (
+              <Button onClick={onCreateClick}>
+                <Plus className="mr-2 h-4 w-4" />
+                Nuevo Producto
+              </Button>
+            )}
+          </div>
+        </Card>
+      )}
+
+      {/* Empty state - no products matching filters */}
+      {products.length === 0 && hasActiveFilters && (
+        <Card className="p-8">
+          <div className="text-center">
+            <p className="mb-4 text-muted-foreground">
+              No se encontraron productos con los filtros seleccionados
+            </p>
+            <Button onClick={onResetFilters} variant="outline">
+              <X className="mr-2 h-4 w-4" />
+              Limpiar Filtros
+            </Button>
+          </div>
+        </Card>
+      )}
+
+      {/* Table with products */}
+      {products.length > 0 && (
+        <Card>
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Nombre</TableHead>
+                <TableHead>Categoría</TableHead>
+                <TableHead>Tipo</TableHead>
+                <TableHead>Estado</TableHead>
+                <TableHead className="text-right">Precio</TableHead>
               </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </Card>
+            </TableHeader>
+            <TableBody>
+              {products.map((product) => (
+                <TableRow
+                  key={product.id}
+                  onClick={() => onProductClick(product.id)}
+                  className="cursor-pointer hover:bg-muted/50"
+                >
+                  <TableCell className="font-medium">{product.name}</TableCell>
+                  <TableCell>
+                    {categoryLabels[product.category] || product.category}
+                  </TableCell>
+                  <TableCell>
+                    {product.type === 'set' ? 'Set' : 'Simple'}
+                  </TableCell>
+                  <TableCell>
+                    <StatusBadge status={product.status} />
+                  </TableCell>
+                  <TableCell className="text-right">
+                    {product.current_price !== undefined
+                      ? formatCurrency(product.current_price)
+                      : '-'}
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </Card>
+      )}
     </div>
   )
 }
