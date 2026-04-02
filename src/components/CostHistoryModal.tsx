@@ -107,7 +107,7 @@ export const CostHistoryModal = ({
                       {formatCurrency(record.amount)}
                     </p>
                     <p className="text-sm text-muted-foreground">
-                      Creado el: {formatDate(record.created_at)}
+                      Creado el: {formatDateTime(record.created_at)}
                     </p>
                   </div>
                   <div>
