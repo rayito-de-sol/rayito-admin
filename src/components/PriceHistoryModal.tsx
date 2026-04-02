@@ -2,6 +2,8 @@ import { useEffect, useState } from 'react'
 import { Button } from './ui/button'
 import { Card } from './ui/card'
 import type { ProductPrice } from '@/types/product'
+import { formatCurrency } from '@/utils/currency'
+import { formatDateTime } from '@/utils/date'
 
 interface PriceHistoryModalProps {
   isOpen: boolean
@@ -58,26 +60,6 @@ export const PriceHistoryModal = ({
     }
   }
 
-  const formatCurrency = (amount: number): string => {
-    return new Intl.NumberFormat('es-CO', {
-      style: 'currency',
-      currency: 'COP',
-      minimumFractionDigits: 0,
-      maximumFractionDigits: 0,
-    }).format(amount)
-  }
-
-  const formatDate = (dateString: string): string => {
-    const date = new Date(dateString)
-    return new Intl.DateTimeFormat('es-CO', {
-      day: '2-digit',
-      month: '2-digit',
-      year: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
-    }).format(date)
-  }
-
   if (!isOpen) return null
 
   return (
@@ -118,16 +100,11 @@ export const PriceHistoryModal = ({
                       {formatCurrency(record.amount)}
                     </p>
                     <p className="text-sm text-muted-foreground">
-                      Vigente desde: {formatDate(record.effective_date)}
+                      Creado el: {formatDateTime(record.created_at)}
                     </p>
-                    {record.superseded_at && (
-                      <p className="text-sm text-muted-foreground">
-                        Reemplazado el: {formatDate(record.superseded_at)}
-                      </p>
-                    )}
                   </div>
                   <div>
-                    {!record.superseded_at ? (
+                    {record.status === 'active' ? (
                       <span className="rounded-full bg-green-100 px-3 py-1 text-sm font-medium text-green-800">
                         Activo
                       </span>

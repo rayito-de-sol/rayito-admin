@@ -3,6 +3,8 @@ import { Button } from './ui/button'
 import { Card } from './ui/card'
 import type { VariantCost } from '@/types/variant'
 import type { PackageCost } from '@/types/package'
+import { formatCurrency } from '@/utils/currency'
+import { formatDateTime } from '@/utils/date'
 
 interface CostHistoryModalProps {
   isOpen: boolean
@@ -61,26 +63,6 @@ export const CostHistoryModal = ({
     } finally {
       setLoading(false)
     }
-  }
-
-  const formatCurrency = (amount: number): string => {
-    return new Intl.NumberFormat('es-CO', {
-      style: 'currency',
-      currency: 'COP',
-      minimumFractionDigits: 0,
-      maximumFractionDigits: 0,
-    }).format(amount)
-  }
-
-  const formatDate = (dateString: string): string => {
-    const date = new Date(dateString)
-    return new Intl.DateTimeFormat('es-CO', {
-      day: '2-digit',
-      month: '2-digit',
-      year: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
-    }).format(date)
   }
 
   if (!isOpen) return null

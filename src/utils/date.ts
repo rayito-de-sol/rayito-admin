@@ -4,10 +4,24 @@
  */
 
 /**
- * Format date as DD/MM/YYYY
+ * Check if a date value is valid
  */
-export const formatDate = (date: Date | string): string => {
+const isValidDate = (date: Date | string | null | undefined): boolean => {
+  if (!date) return false
   const d = typeof date === 'string' ? new Date(date) : date
+  return d instanceof Date && !isNaN(d.getTime())
+}
+
+/**
+ * Format date as DD/MM/YYYY
+ * Returns fallback text if date is invalid
+ */
+export const formatDate = (
+  date: Date | string | null | undefined,
+  fallback = 'Fecha no disponible'
+): string => {
+  if (!isValidDate(date)) return fallback
+  const d = typeof date === 'string' ? new Date(date) : (date as Date)
   return d.toLocaleDateString('es-ES', {
     day: '2-digit',
     month: '2-digit',
@@ -17,9 +31,14 @@ export const formatDate = (date: Date | string): string => {
 
 /**
  * Format date with time as DD/MM/YYYY HH:MM
+ * Returns fallback text if date is invalid
  */
-export const formatDateTime = (date: Date | string): string => {
-  const d = typeof date === 'string' ? new Date(date) : date
+export const formatDateTime = (
+  date: Date | string | null | undefined,
+  fallback = 'Fecha no disponible'
+): string => {
+  if (!isValidDate(date)) return fallback
+  const d = typeof date === 'string' ? new Date(date) : (date as Date)
   return d.toLocaleDateString('es-ES', {
     day: '2-digit',
     month: '2-digit',
@@ -31,9 +50,14 @@ export const formatDateTime = (date: Date | string): string => {
 
 /**
  * Format date as relative time (e.g., "hace 2 días")
+ * Returns fallback text if date is invalid
  */
-export const formatRelativeTime = (date: Date | string): string => {
-  const d = typeof date === 'string' ? new Date(date) : date
+export const formatRelativeTime = (
+  date: Date | string | null | undefined,
+  fallback = 'Fecha no disponible'
+): string => {
+  if (!isValidDate(date)) return fallback
+  const d = typeof date === 'string' ? new Date(date) : (date as Date)
   const now = new Date()
   const diffInSeconds = Math.floor((now.getTime() - d.getTime()) / 1000)
 

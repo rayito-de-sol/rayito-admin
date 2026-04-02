@@ -121,7 +121,7 @@ export interface ProductPrice {
   id: string
   product_id: string
   amount: number
-  effective_date: string
-  superseded_at: string | null
+  currency: string
+  status: 'active' | 'superseded'
   created_at: string
 }
