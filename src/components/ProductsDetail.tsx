@@ -162,8 +162,8 @@ export const ProductsDetail = ({ productId, onBack }: ProductsDetailProps) => {
    * Handle variant stock update
    */
   const handleVariantStockUpdate = async (stock: number) => {
-    if (!selectedVariant) return
-    await variantService.updateStock(selectedVariant.id, stock)
+    if (!selectedVariant || !product) return
+    await variantService.updateStock(product.id, selectedVariant.id, stock)
     toast.success('Stock actualizado exitosamente')
     setShowVariantStockForm(false)
     setSelectedVariant(null)
@@ -174,8 +174,8 @@ export const ProductsDetail = ({ productId, onBack }: ProductsDetailProps) => {
    * Handle variant cost update
    */
   const handleVariantCostUpdate = async (cost: number) => {
-    if (!selectedVariant) return
-    await variantService.updateCost(selectedVariant.id, cost)
+    if (!selectedVariant || !product) return
+    await variantService.updateCost(product.id, selectedVariant.id, cost)
     toast.success('Costo actualizado exitosamente')
     setShowVariantCostForm(false)
     setSelectedVariant(null)
@@ -628,7 +628,7 @@ export const ProductsDetail = ({ productId, onBack }: ProductsDetailProps) => {
       />
 
       {/* Variant Cost History Modal */}
-      {selectedVariant && (
+      {selectedVariant && product && (
         <CostHistoryModal
           isOpen={showVariantCostHistory}
           onClose={() => {
@@ -637,7 +637,9 @@ export const ProductsDetail = ({ productId, onBack }: ProductsDetailProps) => {
           }}
           entityType="variant"
           entityId={selectedVariant.id}
-          fetchHistory={variantService.getCostHistory}
+          fetchHistory={(variantId: string) =>
+            variantService.getCostHistory(product.id, variantId)
+          }
         />
       )}
     </>

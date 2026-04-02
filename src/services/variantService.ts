@@ -108,15 +108,23 @@ export const variantService = {
 
   /**
    * Update variant stock
-   * @param id Variant UUID
+   * @param productId Product UUID
+   * @param variantId Variant UUID
    * @param stock New stock amount
    * @returns Updated variant
    */
-  async updateStock(id: string, stock: number): Promise<Variant> {
+  async updateStock(
+    productId: string,
+    variantId: string,
+    stock: number
+  ): Promise<Variant> {
     try {
-      const response = await apiClient.patch<Variant>(`/variants/${id}/stock`, {
-        stock,
-      })
+      const response = await apiClient.patch<Variant>(
+        `/products/${productId}/variants/${variantId}/stock`,
+        {
+          stock,
+        }
+      )
       return response.data
     } catch (error) {
       const message = getVariantErrorMessage(error)
@@ -126,15 +134,23 @@ export const variantService = {
 
   /**
    * Update variant cost (creates new cost record)
-   * @param id Variant UUID
+   * @param productId Product UUID
+   * @param variantId Variant UUID
    * @param amount New cost amount
    * @returns Updated variant
    */
-  async updateCost(id: string, amount: number): Promise<Variant> {
+  async updateCost(
+    productId: string,
+    variantId: string,
+    amount: number
+  ): Promise<Variant> {
     try {
-      const response = await apiClient.patch<Variant>(`/variants/${id}/cost`, {
-        amount,
-      })
+      const response = await apiClient.patch<Variant>(
+        `/products/${productId}/variants/${variantId}/cost`,
+        {
+          amount,
+        }
+      )
       return response.data
     } catch (error) {
       const message = getVariantErrorMessage(error)
@@ -144,13 +160,17 @@ export const variantService = {
 
   /**
    * Get variant cost history
-   * @param id Variant UUID
+   * @param productId Product UUID
+   * @param variantId Variant UUID
    * @returns Array of cost records
    */
-  async getCostHistory(id: string): Promise<VariantCost[]> {
+  async getCostHistory(
+    productId: string,
+    variantId: string
+  ): Promise<VariantCost[]> {
     try {
       const response = await apiClient.get<VariantCost[]>(
-        `/variants/${id}/cost-history`
+        `/products/${productId}/variants/${variantId}/cost-history`
       )
       return response.data
     } catch (error) {
