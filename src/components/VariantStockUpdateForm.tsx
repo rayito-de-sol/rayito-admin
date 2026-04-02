@@ -50,7 +50,9 @@ export const VariantStockUpdateForm = ({
         <p className="mb-2 text-sm text-muted-foreground">
           Stock actual: {currentStock} unidades
         </p>
-        <Label htmlFor="stock">Nuevo Stock *</Label>
+        <Label htmlFor="stock" className="mb-2">
+          Nuevo Stock *
+        </Label>
         <Input
           id="stock"
           type="number"

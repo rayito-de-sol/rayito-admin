@@ -181,7 +181,9 @@ export const ProductEditModal = ({
         <form onSubmit={handleSubmit} className="space-y-4">
           {/* Name */}
           <div>
-            <Label htmlFor="name">Nombre *</Label>
+            <Label htmlFor="name" className="mb-2">
+              Nombre *
+            </Label>
             <Input
               id="name"
               name="name"
@@ -194,7 +196,9 @@ export const ProductEditModal = ({
 
           {/* Slug */}
           <div>
-            <Label htmlFor="slug">Slug *</Label>
+            <Label htmlFor="slug" className="mb-2">
+              Slug *
+            </Label>
             <Input
               id="slug"
               name="slug"
@@ -211,7 +215,9 @@ export const ProductEditModal = ({
 
           {/* Description */}
           <div>
-            <Label htmlFor="description">Descripción</Label>
+            <Label htmlFor="description" className="mb-2">
+              Descripción
+            </Label>
             <textarea
               id="description"
               name="description"
@@ -225,7 +231,9 @@ export const ProductEditModal = ({
 
           {/* Category */}
           <div>
-            <Label htmlFor="category">Categoría *</Label>
+            <Label htmlFor="category" className="mb-2">
+              Categoría *
+            </Label>
             <select
               id="category"
               name="category"
@@ -248,7 +256,9 @@ export const ProductEditModal = ({
 
           {/* Status */}
           <div>
-            <Label htmlFor="status">Estado *</Label>
+            <Label htmlFor="status" className="mb-2">
+              Estado *
+            </Label>
             <select
               id="status"
               name="status"
@@ -266,7 +276,9 @@ export const ProductEditModal = ({
 
           {/* Type (disabled) */}
           <div>
-            <Label htmlFor="type">Tipo</Label>
+            <Label htmlFor="type" className="mb-2">
+              Tipo
+            </Label>
             <Input
               id="type"
               name="type"
@@ -281,7 +293,9 @@ export const ProductEditModal = ({
 
           {/* Package */}
           <div>
-            <Label htmlFor="package_id">Empaque</Label>
+            <Label htmlFor="package_id" className="mb-2">
+              Empaque
+            </Label>
             <select
               id="package_id"
               name="package_id"
@@ -301,7 +315,9 @@ export const ProductEditModal = ({
 
           {/* Tags */}
           <div>
-            <Label htmlFor="tags">Etiquetas</Label>
+            <Label htmlFor="tags" className="mb-2">
+              Etiquetas
+            </Label>
             <Input
               id="tags"
               name="tags"

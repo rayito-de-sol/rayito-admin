@@ -71,7 +71,9 @@ export const PackageCreateForm = ({
     <form onSubmit={handleSubmit} className="space-y-4">
       {/* Name */}
       <div>
-        <Label htmlFor="name">Nombre *</Label>
+        <Label htmlFor="name" className="mb-2">
+          Nombre *
+        </Label>
         <Input
           id="name"
           name="name"
@@ -84,7 +86,9 @@ export const PackageCreateForm = ({
 
       {/* Description */}
       <div>
-        <Label htmlFor="description">Descripción</Label>
+        <Label htmlFor="description" className="mb-2">
+          Descripción
+        </Label>
         <textarea
           id="description"
           name="description"
@@ -98,7 +102,9 @@ export const PackageCreateForm = ({
 
       {/* Initial Cost */}
       <div>
-        <Label htmlFor="initial_cost">Costo Inicial *</Label>
+        <Label htmlFor="initial_cost" className="mb-2">
+          Costo Inicial *
+        </Label>
         <Input
           id="initial_cost"
           name="initial_cost"

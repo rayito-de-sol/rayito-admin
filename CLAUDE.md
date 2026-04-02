@@ -251,6 +251,36 @@ export const UserMenu = () => {
 - Components that do too many things
 - Premature abstraction (wait until you need it 3 times)
 
+### Form Layout Conventions
+
+**Label Spacing:**
+
+Always add `mb-2` (margin-bottom: 0.5rem) to all `<Label>` components for consistent spacing between labels and input fields.
+
+```tsx
+// ✅ Good - consistent spacing
+<div>
+  <Label htmlFor="name" className="mb-2">
+    Nombre *
+  </Label>
+  <Input id="name" name="name" />
+</div>
+
+// ❌ Bad - no spacing, label touches input
+<div>
+  <Label htmlFor="name">Nombre *</Label>
+  <Input id="name" name="name" />
+</div>
+```
+
+**Why:** Improves readability and visual hierarchy in forms. Makes it easier to distinguish between the label and the input field.
+
+**Apply to:**
+- All form inputs (text, number, email, etc.)
+- Select dropdowns
+- Textareas
+- Any component preceded by a Label
+
 ## Routing
 
 **Structure:**
@@ -557,5 +587,5 @@ Update this CLAUDE.md when you:
 
 ---
 
-Last Updated: 2025-01-24
+Last Updated: 2026-04-02
 Created during initial setup with Claude Sonnet 4.5

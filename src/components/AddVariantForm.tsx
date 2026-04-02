@@ -178,7 +178,9 @@ export const AddVariantForm = ({
     <form onSubmit={handleSubmit} className="space-y-4">
       {/* Color */}
       <div>
-        <Label htmlFor="color">Color *</Label>
+        <Label htmlFor="color" className="mb-2">
+          Color *
+        </Label>
         <Input
           id="color"
           name="color"
@@ -192,7 +194,9 @@ export const AddVariantForm = ({
 
       {/* Size */}
       <div>
-        <Label htmlFor="size_id">Talla *</Label>
+        <Label htmlFor="size_id" className="mb-2">
+          Talla *
+        </Label>
         <select
           id="size_id"
           name="size_id"
@@ -213,7 +217,9 @@ export const AddVariantForm = ({
 
       {/* SKU */}
       <div>
-        <Label htmlFor="sku">SKU *</Label>
+        <Label htmlFor="sku" className="mb-2">
+          SKU *
+        </Label>
         <Input
           id="sku"
           name="sku"
@@ -227,7 +233,9 @@ export const AddVariantForm = ({
 
       {/* Stock */}
       <div>
-        <Label htmlFor="stock">Stock Inicial *</Label>
+        <Label htmlFor="stock" className="mb-2">
+          Stock Inicial *
+        </Label>
         <Input
           id="stock"
           name="stock"
@@ -242,7 +250,9 @@ export const AddVariantForm = ({
 
       {/* Initial Cost */}
       <div>
-        <Label htmlFor="initial_cost">Costo Inicial *</Label>
+        <Label htmlFor="initial_cost" className="mb-2">
+          Costo Inicial *
+        </Label>
         <Input
           id="initial_cost"
           name="initial_cost"
@@ -258,7 +268,7 @@ export const AddVariantForm = ({
 
       {/* Images */}
       <div>
-        <Label>Imágenes</Label>
+        <Label className="mb-2">Imágenes</Label>
         <div className="space-y-3">
           {images.map((image, index) => (
             <div key={index} className="rounded-lg border p-3">

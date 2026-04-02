@@ -205,7 +205,9 @@ export const ProductCreateModal = ({
         <form onSubmit={handleSubmit} className="space-y-4">
           {/* Name */}
           <div>
-            <Label htmlFor="name">Nombre *</Label>
+            <Label htmlFor="name" className="mb-2">
+              Nombre *
+            </Label>
             <Input
               id="name"
               name="name"
@@ -218,7 +220,9 @@ export const ProductCreateModal = ({
 
           {/* Slug */}
           <div>
-            <Label htmlFor="slug">Slug *</Label>
+            <Label htmlFor="slug" className="mb-2">
+              Slug *
+            </Label>
             <Input
               id="slug"
               name="slug"
@@ -235,7 +239,9 @@ export const ProductCreateModal = ({
 
           {/* Description */}
           <div>
-            <Label htmlFor="description">Descripción</Label>
+            <Label htmlFor="description" className="mb-2">
+              Descripción
+            </Label>
             <textarea
               id="description"
               name="description"
@@ -249,7 +255,9 @@ export const ProductCreateModal = ({
 
           {/* SKU Prefix */}
           <div>
-            <Label htmlFor="sku_prefix">Prefijo SKU *</Label>
+            <Label htmlFor="sku_prefix" className="mb-2">
+              Prefijo SKU *
+            </Label>
             <Input
               id="sku_prefix"
               name="sku_prefix"
@@ -263,7 +271,9 @@ export const ProductCreateModal = ({
 
           {/* Category */}
           <div>
-            <Label htmlFor="category">Categoría *</Label>
+            <Label htmlFor="category" className="mb-2">
+              Categoría *
+            </Label>
             <select
               id="category"
               name="category"
@@ -286,7 +296,9 @@ export const ProductCreateModal = ({
 
           {/* Type */}
           <div>
-            <Label htmlFor="type">Tipo *</Label>
+            <Label htmlFor="type" className="mb-2">
+              Tipo *
+            </Label>
             <select
               id="type"
               name="type"
@@ -303,7 +315,9 @@ export const ProductCreateModal = ({
 
           {/* Package */}
           <div>
-            <Label htmlFor="package_id">Empaque</Label>
+            <Label htmlFor="package_id" className="mb-2">
+              Empaque
+            </Label>
             <select
               id="package_id"
               name="package_id"
@@ -323,7 +337,9 @@ export const ProductCreateModal = ({
 
           {/* Tags */}
           <div>
-            <Label htmlFor="tags">Etiquetas</Label>
+            <Label htmlFor="tags" className="mb-2">
+              Etiquetas
+            </Label>
             <Input
               id="tags"
               name="tags"
@@ -339,7 +355,9 @@ export const ProductCreateModal = ({
 
           {/* Initial Price */}
           <div>
-            <Label htmlFor="initial_price">Precio Inicial *</Label>
+            <Label htmlFor="initial_price" className="mb-2">
+              Precio Inicial *
+            </Label>
             <Input
               id="initial_price"
               name="initial_price"

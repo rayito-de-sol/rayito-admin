@@ -152,7 +152,9 @@ export const PackageEditModal = ({
           <form onSubmit={handleSubmit} className="space-y-4">
             {/* Name */}
             <div>
-              <Label htmlFor="name">Nombre *</Label>
+              <Label htmlFor="name" className="mb-2">
+                Nombre *
+              </Label>
               <Input
                 id="name"
                 name="name"
@@ -165,7 +167,9 @@ export const PackageEditModal = ({
 
             {/* Description */}
             <div>
-              <Label htmlFor="description">Descripción</Label>
+              <Label htmlFor="description" className="mb-2">
+                Descripción
+              </Label>
               <textarea
                 id="description"
                 name="description"
@@ -242,7 +246,9 @@ export const PackageEditModal = ({
                       ? formatCurrency(pkg.current_cost)
                       : 'N/A'}
                   </p>
-                  <Label htmlFor="new_cost">Nuevo Costo *</Label>
+                  <Label htmlFor="new_cost" className="mb-2">
+                    Nuevo Costo *
+                  </Label>
                   <Input
                     id="new_cost"
                     type="number"

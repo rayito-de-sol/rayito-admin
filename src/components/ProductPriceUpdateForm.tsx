@@ -51,7 +51,9 @@ export const ProductPriceUpdateForm = ({
         <p className="mb-2 text-sm text-muted-foreground">
           Precio actual: {formatCurrency(currentPrice)}
         </p>
-        <Label htmlFor="price">Nuevo Precio *</Label>
+        <Label htmlFor="price" className="mb-2">
+          Nuevo Precio *
+        </Label>
         <Input
           id="price"
           type="number"

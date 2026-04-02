@@ -188,7 +188,9 @@ export const SetCompositionForm = ({
               ) : (
                 <div className="space-y-3">
                   <div>
-                    <Label htmlFor="variant_id">Variante *</Label>
+                    <Label htmlFor="variant_id" className="mb-2">
+                      Variante *
+                    </Label>
                     <select
                       id="variant_id"
                       value={selectedVariantId}
@@ -208,7 +210,9 @@ export const SetCompositionForm = ({
                   </div>
 
                   <div>
-                    <Label htmlFor="quantity">Cantidad *</Label>
+                    <Label htmlFor="quantity" className="mb-2">
+                      Cantidad *
+                    </Label>
                     <Input
                       id="quantity"
                       type="number"

@@ -43,7 +43,9 @@ export const AddSizeForm = ({ onAdd, onCancel }: AddSizeFormProps) => {
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       <div>
-        <Label htmlFor="size-label">Etiqueta de Talla *</Label>
+        <Label htmlFor="size-label" className="mb-2">
+          Etiqueta de Talla *
+        </Label>
         <Input
           id="size-label"
           value={label}

@@ -51,7 +51,9 @@ export const VariantCostUpdateForm = ({
         <p className="mb-2 text-sm text-muted-foreground">
           Costo actual: {formatCurrency(currentCost)}
         </p>
-        <Label htmlFor="cost">Nuevo Costo *</Label>
+        <Label htmlFor="cost" className="mb-2">
+          Nuevo Costo *
+        </Label>
         <Input
           id="cost"
           type="number"
