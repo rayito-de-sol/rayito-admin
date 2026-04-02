@@ -56,7 +56,7 @@ export const sizeService = {
   async createSize(productId: string, data: CreateSizeRequest): Promise<Size> {
     try {
       const response = await apiClient.post<Size>(
-        `/products/${productId}/sizes`,
+        `/products/${productId}/size-options`,
         data
       )
       return response.data
