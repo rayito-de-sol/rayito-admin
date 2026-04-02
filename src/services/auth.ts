@@ -51,7 +51,7 @@ export const authService = {
     return {
       id: session.user.id,
       email: session.user.email!,
-      role: 'analyst' as const, // Default role, will be fetched from backend
+      role: 'admin' as const, // Default role, will be fetched from backend
       fullName: session.user.user_metadata?.full_name || null,
       createdAt: new Date(session.user.created_at),
       updatedAt: new Date(session.user.updated_at || session.user.created_at),
