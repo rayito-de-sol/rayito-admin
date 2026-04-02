@@ -125,16 +125,11 @@ export const CostHistoryModal = ({
                       {formatCurrency(record.amount)}
                     </p>
                     <p className="text-sm text-muted-foreground">
-                      Vigente desde: {formatDate(record.effective_date)}
+                      Creado el: {formatDate(record.created_at)}
                     </p>
-                    {record.superseded_at && (
-                      <p className="text-sm text-muted-foreground">
-                        Reemplazado el: {formatDate(record.superseded_at)}
-                      </p>
-                    )}
                   </div>
                   <div>
-                    {!record.superseded_at ? (
+                    {record.status === 'active' ? (
                       <span className="rounded-full bg-green-100 px-3 py-1 text-sm font-medium text-green-800">
                         Activo
                       </span>

@@ -19,8 +19,7 @@ export interface VariantCost {
   id: string
   variant_id: string
   amount: number
-  effective_date: string
-  superseded_at: string | null
+  status: 'active' | 'superseded'
   created_at: string
 }
 
