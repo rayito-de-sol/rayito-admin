@@ -184,7 +184,7 @@ export const ProductDetailModal = ({
    */
   const handleVariantStockUpdate = async (stock: number) => {
     if (!selectedVariant) return
-    await variantService.updateStock(selectedVariant.id, stock)
+    await variantService.updateStock(productId, selectedVariant.id, stock)
     toast.success('Stock actualizado exitosamente')
     setShowVariantStockForm(false)
     setSelectedVariant(null)
@@ -196,7 +196,7 @@ export const ProductDetailModal = ({
    */
   const handleVariantCostUpdate = async (cost: number) => {
     if (!selectedVariant) return
-    await variantService.updateCost(selectedVariant.id, cost)
+    await variantService.updateCost(productId, selectedVariant.id, cost)
     toast.success('Costo actualizado exitosamente')
     setShowVariantCostForm(false)
     setSelectedVariant(null)
@@ -689,7 +689,7 @@ export const ProductDetailModal = ({
           }}
           entityType="variant"
           entityId={selectedVariant.id}
-          fetchHistory={variantService.getCostHistory}
+          fetchHistory={(variantId) => variantService.getCostHistory(productId, variantId)}
         />
       )}
     </>

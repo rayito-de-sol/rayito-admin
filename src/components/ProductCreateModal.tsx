@@ -122,7 +122,7 @@ export const ProductCreateModal = ({
     if (variants.length > 0) {
       setSetItems((prev) => [
         ...prev,
-        { variant_id: variants[0].id, quantity: 1 },
+        { variant_id: variants[0]!.id, quantity: 1 },
       ])
     }
   }
@@ -138,9 +138,9 @@ export const ProductCreateModal = ({
     setSetItems((prev) => {
       const updated = [...prev]
       if (field === 'variant_id') {
-        updated[index].variant_id = value as string
+        updated[index]!.variant_id = value as string
       } else {
-        updated[index].quantity = Number(value)
+        updated[index]!.quantity = Number(value)
       }
       return updated
     })
