@@ -11,7 +11,7 @@ import {
 } from '@/components/ui/table'
 import { LoadingSpinner } from '@/components/LoadingSpinner'
 import { StatusBadge } from '@/components/StatusBadge'
-import { Plus, X } from 'lucide-react'
+import { Plus, Upload, X } from 'lucide-react'
 import { formatCurrency } from '@/utils/currency'
 
 interface ProductsListProps {
@@ -20,6 +20,7 @@ interface ProductsListProps {
   error: string | null
   onProductClick: (productId: string) => void
   onCreateClick: () => void
+  onImportClick: () => void
   onRetry: () => void
   // Filters
   statusFilter: ProductStatus | 'all'
@@ -42,6 +43,7 @@ export const ProductsList = ({
   error,
   onProductClick,
   onCreateClick,
+  onImportClick,
   onRetry,
   statusFilter,
   categoryFilter,
@@ -156,9 +158,13 @@ export const ProductsList = ({
         )}
       </div>
 
-      {/* Create Button */}
+      {/* Create / Import Buttons */}
       {canEdit && (
-        <div className="flex justify-end">
+        <div className="flex justify-end gap-2">
+          <Button variant="outline" onClick={onImportClick}>
+            <Upload className="mr-2 h-4 w-4" />
+            Importar CSV
+          </Button>
           <Button onClick={onCreateClick}>
             <Plus className="mr-2 h-4 w-4" />
             Nuevo Producto
@@ -174,10 +180,16 @@ export const ProductsList = ({
               No hay productos registrados
             </p>
             {canEdit && (
-              <Button onClick={onCreateClick}>
-                <Plus className="mr-2 h-4 w-4" />
-                Nuevo Producto
-              </Button>
+              <div className="flex justify-center gap-2">
+                <Button variant="outline" onClick={onImportClick}>
+                  <Upload className="mr-2 h-4 w-4" />
+                  Importar CSV
+                </Button>
+                <Button onClick={onCreateClick}>
+                  <Plus className="mr-2 h-4 w-4" />
+                  Nuevo Producto
+                </Button>
+              </div>
             )}
           </div>
         </Card>

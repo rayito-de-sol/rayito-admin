@@ -115,6 +115,25 @@ export interface SetStockResponse {
 }
 
 /**
+ * A single row error from a bulk product import
+ */
+export interface BulkImportProductRowError {
+  row: number
+  name: string
+  error: string
+}
+
+/**
+ * Result of a bulk product import operation
+ */
+export interface BulkImportProductResult {
+  total: number
+  created: number
+  failed: number
+  errors: BulkImportProductRowError[]
+}
+
+/**
  * Price record
  */
 export interface ProductPrice {

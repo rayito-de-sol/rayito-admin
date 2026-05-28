@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { ProductsList } from '@/components/ProductsList'
 import { ProductsDetail } from '@/components/ProductsDetail'
 import { ProductCreateModal } from '@/components/ProductCreateModal'
+import { ProductsCSVImport } from '@/components/ProductsCSVImport'
 import type {
   Product,
   ProductStatus,
@@ -11,7 +12,7 @@ import type {
 import { productService } from '@/services/productService'
 import { useAuth } from '@/hooks/useAuth'
 
-type View = 'list' | 'create' | 'detail'
+type View = 'list' | 'detail' | 'import'
 
 /**
  * ProductsPage
@@ -94,6 +95,21 @@ export const ProductsPage = () => {
   }
 
   /**
+   * Handle import button click - show import view
+   */
+  const handleImportClick = () => {
+    setView('import')
+  }
+
+  /**
+   * Handle successful import - refresh list and return to list view
+   */
+  const handleImportSuccess = () => {
+    fetchProducts()
+    setView('list')
+  }
+
+  /**
    * Handle back button click - return to list view
    */
   const handleBackClick = () => {
@@ -127,6 +143,7 @@ export const ProductsPage = () => {
           error={error}
           onProductClick={handleProductClick}
           onCreateClick={handleCreateClick}
+          onImportClick={handleImportClick}
           onRetry={fetchProducts}
           statusFilter={statusFilter}
           categoryFilter={categoryFilter}
@@ -137,6 +154,22 @@ export const ProductsPage = () => {
           onResetFilters={handleResetFilters}
           canEdit={canEdit}
         />
+      )}
+
+      {/* Import View */}
+      {view === 'import' && (
+        <div>
+          <div className="mb-6">
+            <h2 className="text-2xl font-semibold">Importar Productos CSV</h2>
+            <p className="mt-1 text-muted-foreground">
+              Solo productos de tipo simple. Los sets deben crearse manualmente.
+            </p>
+          </div>
+          <ProductsCSVImport
+            onSuccess={handleImportSuccess}
+            onCancel={() => setView('list')}
+          />
+        </div>
       )}
 
       {/* Detail View */}

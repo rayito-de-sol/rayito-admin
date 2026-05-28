@@ -9,6 +9,7 @@ import type {
   ProductStatus,
   ProductCategory,
   ProductType,
+  BulkImportProductResult,
 } from '@/types/product'
 import { AxiosError } from 'axios'
 
@@ -215,6 +216,34 @@ export const productService = {
     try {
       const response = await apiClient.get<SetStockResponse>(
         `/products/${id}/set-stock`
+      )
+      return response.data
+    } catch (error) {
+      const message = getProductErrorMessage(error)
+      throw new Error(message)
+    }
+  },
+
+  /**
+   * Bulk create single-type products from CSV data
+   * @param products Array of product inputs
+   * @returns Import result with per-row errors
+   */
+  async bulkCreateProducts(
+    products: {
+      name: string
+      slug: string
+      sku_prefix: string
+      description: string
+      category: string
+      tags: string
+      initial_price: number
+    }[]
+  ): Promise<BulkImportProductResult> {
+    try {
+      const response = await apiClient.post<BulkImportProductResult>(
+        '/products/bulk',
+        products
       )
       return response.data
     } catch (error) {
