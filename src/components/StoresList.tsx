@@ -10,7 +10,7 @@ import {
   TableRow,
 } from '@/components/ui/table'
 import { LoadingSpinner } from '@/components/LoadingSpinner'
-import { Plus } from 'lucide-react'
+import { Plus, Upload } from 'lucide-react'
 
 interface StoresListProps {
   stores: Store[]
@@ -18,6 +18,7 @@ interface StoresListProps {
   error: string | null
   onStoreClick: (storeId: string) => void
   onCreateClick: () => void
+  onImportClick: () => void
   onRetry: () => void
 }
 
@@ -31,6 +32,7 @@ export const StoresList = ({
   error,
   onStoreClick,
   onCreateClick,
+  onImportClick,
   onRetry,
 }: StoresListProps) => {
   // Loading state
@@ -66,10 +68,16 @@ export const StoresList = ({
           <p className="mb-4 text-muted-foreground">
             No hay tiendas registradas
           </p>
-          <Button onClick={onCreateClick}>
-            <Plus className="mr-2 h-4 w-4" />
-            Nueva Tienda
-          </Button>
+          <div className="flex justify-center gap-3">
+            <Button variant="outline" onClick={onImportClick}>
+              <Upload className="mr-2 h-4 w-4" />
+              Importar CSV
+            </Button>
+            <Button onClick={onCreateClick}>
+              <Plus className="mr-2 h-4 w-4" />
+              Nueva Tienda
+            </Button>
+          </div>
         </div>
       </Card>
     )
@@ -78,7 +86,11 @@ export const StoresList = ({
   // Table with stores
   return (
     <div className="space-y-4">
-      <div className="flex justify-end">
+      <div className="flex justify-end gap-3">
+        <Button variant="outline" onClick={onImportClick}>
+          <Upload className="mr-2 h-4 w-4" />
+          Importar CSV
+        </Button>
         <Button onClick={onCreateClick}>
           <Plus className="mr-2 h-4 w-4" />
           Nueva Tienda

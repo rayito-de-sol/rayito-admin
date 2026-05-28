@@ -3,6 +3,7 @@ import type {
   Store,
   CreateStoreRequest,
   UpdateStoreRequest,
+  BulkImportResult,
 } from '@/types/store'
 import { AxiosError } from 'axios'
 
@@ -108,6 +109,21 @@ export const storesService = {
   async updateStore(id: string, data: UpdateStoreRequest): Promise<Store> {
     try {
       const response = await apiClient.patch<Store>(`/stores/${id}`, data)
+      return response.data
+    } catch (error) {
+      const message = getStoreErrorMessage(error)
+      throw new Error(message)
+    }
+  },
+
+  /**
+   * Bulk create stores from a parsed CSV payload
+   * @param stores Array of store creation data
+   * @returns Summary with created/failed counts and per-row errors
+   */
+  async bulkCreateStores(stores: CreateStoreRequest[]): Promise<BulkImportResult> {
+    try {
+      const response = await apiClient.post<BulkImportResult>('/stores/bulk', stores)
       return response.data
     } catch (error) {
       const message = getStoreErrorMessage(error)

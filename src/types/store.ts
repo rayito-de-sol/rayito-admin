@@ -90,6 +90,25 @@ export interface CreateStoreRequest {
 }
 
 /**
+ * BulkImportRowError describes a per-row failure returned by the bulk create endpoint
+ */
+export interface BulkImportRowError {
+  row: number
+  identity_number: string
+  error: string
+}
+
+/**
+ * BulkImportResult is the summary returned after a bulk store import
+ */
+export interface BulkImportResult {
+  total: number
+  created: number
+  failed: number
+  errors: BulkImportRowError[]
+}
+
+/**
  * UpdateStoreRequest type for partial updates
  */
 export interface UpdateStoreRequest {

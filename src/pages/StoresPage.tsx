@@ -3,9 +3,10 @@ import { Store } from '@/types/store'
 import { StoresList } from '@/components/StoresList'
 import { StoresForm } from '@/components/StoresForm'
 import { StoresDetail } from '@/components/StoresDetail'
+import { StoresCSVImport } from '@/components/StoresCSVImport'
 import { storesService } from '@/services/stores'
 
-type View = 'list' | 'create' | 'edit' | 'detail'
+type View = 'list' | 'create' | 'edit' | 'detail' | 'import'
 
 /**
  * StoresPage component
@@ -61,6 +62,15 @@ export const StoresPage = () => {
     setSelectedStoreId(null)
     setSelectedStore(null)
     setView('create')
+  }
+
+  /**
+   * Handle import CSV button click - show CSV import view
+   */
+  const handleImportClick = () => {
+    setSelectedStoreId(null)
+    setSelectedStore(null)
+    setView('import')
   }
 
   /**
@@ -129,6 +139,7 @@ export const StoresPage = () => {
           error={error}
           onStoreClick={handleStoreClick}
           onCreateClick={handleCreateClick}
+          onImportClick={handleImportClick}
           onRetry={fetchStores}
         />
       )}
@@ -158,6 +169,19 @@ export const StoresPage = () => {
             initialData={selectedStore}
             onSuccess={handleFormSuccess}
             onCancel={handleFormCancel}
+          />
+        </div>
+      )}
+
+      {/* Import CSV View */}
+      {view === 'import' && (
+        <div>
+          <div className="mb-6">
+            <h2 className="text-2xl font-semibold">Importar Tiendas desde CSV</h2>
+          </div>
+          <StoresCSVImport
+            onSuccess={handleFormSuccess}
+            onCancel={() => setView('list')}
           />
         </div>
       )}
