@@ -61,13 +61,17 @@ export const productService = {
   /**
    * List all products with optional filters
    * @param filters Optional filters for status, category, type
+   * @param signal Optional AbortSignal to cancel the request
    * @returns Array of products
    */
-  async listProducts(filters?: {
-    status?: ProductStatus
-    category?: ProductCategory
-    type?: ProductType
-  }): Promise<Product[]> {
+  async listProducts(
+    filters?: {
+      status?: ProductStatus
+      category?: ProductCategory
+      type?: ProductType
+    },
+    signal?: AbortSignal
+  ): Promise<Product[]> {
     try {
       const params = new URLSearchParams()
       if (filters?.status) params.append('status', filters.status)
@@ -77,7 +81,7 @@ export const productService = {
       const queryString = params.toString()
       const url = queryString ? `/products?${queryString}` : '/products'
 
-      const response = await apiClient.get<Product[]>(url)
+      const response = await apiClient.get<Product[]>(url, { signal })
       return response.data
     } catch (error) {
       const message = getProductErrorMessage(error)

@@ -28,19 +28,21 @@ export const PackagesPage = () => {
 
   /**
    * Fetch packages
+   * Accepts an optional AbortSignal so the effect cleanup can cancel in-flight requests.
    */
-  const fetchPackages = async () => {
+  const fetchPackages = async (signal?: AbortSignal) => {
     try {
       setLoading(true)
       setError(null)
-      const data = await packageService.listPackages()
+      const data = await packageService.listPackages(signal)
       setPackages(data || [])
     } catch (err) {
+      if (signal?.aborted) return
       setError(
         err instanceof Error ? err.message : 'Error al cargar los empaques'
       )
     } finally {
-      setLoading(false)
+      if (!signal?.aborted) setLoading(false)
     }
   }
 
@@ -48,7 +50,9 @@ export const PackagesPage = () => {
    * Fetch packages on mount
    */
   useEffect(() => {
-    fetchPackages()
+    const controller = new AbortController()
+    fetchPackages(controller.signal)
+    return () => controller.abort()
   }, [])
 
   /**

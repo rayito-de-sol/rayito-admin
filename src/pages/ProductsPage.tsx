@@ -42,8 +42,9 @@ export const ProductsPage = () => {
 
   /**
    * Fetch products with filters
+   * Accepts an optional AbortSignal so the effect cleanup can cancel in-flight requests.
    */
-  const fetchProducts = async () => {
+  const fetchProducts = async (signal?: AbortSignal) => {
     try {
       setLoading(true)
       setError(null)
@@ -53,22 +54,26 @@ export const ProductsPage = () => {
       if (categoryFilter !== 'all') filters.category = categoryFilter
       if (typeFilter !== 'all') filters.type = typeFilter
 
-      const data = await productService.listProducts(filters)
+      const data = await productService.listProducts(filters, signal)
       setProducts(data || [])
     } catch (err) {
+      if (signal?.aborted) return
       setError(
         err instanceof Error ? err.message : 'Error al cargar los productos'
       )
     } finally {
-      setLoading(false)
+      if (!signal?.aborted) setLoading(false)
     }
   }
 
   /**
-   * Fetch products on mount and when filters change
+   * Fetch products on mount and when filters change.
+   * Each run cancels the previous in-flight request via AbortController.
    */
   useEffect(() => {
-    fetchProducts()
+    const controller = new AbortController()
+    fetchProducts(controller.signal)
+    return () => controller.abort()
   }, [statusFilter, categoryFilter, typeFilter])
 
   /**

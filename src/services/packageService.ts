@@ -58,11 +58,12 @@ const getPackageErrorMessage = (error: unknown): string => {
 export const packageService = {
   /**
    * List all packages
+   * @param signal Optional AbortSignal to cancel the request
    * @returns Array of packages
    */
-  async listPackages(): Promise<Package[]> {
+  async listPackages(signal?: AbortSignal): Promise<Package[]> {
     try {
-      const response = await apiClient.get<Package[]>('/packages')
+      const response = await apiClient.get<Package[]>('/packages', { signal })
       return response.data
     } catch (error) {
       const message = getPackageErrorMessage(error)

@@ -58,11 +58,12 @@ const getStoreErrorMessage = (error: unknown): string => {
 export const storesService = {
   /**
    * List all stores
+   * @param signal Optional AbortSignal to cancel the request
    * @returns Array of all stores with nested address and config data
    */
-  async listStores(): Promise<Store[]> {
+  async listStores(signal?: AbortSignal): Promise<Store[]> {
     try {
-      const response = await apiClient.get<Store[]>('/stores')
+      const response = await apiClient.get<Store[]>('/stores', { signal })
       return response.data
     } catch (error) {
       const message = getStoreErrorMessage(error)

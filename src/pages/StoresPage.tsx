@@ -22,21 +22,19 @@ export const StoresPage = () => {
 
   /**
    * Fetch all stores
+   * Accepts an optional AbortSignal so the effect cleanup can cancel in-flight requests.
    */
-  const fetchStores = async () => {
+  const fetchStores = async (signal?: AbortSignal) => {
     try {
       setLoading(true)
       setError(null)
-      const data = await storesService.listStores()
+      const data = await storesService.listStores(signal)
       setStores(data || [])
     } catch (err) {
-      if (err instanceof Error) {
-        setError(err.message)
-      } else {
-        setError('Error al cargar las tiendas')
-      }
+      if (signal?.aborted) return
+      setError(err instanceof Error ? err.message : 'Error al cargar las tiendas')
     } finally {
-      setLoading(false)
+      if (!signal?.aborted) setLoading(false)
     }
   }
 
@@ -44,7 +42,9 @@ export const StoresPage = () => {
    * Fetch stores on component mount
    */
   useEffect(() => {
-    fetchStores()
+    const controller = new AbortController()
+    fetchStores(controller.signal)
+    return () => controller.abort()
   }, [])
 
   /**
