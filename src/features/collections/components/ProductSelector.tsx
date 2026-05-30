@@ -81,7 +81,7 @@ export const ProductSelector = ({
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
-      <PopoverTrigger>
+      <PopoverTrigger asChild>
         <Button variant="outline" disabled={disabled} className="w-full">
           <Search className="mr-2 h-4 w-4" />
           Buscar producto
@@ -124,6 +124,7 @@ export const ProductSelector = ({
               filteredVariants.map((variant) => (
                 <button
                   key={variant.id}
+                  type="button"
                   onClick={() => handleSelect(variant)}
                   className="flex w-full items-center justify-between border-b px-4 py-3 text-left hover:bg-secondary"
                 >

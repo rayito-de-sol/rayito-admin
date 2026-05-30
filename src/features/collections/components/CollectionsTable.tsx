@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useCallback } from 'react'
 import {
   Table,
   TableBody,
@@ -18,7 +18,7 @@ import {
 import { CollectionStateBadge } from './CollectionStateBadge'
 import { CollectionActions } from './CollectionActions'
 import { useCollections } from '../hooks/useCollections'
-import { getGoogleDriveUrl } from '../utils/googleDrive'
+import { collectionsApi } from '../api/collectionsApi'
 import { formatColombiaCurrency } from '../utils/currency'
 import type { CollectionState } from '../types/collection.types'
 import { Plus, FileText, ArrowUpDown, Loader2 } from 'lucide-react'
@@ -42,6 +42,15 @@ export const CollectionsTable = ({
   const { collections, isLoading, error, refetch } = useCollections(storeId, {
     state: stateFilter === 'all' ? undefined : stateFilter,
   })
+
+  const handleOpenDocument = useCallback(async (documentId: string) => {
+    try {
+      const url = await collectionsApi.getDocumentDownloadUrl(documentId)
+      window.open(url, '_blank', 'noopener,noreferrer')
+    } catch {
+      // ignore
+    }
+  }, [])
 
   const handleSort = (field: SortField) => {
     if (sortField === field) {
@@ -197,14 +206,13 @@ export const CollectionsTable = ({
                   </TableCell>
                   <TableCell>
                     {hasPDF(collection) ? (
-                      <a
-                        href={getGoogleDriveUrl(collection.document_id!)}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="inline-flex items-center text-primary hover:underline"
+                      <button
+                        type="button"
+                        onClick={() => handleOpenDocument(collection.document_id!)}
+                        className="inline-flex items-center text-primary hover:text-primary/80"
                       >
                         <FileText className="h-4 w-4" />
-                      </a>
+                      </button>
                     ) : (
                       <span className="text-muted-foreground">-</span>
                     )}

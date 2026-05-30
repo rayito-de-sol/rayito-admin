@@ -42,7 +42,13 @@ export const collectionsApi = {
    * Create a new collection (draft state)
    */
   async create(data: CreateCollectionRequest): Promise<Collection> {
-    const response = await apiClient.post<Collection>('/collections', data)
+    const payload = {
+      ...data,
+      payment_due_date: data.payment_due_date
+        ? new Date(data.payment_due_date).toISOString()
+        : undefined,
+    }
+    const response = await apiClient.post<Collection>('/collections', payload)
     return response.data
   },
 
@@ -75,9 +81,15 @@ export const collectionsApi = {
     id: string,
     data: UpdateCollectionMetadataRequest
   ): Promise<Collection> {
+    const payload = {
+      ...data,
+      payment_due_date: data.payment_due_date
+        ? new Date(data.payment_due_date).toISOString()
+        : undefined,
+    }
     const response = await apiClient.patch<Collection>(
       `/collections/${id}`,
-      data
+      payload
     )
     return response.data
   },
@@ -91,6 +103,16 @@ export const collectionsApi = {
       {}
     )
     return response.data
+  },
+
+  /**
+   * Get a short-lived signed download URL for a collection's PDF document
+   */
+  async getDocumentDownloadUrl(documentId: string): Promise<string> {
+    const response = await apiClient.get<{ url: string }>(
+      `/documents/${documentId}/download-url`
+    )
+    return response.data.url
   },
 
   /**

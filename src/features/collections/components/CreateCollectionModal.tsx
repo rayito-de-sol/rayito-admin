@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import {
   Dialog,
   DialogContent,
@@ -9,11 +9,12 @@ import {
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { ProductSelector } from './ProductSelector'
 import { useCreateCollection } from '../hooks/useCreateCollection'
+import { variantService } from '@/services/variantService'
+import { formatColombiaCurrency } from '../utils/currency'
 import { toast } from 'sonner'
 import type { Variant } from '@/types/variant'
-import { Trash2, Loader2 } from 'lucide-react'
+import { Loader2, Search } from 'lucide-react'
 
 interface CreateCollectionModalProps {
   storeId: string
@@ -22,156 +23,128 @@ interface CreateCollectionModalProps {
   onSuccess?: () => void
 }
 
-interface CollectionFormItem {
-  variant: Variant
-  quantity: number
-  quantityError?: string
-}
-
 export const CreateCollectionModal = ({
   storeId,
   isOpen,
   onClose,
   onSuccess,
 }: CreateCollectionModalProps) => {
-  const [items, setItems] = useState<CollectionFormItem[]>([])
+  const [variants, setVariants] = useState<Variant[]>([])
+  const [quantities, setQuantities] = useState<Record<string, number>>({})
+  const [search, setSearch] = useState('')
   const [notes, setNotes] = useState('')
   const [notesError, setNotesError] = useState('')
   const [paymentDueDate, setPaymentDueDate] = useState('')
   const [dueDateError, setDueDateError] = useState('')
   const [formError, setFormError] = useState('')
+  const [isLoadingVariants, setIsLoadingVariants] = useState(false)
+  const [variantsError, setVariantsError] = useState('')
 
   const { createCollection, isLoading } = useCreateCollection()
 
-  const handleAddVariant = (variant: Variant) => {
-    setItems((prev) => [
-      ...prev,
-      {
-        variant,
-        quantity: 1,
-      },
-    ])
-    setFormError('')
-  }
+  useEffect(() => {
+    if (!isOpen) return
 
-  const handleRemoveItem = (index: number) => {
-    setItems((prev) => prev.filter((_, i) => i !== index))
-  }
+    const fetchVariants = async () => {
+      try {
+        setIsLoadingVariants(true)
+        setVariantsError('')
+        const data = await variantService.listVariants()
+        setVariants(data)
+      } catch (err) {
+        setVariantsError(
+          err instanceof Error ? err.message : 'Error al cargar productos'
+        )
+      } finally {
+        setIsLoadingVariants(false)
+      }
+    }
 
-  const handleQuantityChange = (index: number, value: string) => {
-    const numValue = parseInt(value, 10)
+    fetchVariants()
+  }, [isOpen])
 
-    setItems((prev) =>
-      prev.map((item, i) => {
-        if (i !== index) return item
-
-        let error: string | undefined
-
-        if (isNaN(numValue) || numValue <= 0) {
-          error = 'La cantidad debe ser mayor a cero'
-        } else if (!Number.isInteger(numValue)) {
-          error = 'La cantidad debe ser un número entero'
-        }
-
-        return {
-          ...item,
-          quantity: isNaN(numValue) ? 1 : numValue,
-          quantityError: error,
-        }
-      })
+  const filteredVariants = variants.filter((v) => {
+    if (!search) return true
+    const q = search.toLowerCase()
+    return (
+      (v.product_name?.toLowerCase() ?? '').includes(q) ||
+      v.color.toLowerCase().includes(q) ||
+      v.sku.toLowerCase().includes(q) ||
+      (v.size?.label.toLowerCase() ?? '').includes(q)
     )
+  })
+
+  const selectedItems = variants.filter(
+    (v) => (quantities[v.id] ?? 0) > 0
+  )
+
+  const handleQuantityChange = (variantId: string, value: string) => {
+    const num = parseInt(value, 10)
+    setQuantities((prev) => ({
+      ...prev,
+      [variantId]: isNaN(num) || num < 0 ? 0 : num,
+    }))
+    setFormError('')
   }
 
   const handleNotesChange = (value: string) => {
     setNotes(value)
-
-    if (value.length > 500) {
-      setNotesError('Las notas no pueden exceder 500 caracteres')
-    } else {
-      setNotesError('')
-    }
+    setNotesError(
+      value.length > 500 ? 'Las notas no pueden exceder 500 caracteres' : ''
+    )
   }
 
   const handleDueDateChange = (value: string) => {
     setPaymentDueDate(value)
-
     if (!value) {
       setDueDateError('')
       return
     }
-
-    const selectedDate = new Date(value)
+    const selected = new Date(value)
     const today = new Date()
     today.setHours(0, 0, 0, 0)
-
     const oneYearFromNow = new Date()
     oneYearFromNow.setFullYear(oneYearFromNow.getFullYear() + 1)
-
-    if (selectedDate < today) {
+    if (selected < today) {
       setDueDateError('La fecha de vencimiento debe ser futura')
-    } else if (selectedDate > oneYearFromNow) {
+    } else if (selected > oneYearFromNow) {
       setDueDateError('La fecha de vencimiento no puede ser mayor a 1 año')
     } else {
       setDueDateError('')
     }
   }
 
-  const validateForm = (): boolean => {
-    // Check at least 1 item
-    if (items.length === 0) {
-      setFormError('Debe agregar al menos un producto')
-      return false
-    }
-
-    // Check quantity errors
-    const hasQuantityErrors = items.some((item) => item.quantityError)
-    if (hasQuantityErrors) {
-      setFormError('Corrija los errores de cantidad antes de continuar')
-      return false
-    }
-
-    // Check notes error
-    if (notesError) {
-      return false
-    }
-
-    // Check due date error
-    if (dueDateError) {
-      return false
-    }
-
-    setFormError('')
-    return true
-  }
-
   const handleSubmit = async () => {
-    if (!validateForm()) {
+    if (selectedItems.length === 0) {
+      setFormError('Debe agregar al menos un producto con cantidad mayor a cero')
       return
     }
+    if (notesError || dueDateError) return
 
     try {
       await createCollection({
         store_id: storeId,
-        items: items.map((item) => ({
-          variant_id: item.variant.id,
-          quantity: item.quantity,
+        items: selectedItems.map((v) => ({
+          variant_id: v.id,
+          quantity: quantities[v.id] ?? 0,
         })),
         notes: notes || undefined,
         payment_due_date: paymentDueDate || undefined,
       })
-
       toast.success('Cuenta de cobro creada exitosamente')
       handleClose()
       onSuccess?.()
     } catch (err) {
-      const message =
+      setFormError(
         err instanceof Error ? err.message : 'Error al crear cuenta de cobro'
-      setFormError(message)
+      )
     }
   }
 
   const handleClose = () => {
-    setItems([])
+    setVariants([])
+    setQuantities({})
+    setSearch('')
     setNotes('')
     setNotesError('')
     setPaymentDueDate('')
@@ -180,11 +153,7 @@ export const CreateCollectionModal = ({
     onClose()
   }
 
-  const isFormValid =
-    items.length > 0 &&
-    !items.some((item) => item.quantityError) &&
-    !notesError &&
-    !dueDateError
+  const isFormValid = selectedItems.length > 0 && !notesError && !dueDateError
 
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
@@ -194,66 +163,87 @@ export const CreateCollectionModal = ({
         </DialogHeader>
 
         <div className="space-y-6">
-          {/* Products Section */}
+          {/* Variant list */}
           <div>
-            <Label className="mb-2">Productos *</Label>
-            <ProductSelector
-              onSelect={handleAddVariant}
-              selectedVariantIds={items.map((item) => item.variant.id)}
-              disabled={isLoading}
-            />
+            <Label className="mb-2">Productos</Label>
+            <div className="relative mb-3">
+              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+              <Input
+                placeholder="Buscar por nombre, color, talla, SKU..."
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                className="pl-9"
+                disabled={isLoading}
+              />
+            </div>
 
-            {/* Items List */}
-            {items.length > 0 && (
-              <div className="mt-4 space-y-2">
-                {items.map((item, index) => (
-                  <div
-                    key={item.variant.id}
-                    className="flex items-center gap-2 rounded-md border p-3"
-                  >
-                    <div className="flex-1">
-                      <div className="font-medium">
-                        {item.variant.product_name} - {item.variant.color}
-                      </div>
-                      <div className="text-sm text-muted-foreground">
-                        {item.variant.size?.label && `${item.variant.size.label} • `}
-                        SKU: {item.variant.sku}
-                      </div>
-                    </div>
-
-                    <div className="w-24">
-                      <Input
-                        type="number"
-                        min="1"
-                        value={item.quantity}
-                        onChange={(e) =>
-                          handleQuantityChange(index, e.target.value)
-                        }
-                        disabled={isLoading}
-                        className={item.quantityError ? 'border-destructive' : ''}
-                      />
-                      {item.quantityError && (
-                        <div className="mt-1 text-xs text-destructive">
-                          {item.quantityError}
-                        </div>
-                      )}
-                    </div>
-
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      onClick={() => handleRemoveItem(index)}
-                      disabled={isLoading}
-                    >
-                      <Trash2 className="h-4 w-4 text-destructive" />
-                    </Button>
-                  </div>
-                ))}
+            {isLoadingVariants && (
+              <div className="flex items-center justify-center py-8 text-sm text-muted-foreground">
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                Cargando productos...
               </div>
+            )}
+
+            {variantsError && (
+              <div className="rounded-md bg-destructive/10 p-3 text-sm text-destructive">
+                {variantsError}
+              </div>
+            )}
+
+            {!isLoadingVariants && !variantsError && (
+              <div className="rounded-md border overflow-hidden">
+                {filteredVariants.length === 0 ? (
+                  <div className="p-4 text-center text-sm text-muted-foreground">
+                    {search ? 'No se encontraron productos' : 'No hay productos disponibles'}
+                  </div>
+                ) : (
+                  <div className="divide-y max-h-[320px] overflow-y-auto">
+                    {filteredVariants.map((variant) => (
+                      <div
+                        key={variant.id}
+                        className={`flex items-center gap-3 px-4 py-3 ${
+                          (quantities[variant.id] ?? 0) > 0 ? 'bg-secondary/50' : ''
+                        }`}
+                      >
+                        <div className="flex-1 min-w-0">
+                          <div className="font-medium truncate">
+                            {variant.product_name} - {variant.color}
+                          </div>
+                          <div className="text-xs text-muted-foreground">
+                            {variant.size?.label && `${variant.size.label} • `}
+                            SKU: {variant.sku}
+                            {variant.current_cost !== undefined && (
+                              <> • {formatColombiaCurrency(variant.current_cost)}</>
+                            )}
+                          </div>
+                        </div>
+                        <div className="w-24 shrink-0">
+                          <Input
+                            type="number"
+                            min="0"
+                            value={quantities[variant.id] ?? 0}
+                            onChange={(e) =>
+                              handleQuantityChange(variant.id, e.target.value)
+                            }
+                            disabled={isLoading}
+                          />
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            )}
+
+            {selectedItems.length > 0 && (
+              <p className="mt-2 text-xs text-muted-foreground">
+                {selectedItems.length}{' '}
+                {selectedItems.length === 1 ? 'producto seleccionado' : 'productos seleccionados'}
+              </p>
             )}
           </div>
 
-          {/* Optional Details */}
+          {/* Optional details */}
           <div className="space-y-4">
             <div>
               <Label htmlFor="notes" className="mb-2">
@@ -269,7 +259,7 @@ export const CreateCollectionModal = ({
                 } bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50`}
                 placeholder="Agregar notas internas..."
               />
-              <div className="mt-1 flex justify-between text-xs">
+              <div className="mt-1 text-xs">
                 <span className={notesError ? 'text-destructive' : 'text-muted-foreground'}>
                   {notesError || `${notes.length}/500 caracteres`}
                 </span>
@@ -294,17 +284,6 @@ export const CreateCollectionModal = ({
             </div>
           </div>
 
-          {/* Pricing Summary */}
-          <div className="rounded-md bg-secondary p-4">
-            <div className="text-sm font-medium">Resumen</div>
-            <div className="mt-2 text-sm text-muted-foreground">
-              {items.length === 0
-                ? 'Agregue productos para ver el resumen de precios'
-                : '(Se calculará al crear)'}
-            </div>
-          </div>
-
-          {/* Form Error */}
           {formError && (
             <div className="rounded-md bg-destructive/10 p-3 text-sm text-destructive">
               {formError}
@@ -316,10 +295,7 @@ export const CreateCollectionModal = ({
           <Button variant="outline" onClick={handleClose} disabled={isLoading}>
             Cancelar
           </Button>
-          <Button
-            onClick={handleSubmit}
-            disabled={!isFormValid || isLoading}
-          >
+          <Button onClick={handleSubmit} disabled={!isFormValid || isLoading}>
             {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
             Crear borrador
           </Button>

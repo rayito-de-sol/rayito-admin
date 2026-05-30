@@ -1,3 +1,4 @@
+import { useState, useEffect } from 'react'
 import {
   Dialog,
   DialogContent,
@@ -5,18 +6,11 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog'
 import { Button } from '@/components/ui/button'
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/components/ui/table'
 import { CollectionStateBadge } from './CollectionStateBadge'
 import { formatColombiaCurrency } from '../utils/currency'
+import { collectionsApi } from '../api/collectionsApi'
 import type { Collection } from '../types/collection.types'
-import { X } from 'lucide-react'
+import { Loader2 } from 'lucide-react'
 
 interface CollectionDetailsModalProps {
   collection: Collection
@@ -29,6 +23,27 @@ export const CollectionDetailsModal = ({
   isOpen,
   onClose,
 }: CollectionDetailsModalProps) => {
+  const [fullCollection, setFullCollection] = useState<Collection | null>(null)
+  const [isLoading, setIsLoading] = useState(false)
+
+  useEffect(() => {
+    if (!isOpen) return
+    const fetch = async () => {
+      try {
+        setIsLoading(true)
+        const data = await collectionsApi.get(collection.id)
+        setFullCollection(data)
+      } catch {
+        setFullCollection(collection)
+      } finally {
+        setIsLoading(false)
+      }
+    }
+    fetch()
+  }, [isOpen, collection.id])
+
+  const data = fullCollection ?? collection
+
   const formatDate = (dateString?: string): string => {
     if (!dateString) return '-'
     return new Date(dateString).toLocaleDateString('es-CO', {
@@ -47,193 +62,173 @@ export const CollectionDetailsModal = ({
           </DialogTitle>
         </DialogHeader>
 
-        <div className="space-y-6">
-          {/* Metadata Section */}
-          <div className="rounded-md border p-4">
-            <h3 className="mb-3 font-semibold">Información General</h3>
-            <div className="grid gap-3 md:grid-cols-2">
-              <div>
-                <p className="text-sm text-muted-foreground">Estado</p>
-                <div className="mt-1">
-                  <CollectionStateBadge state={collection.state} />
-                </div>
-              </div>
-              <div>
-                <p className="text-sm text-muted-foreground">Fecha de creación</p>
-                <p className="text-base">{formatDate(collection.created_at)}</p>
-              </div>
-              {collection.payment_due_date && (
+        {isLoading ? (
+          <div className="flex items-center justify-center py-12">
+            <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
+          </div>
+        ) : (
+          <div className="space-y-6">
+            {/* General info */}
+            <div className="rounded-md border p-4">
+              <h3 className="mb-3 font-semibold">Información General</h3>
+              <div className="grid gap-3 md:grid-cols-2">
                 <div>
-                  <p className="text-sm text-muted-foreground">
-                    Fecha de vencimiento
-                  </p>
-                  <p className="text-base">
-                    {formatDate(collection.payment_due_date)}
-                  </p>
+                  <p className="text-sm text-muted-foreground">Estado</p>
+                  <div className="mt-1">
+                    <CollectionStateBadge state={data.state} />
+                  </div>
                 </div>
-              )}
-              {collection.notes && (
-                <div className="md:col-span-2">
-                  <p className="text-sm text-muted-foreground">Notas</p>
-                  <p className="text-base">{collection.notes}</p>
+                <div>
+                  <p className="text-sm text-muted-foreground">Fecha de creación</p>
+                  <p className="text-sm">{formatDate(data.created_at)}</p>
                 </div>
+                {data.payment_due_date && (
+                  <div>
+                    <p className="text-sm text-muted-foreground">Fecha de vencimiento</p>
+                    <p className="text-sm">{formatDate(data.payment_due_date)}</p>
+                  </div>
+                )}
+                {data.notes && (
+                  <div className="md:col-span-2">
+                    <p className="text-sm text-muted-foreground">Notas</p>
+                    <p className="text-sm">{data.notes}</p>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* Items */}
+            <div className="rounded-md border">
+              <div className="border-b px-4 py-3">
+                <h3 className="font-semibold">Productos</h3>
+              </div>
+              {data.items && data.items.length > 0 ? (
+                <div className="overflow-x-auto">
+                  <table className="w-full text-sm">
+                    <thead>
+                      <tr className="border-b bg-muted/50">
+                        <th className="px-4 py-2 text-left font-medium">Producto</th>
+                        <th className="px-4 py-2 text-left font-medium">Color</th>
+                        <th className="px-4 py-2 text-left font-medium">Talla</th>
+                        <th className="px-4 py-2 text-left font-medium">SKU</th>
+                        <th className="px-4 py-2 text-right font-medium">Cantidad</th>
+                        <th className="px-4 py-2 text-right font-medium">P. Unitario</th>
+                        <th className="px-4 py-2 text-right font-medium">Total</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {data.items.map((item) => (
+                        <tr key={item.id} className="border-b last:border-0">
+                          <td className="px-4 py-2 font-medium">{item.product_name}</td>
+                          <td className="px-4 py-2">{item.variant_color}</td>
+                          <td className="px-4 py-2">{item.size_name || '-'}</td>
+                          <td className="px-4 py-2 font-mono text-xs">{item.variant_sku}</td>
+                          <td className="px-4 py-2 text-right">{item.quantity}</td>
+                          <td className="px-4 py-2 text-right">
+                            {formatColombiaCurrency(item.unit_price_final)}
+                          </td>
+                          <td className="px-4 py-2 text-right">
+                            {formatColombiaCurrency(item.unit_price_final * item.quantity)}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              ) : (
+                <p className="px-4 py-6 text-center text-sm text-muted-foreground">
+                  No hay productos en esta cuenta de cobro
+                </p>
               )}
             </div>
-          </div>
 
-          {/* Items Section */}
-          <div className="rounded-md border">
-            <div className="border-b p-4">
-              <h3 className="font-semibold">Productos</h3>
-            </div>
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Producto</TableHead>
-                  <TableHead>Color</TableHead>
-                  <TableHead>Talla</TableHead>
-                  <TableHead>SKU</TableHead>
-                  <TableHead className="text-right">Cantidad</TableHead>
-                  <TableHead className="text-right">Precio Original</TableHead>
-                  <TableHead className="text-right">Precio Final</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {collection.items?.map((item) => (
-                  <TableRow key={item.id}>
-                    <TableCell className="font-medium">
-                      {item.product_name}
-                    </TableCell>
-                    <TableCell>{item.variant_color}</TableCell>
-                    <TableCell>{item.size_name || '-'}</TableCell>
-                    <TableCell className="font-mono text-xs">
-                      {item.variant_sku}
-                    </TableCell>
-                    <TableCell className="text-right">{item.quantity}</TableCell>
-                    <TableCell className="text-right">
-                      {formatColombiaCurrency(item.unit_price_original)}
-                    </TableCell>
-                    <TableCell className="text-right">
-                      {formatColombiaCurrency(item.unit_price_final)}
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </div>
-
-          {/* Pricing Breakdown Section */}
-          <div className="rounded-md border p-4">
-            <h3 className="mb-3 font-semibold">Desglose de Precios</h3>
-            <div className="space-y-2">
-              <div className="flex justify-between">
-                <span className="text-muted-foreground">
-                  Subtotal antes de descuento
-                </span>
-                <span className="font-medium">
-                  {formatColombiaCurrency(collection.subtotal_before_discount)}
-                </span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-muted-foreground">
-                  Descuento ({collection.discount_percentage}%)
-                </span>
-                <span className="text-destructive">
-                  -{formatColombiaCurrency(collection.discount_amount)}
-                </span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-muted-foreground">
-                  Subtotal después de descuento
-                </span>
-                <span className="font-medium">
-                  {formatColombiaCurrency(collection.subtotal_after_discount)}
-                </span>
-              </div>
-              {collection.vat_deducted && (
+            {/* Pricing breakdown */}
+            <div className="rounded-md border p-4">
+              <h3 className="mb-3 font-semibold">Desglose de Precios</h3>
+              <div className="space-y-2 text-sm">
+                <div className="flex justify-between">
+                  <span className="text-muted-foreground">Subtotal antes de descuento</span>
+                  <span>{formatColombiaCurrency(data.subtotal_before_discount)}</span>
+                </div>
                 <div className="flex justify-between">
                   <span className="text-muted-foreground">
-                    IVA deducido ({collection.vat_percentage * 100}%)
+                    Descuento ({data.discount_percentage}%)
                   </span>
                   <span className="text-destructive">
-                    -{formatColombiaCurrency(collection.vat_amount)}
+                    -{formatColombiaCurrency(data.discount_amount)}
                   </span>
                 </div>
-              )}
-              <div className="flex justify-between border-t pt-2">
-                <span className="font-semibold">Total</span>
-                <span className="text-lg font-bold">
-                  {formatColombiaCurrency(collection.total_price)}{' '}
-                  {collection.currency}
-                </span>
+                <div className="flex justify-between">
+                  <span className="text-muted-foreground">Subtotal después de descuento</span>
+                  <span>{formatColombiaCurrency(data.subtotal_after_discount)}</span>
+                </div>
+                {data.vat_deducted && (
+                  <div className="flex justify-between">
+                    <span className="text-muted-foreground">
+                      IVA deducido ({data.vat_percentage * 100}%)
+                    </span>
+                    <span className="text-destructive">
+                      -{formatColombiaCurrency(data.vat_amount)}
+                    </span>
+                  </div>
+                )}
+                <div className="flex justify-between border-t pt-2 font-semibold">
+                  <span>Total</span>
+                  <span className="text-base">
+                    {formatColombiaCurrency(data.total_price)} {data.currency}
+                  </span>
+                </div>
               </div>
             </div>
+
+            {/* Payment details */}
+            {data.state === 'paid' && (
+              <div className="rounded-md border bg-green-50 p-4">
+                <h3 className="mb-3 font-semibold text-green-900">Detalles de Pago</h3>
+                <div className="grid gap-2 text-sm md:grid-cols-2">
+                  <div>
+                    <p className="text-green-700">Fecha de pago</p>
+                    <p className="text-green-900">{formatDate(data.payment_received_at)}</p>
+                  </div>
+                  {data.payment_method && (
+                    <div>
+                      <p className="text-green-700">Método de pago</p>
+                      <p className="text-green-900">{data.payment_method}</p>
+                    </div>
+                  )}
+                  {data.payment_reference && (
+                    <div className="md:col-span-2">
+                      <p className="text-green-700">Referencia de pago</p>
+                      <p className="text-green-900">{data.payment_reference}</p>
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
+
+            {/* Cancellation details */}
+            {data.state === 'cancelled' && (
+              <div className="rounded-md border bg-red-50 p-4">
+                <h3 className="mb-3 font-semibold text-red-900">Detalles de Cancelación</h3>
+                <div className="space-y-2 text-sm">
+                  <div>
+                    <p className="text-red-700">Fecha de cancelación</p>
+                    <p className="text-red-900">{formatDate(data.cancelled_at)}</p>
+                  </div>
+                  {data.cancel_reason && (
+                    <div>
+                      <p className="text-red-700">Motivo</p>
+                      <p className="text-red-900">{data.cancel_reason}</p>
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
           </div>
+        )}
 
-          {/* Payment Details (if paid) */}
-          {collection.state === 'paid' && (
-            <div className="rounded-md border bg-green-50 p-4">
-              <h3 className="mb-3 font-semibold text-green-900">
-                Detalles de Pago
-              </h3>
-              <div className="grid gap-2 md:grid-cols-2">
-                <div>
-                  <p className="text-sm text-green-700">Fecha de pago</p>
-                  <p className="text-base text-green-900">
-                    {formatDate(collection.payment_received_at)}
-                  </p>
-                </div>
-                {collection.payment_method && (
-                  <div>
-                    <p className="text-sm text-green-700">Método de pago</p>
-                    <p className="text-base text-green-900">
-                      {collection.payment_method}
-                    </p>
-                  </div>
-                )}
-                {collection.payment_reference && (
-                  <div className="md:col-span-2">
-                    <p className="text-sm text-green-700">
-                      Referencia de pago
-                    </p>
-                    <p className="text-base text-green-900">
-                      {collection.payment_reference}
-                    </p>
-                  </div>
-                )}
-              </div>
-            </div>
-          )}
-
-          {/* Cancellation Details (if cancelled) */}
-          {collection.state === 'cancelled' && (
-            <div className="rounded-md border bg-red-50 p-4">
-              <h3 className="mb-3 font-semibold text-red-900">
-                Detalles de Cancelación
-              </h3>
-              <div className="space-y-2">
-                <div>
-                  <p className="text-sm text-red-700">Fecha de cancelación</p>
-                  <p className="text-base text-red-900">
-                    {formatDate(collection.cancelled_at)}
-                  </p>
-                </div>
-                {collection.cancel_reason && (
-                  <div>
-                    <p className="text-sm text-red-700">Motivo</p>
-                    <p className="text-base text-red-900">
-                      {collection.cancel_reason}
-                    </p>
-                  </div>
-                )}
-              </div>
-            </div>
-          )}
-        </div>
-
-        <div className="flex justify-end">
-          <Button onClick={onClose}>
-            <X className="mr-2 h-4 w-4" />
+        <div className="flex justify-end pt-2">
+          <Button variant="outline" onClick={onClose}>
             Cerrar
           </Button>
         </div>

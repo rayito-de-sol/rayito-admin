@@ -66,11 +66,15 @@ apiClient.interceptors.response.use(
         error.message = 'Recurso no encontrado'
         break
       case 500:
-        error.message = 'Error del servidor. Intente nuevamente más tarde'
+        error.message =
+          error.response.data?.error?.message ||
+          error.response.data?.message ||
+          'Error del servidor. Intente nuevamente más tarde'
         break
       default:
-        // Use backend error message if available
-        if (error.response.data?.message) {
+        if (error.response.data?.error?.message) {
+          error.message = error.response.data.error.message
+        } else if (error.response.data?.message) {
           error.message = error.response.data.message
         }
     }
