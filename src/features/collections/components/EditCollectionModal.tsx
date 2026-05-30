@@ -248,7 +248,6 @@ export const EditCollectionModal = ({
                             ) : (
                               <span className="text-destructive"> • Sin precio</span>
                             )}
-                            )}
                           </div>
                         </div>
                         <div className="w-24 shrink-0">
