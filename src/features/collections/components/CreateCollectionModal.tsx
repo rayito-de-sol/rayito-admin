@@ -121,6 +121,13 @@ export const CreateCollectionModal = ({
     }
     if (notesError || dueDateError) return
 
+    const withoutPrice = selectedItems.filter((v) => !v.product_price)
+    if (withoutPrice.length > 0) {
+      const names = withoutPrice.map((v) => v.product_name ?? v.sku).join(', ')
+      setFormError(`Los siguientes productos no tienen precio definido: ${names}`)
+      return
+    }
+
     try {
       await createCollection({
         store_id: storeId,

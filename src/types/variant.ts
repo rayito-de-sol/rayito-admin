@@ -42,7 +42,8 @@ export interface Variant {
     label: string
   }
   current_cost?: number
-  product_name?: string // Populated when listing all variants
+  product_name?: string  // Populated when listing all variants
+  product_price?: number // Populated when listing all variants
 }
 
 /**
