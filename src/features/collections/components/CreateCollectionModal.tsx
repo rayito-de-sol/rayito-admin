@@ -219,8 +219,10 @@ export const CreateCollectionModal = ({
                           <div className="text-xs text-muted-foreground">
                             {variant.size?.label && `${variant.size.label} • `}
                             SKU: {variant.sku}
-                            {variant.current_cost !== undefined && (
-                              <> • {formatColombiaCurrency(variant.current_cost)}</>
+                            {variant.product_price !== undefined ? (
+                              <> • {formatColombiaCurrency(variant.product_price)}</>
+                            ) : (
+                              <span className="text-destructive"> • Sin precio</span>
                             )}
                           </div>
                         </div>
