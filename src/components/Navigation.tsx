@@ -5,6 +5,7 @@ import {
   Store,
   Package,
   Box,
+  ShoppingBag,
   ChevronLeft,
   ChevronRight,
 } from 'lucide-react'
@@ -98,6 +99,16 @@ export const Navigation = ({ isCollapsed, onToggle }: NavigationProps) => {
           >
             <Box className="h-4 w-4 flex-shrink-0" />
             {!isCollapsed && <span>Empaques</span>}
+          </NavLink>
+        </li>
+        <li>
+          <NavLink
+            to="/ventas"
+            className={linkClass}
+            title={isCollapsed ? 'Ventas' : undefined}
+          >
+            <ShoppingBag className="h-4 w-4 flex-shrink-0" />
+            {!isCollapsed && <span>Ventas</span>}
           </NavLink>
         </li>
       </ul>

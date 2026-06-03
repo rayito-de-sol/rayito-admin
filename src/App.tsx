@@ -9,6 +9,7 @@ import { DashboardPage } from '@/pages/DashboardPage'
 import { StoresPage } from '@/pages/StoresPage'
 import { ProductsPage } from '@/pages/ProductsPage'
 import { PackagesPage } from '@/pages/PackagesPage'
+import { VentasPage } from '@/pages/VentasPage'
 import { NotFoundPage } from '@/pages/NotFoundPage'
 import { initAuth } from '@/services/authInit'
 import { useAuthStore } from '@/stores/useAuthStore'
@@ -80,6 +81,17 @@ function App() {
             <ProtectedRoute>
               <Layout>
                 <PackagesPage />
+              </Layout>
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/ventas"
+          element={
+            <ProtectedRoute>
+              <Layout>
+                <VentasPage />
               </Layout>
             </ProtectedRoute>
           }
