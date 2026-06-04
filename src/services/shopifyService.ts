@@ -17,10 +17,24 @@ export interface ShopifySyncResult {
   skipped: number
 }
 
+export interface ShopifySetupResult {
+  registered: string[]
+  already_existed: string[]
+}
+
 export const shopifyService = {
   async triggerSync(): Promise<ShopifySyncResult> {
     try {
       const res = await apiClient.post<ShopifySyncResult>('/shopify/sync')
+      return res.data
+    } catch (error) {
+      throw new Error(getShopifyErrorMessage(error))
+    }
+  },
+
+  async setup(): Promise<ShopifySetupResult> {
+    try {
+      const res = await apiClient.post<ShopifySetupResult>('/shopify/setup')
       return res.data
     } catch (error) {
       throw new Error(getShopifyErrorMessage(error))

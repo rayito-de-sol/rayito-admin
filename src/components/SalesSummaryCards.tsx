@@ -1,4 +1,4 @@
-import type { SalesSummary } from '@/types/sale'
+import type { OrdersSummary as SalesSummary } from '@/types/order'
 import { Card } from '@/components/ui/card'
 import { formatCurrency } from '@/utils/currency'
 import { ShoppingBag, Store, ShoppingCart, MessageCircle } from 'lucide-react'
