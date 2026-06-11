@@ -2,6 +2,7 @@ import { apiClient } from './api/client'
 import type {
   Variant,
   CreateVariantRequest,
+  BulkCreateVariantsRequest,
   VariantCost,
 } from '@/types/variant'
 import { AxiosError } from 'axios'
@@ -153,6 +154,34 @@ export const variantService = {
       )
       return response.data
     } catch (error) {
+      const message = getVariantErrorMessage(error)
+      throw new Error(message)
+    }
+  },
+
+  /**
+   * Bulk create variants without a product assignment
+   * @param data Array of variant inputs
+   * @returns Array of created variants
+   */
+  async bulkCreate(data: BulkCreateVariantsRequest): Promise<Variant[]> {
+    try {
+      const response = await apiClient.post<Variant[]>('/variants/bulk', data)
+      return response.data
+    } catch (error) {
+      if (error instanceof AxiosError) {
+        const status = error.response?.status
+        const errorCode = error.response?.data?.code
+
+        if (status === 409 || errorCode === 'DUPLICATE_SKU') {
+          throw new Error(
+            'Uno o más SKUs ya existen. Ninguna variante fue creada.'
+          )
+        }
+        if (status === 422 || errorCode === 'VALIDATION_ERROR') {
+          throw new Error('Error de validación. Revisa los datos ingresados.')
+        }
+      }
       const message = getVariantErrorMessage(error)
       throw new Error(message)
     }

@@ -450,7 +450,7 @@ export const ProductCreateModal = ({
                     >
                       {variants.map((variant) => (
                         <option key={variant.id} value={variant.id}>
-                          {variant.product_name} - {variant.color} (SKU: {variant.sku})
+                          {variant.product_name} - {variant.color?.name ?? '—'} (SKU: {[variant.product_sku_prefix, variant.color?.sku, variant.size?.sku].filter(Boolean).join('-') || '—'})
                         </option>
                       ))}
                     </select>

@@ -81,8 +81,8 @@ export const EditCollectionModal = ({
     const q = search.toLowerCase()
     return (
       (v.product_name?.toLowerCase() ?? '').includes(q) ||
-      v.color.toLowerCase().includes(q) ||
-      v.sku.toLowerCase().includes(q) ||
+      (v.color?.name ?? '').toLowerCase().includes(q) ||
+      [v.product_sku_prefix, v.color?.sku, v.size?.sku].filter(Boolean).join('-').toLowerCase().includes(q) ||
       (v.size?.label.toLowerCase() ?? '').includes(q)
     )
   })
@@ -134,7 +134,7 @@ export const EditCollectionModal = ({
 
     const withoutPrice = selectedItems.filter((v) => !v.product_price)
     if (withoutPrice.length > 0) {
-      const names = withoutPrice.map((v) => v.product_name ?? v.sku).join(', ')
+      const names = withoutPrice.map((v) => v.product_name ?? [v.product_sku_prefix, v.color?.sku, v.size?.sku].filter(Boolean).join('-')).join(', ')
       setFormError(`Los siguientes productos no tienen precio definido: ${names}`)
       return
     }
@@ -238,11 +238,11 @@ export const EditCollectionModal = ({
                       >
                         <div className="flex-1 min-w-0">
                           <div className="font-medium truncate">
-                            {variant.product_name} - {variant.color}
+                            {variant.product_name} - {variant.color?.name ?? '—'}
                           </div>
                           <div className="text-xs text-muted-foreground">
                             {variant.size?.label && `${variant.size.label} • `}
-                            SKU: {variant.sku}
+                            SKU: {[variant.product_sku_prefix, variant.color?.sku, variant.size?.sku].filter(Boolean).join('-') || '—'}
                             {variant.product_price !== undefined ? (
                               <> • {formatColombiaCurrency(variant.product_price)}</>
                             ) : (

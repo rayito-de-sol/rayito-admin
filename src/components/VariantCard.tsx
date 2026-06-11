@@ -61,12 +61,12 @@ export const VariantCard = ({
           {/* Info */}
           <div className="flex-1">
             <div className="mb-2">
-              <h4 className="font-semibold">{variant.color}</h4>
+              <h4 className="font-semibold">{variant.color?.name ?? '—'}</h4>
               <p className="text-sm text-muted-foreground">
                 {variant.size?.label || 'Sin talla'}
               </p>
               <p className="text-xs text-muted-foreground">
-                SKU: {variant.sku}
+                SKU: {[variant.product_sku_prefix, variant.color?.sku, variant.size?.sku].filter(Boolean).join('-') || '—'}
               </p>
             </div>
 

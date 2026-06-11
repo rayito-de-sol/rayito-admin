@@ -1,21 +1,14 @@
 import { apiClient } from './api/client'
-import type { Size, CreateSizeRequest } from '@/types/size'
+import type { Size, CreateSizeRequest, UpdateSizeRequest } from '@/types/size'
 import { AxiosError } from 'axios'
 
-/**
- * Map API error codes to Spanish error messages
- */
 const getSizeErrorMessage = (error: unknown): string => {
   if (error instanceof AxiosError) {
     const status = error.response?.status
     const errorCode = error.response?.data?.code
 
     if (status === 409 || errorCode === 'DUPLICATE_SIZE_LABEL') {
-      return 'Ya existe una talla con esta etiqueta para este producto'
-    }
-
-    if (errorCode === 'PRODUCT_NOT_FOUND') {
-      return 'Producto no encontrado'
+      return 'Ya existe una talla con esta etiqueta'
     }
 
     if (status === 400 || errorCode === 'VALIDATION_FAILED') {
@@ -42,24 +35,40 @@ const getSizeErrorMessage = (error: unknown): string => {
   return 'Error desconocido'
 }
 
-/**
- * Size service
- * Handles size CRUD operations
- */
 export const sizeService = {
-  /**
-   * Create new size for a product
-   * @param productId Product UUID
-   * @param data Size creation data
-   * @returns Created size
-   */
-  async createSize(productId: string, data: CreateSizeRequest): Promise<Size> {
+  async listSizes(): Promise<Size[]> {
     try {
-      const response = await apiClient.post<Size>(
-        `/products/${productId}/size-options`,
-        data
-      )
+      const response = await apiClient.get<Size[]>('/sizes')
       return response.data
+    } catch (error) {
+      const message = getSizeErrorMessage(error)
+      throw new Error(message)
+    }
+  },
+
+  async createSize(data: CreateSizeRequest): Promise<Size> {
+    try {
+      const response = await apiClient.post<Size>('/sizes', data)
+      return response.data
+    } catch (error) {
+      const message = getSizeErrorMessage(error)
+      throw new Error(message)
+    }
+  },
+
+  async updateSize(id: string, data: UpdateSizeRequest): Promise<Size> {
+    try {
+      const response = await apiClient.put<Size>(`/sizes/${id}`, data)
+      return response.data
+    } catch (error) {
+      const message = getSizeErrorMessage(error)
+      throw new Error(message)
+    }
+  },
+
+  async deleteSize(id: string): Promise<void> {
+    try {
+      await apiClient.delete(`/sizes/${id}`)
     } catch (error) {
       const message = getSizeErrorMessage(error)
       throw new Error(message)

@@ -181,7 +181,7 @@ export const ManualSaleModal = ({ open, onClose, onSuccess }: ManualSaleModalPro
                     <SelectContent>
                       {variants.map((v) => (
                         <SelectItem key={v.id} value={v.id}>
-                          {v.sku} — {v.color}
+                          {[v.product_sku_prefix, v.color?.sku, v.size?.sku].filter(Boolean).join('-') || '—'} — {v.color?.name ?? '—'}
                         </SelectItem>
                       ))}
                     </SelectContent>

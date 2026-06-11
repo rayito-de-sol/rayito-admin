@@ -4,8 +4,11 @@ import {
   Users,
   Store,
   Package,
+  Ruler,
+  Layers,
   Box,
   ShoppingBag,
+  Palette,
   ChevronLeft,
   ChevronRight,
 } from 'lucide-react'
@@ -89,6 +92,36 @@ export const Navigation = ({ isCollapsed, onToggle }: NavigationProps) => {
           >
             <Package className="h-4 w-4 flex-shrink-0" />
             {!isCollapsed && <span>Productos</span>}
+          </NavLink>
+        </li>
+        <li>
+          <NavLink
+            to="/colores"
+            className={linkClass}
+            title={isCollapsed ? 'Colores' : undefined}
+          >
+            <Palette className="h-4 w-4 flex-shrink-0" />
+            {!isCollapsed && <span>Colores</span>}
+          </NavLink>
+        </li>
+        <li>
+          <NavLink
+            to="/tallas"
+            className={linkClass}
+            title={isCollapsed ? 'Tallas' : undefined}
+          >
+            <Ruler className="h-4 w-4 flex-shrink-0" />
+            {!isCollapsed && <span>Tallas</span>}
+          </NavLink>
+        </li>
+        <li>
+          <NavLink
+            to="/variantes"
+            className={linkClass}
+            title={isCollapsed ? 'Crear Variantes' : undefined}
+          >
+            <Layers className="h-4 w-4 flex-shrink-0" />
+            {!isCollapsed && <span>Variantes</span>}
           </NavLink>
         </li>
         <li>

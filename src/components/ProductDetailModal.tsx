@@ -146,7 +146,7 @@ export const ProductDetailModal = ({
    */
   const handleSizeAdd = async (label: string) => {
     if (!product) return
-    await sizeService.createSize(product.id, { label })
+    await sizeService.createSize({ label })
     toast.success('Talla creada exitosamente')
     setShowSizeForm(false)
     await loadProduct()
@@ -165,9 +165,8 @@ export const ProductDetailModal = ({
    * Handle variant creation
    */
   const handleVariantAdd = async (data: {
-    color: string
-    size_id: string
-    sku: string
+    color_id: string
+    size_id?: string
     stock: number
     initial_cost: number
     images: any[]
@@ -530,7 +529,7 @@ export const ProductDetailModal = ({
                   {showVariantStockForm && selectedVariant && (
                     <div className="mt-4 rounded-lg border p-4">
                       <h4 className="mb-3 font-semibold">
-                        Actualizar Stock - {selectedVariant.color}
+                        Actualizar Stock - {selectedVariant.color?.name ?? '—'}
                       </h4>
                       <VariantStockUpdateForm
                         currentStock={selectedVariant.stock}
@@ -549,7 +548,7 @@ export const ProductDetailModal = ({
                     selectedVariant.current_cost !== undefined && (
                       <div className="mt-4 rounded-lg border p-4">
                         <h4 className="mb-3 font-semibold">
-                          Actualizar Costo - {selectedVariant.color}
+                          Actualizar Costo - {selectedVariant.color?.name ?? '—'}
                         </h4>
                         <VariantCostUpdateForm
                           currentCost={selectedVariant.current_cost}

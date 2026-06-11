@@ -119,12 +119,12 @@ export const SetCompositionForm = ({
             >
               <div className="flex-1">
                 <div className="flex items-center gap-2">
-                  <span className="font-medium">{component.variant.color}</span>
+                  <span className="font-medium">{component.variant.color?.name ?? '—'}</span>
                   <span className="text-sm text-muted-foreground">
                     ({component.variant.size?.label})
                   </span>
                   <span className="text-xs text-muted-foreground">
-                    SKU: {component.variant.sku}
+                    SKU: {[component.variant.product_sku_prefix, component.variant.color?.sku, component.variant.size?.sku].filter(Boolean).join('-') || '—'}
                   </span>
                 </div>
                 <div className="mt-1 flex items-center gap-4 text-sm">
@@ -202,8 +202,8 @@ export const SetCompositionForm = ({
                       <option value="">Seleccionar variante</option>
                       {availableForAdd.map((variant) => (
                         <option key={variant.id} value={variant.id}>
-                          {variant.color} - {variant.size?.label} (SKU:{' '}
-                          {variant.sku})
+                          {variant.color?.name ?? '—'} - {variant.size?.label} (SKU:{' '}
+                          {[variant.product_sku_prefix, variant.color?.sku, variant.size?.sku].filter(Boolean).join('-') || '—'})
                         </option>
                       ))}
                     </select>

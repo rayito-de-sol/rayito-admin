@@ -10,6 +10,9 @@ import { StoresPage } from '@/pages/StoresPage'
 import { ProductsPage } from '@/pages/ProductsPage'
 import { PackagesPage } from '@/pages/PackagesPage'
 import { VentasPage } from '@/pages/VentasPage'
+import { VariantsPage } from '@/pages/VariantsPage'
+import { SizesPage } from '@/pages/SizesPage'
+import { ColorsPage } from '@/pages/ColorsPage'
 import { NotFoundPage } from '@/pages/NotFoundPage'
 import { initAuth } from '@/services/authInit'
 import { useAuthStore } from '@/stores/useAuthStore'
@@ -92,6 +95,39 @@ function App() {
             <ProtectedRoute>
               <Layout>
                 <VentasPage />
+              </Layout>
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/variantes"
+          element={
+            <ProtectedRoute>
+              <Layout>
+                <VariantsPage />
+              </Layout>
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/tallas"
+          element={
+            <ProtectedRoute>
+              <Layout>
+                <SizesPage />
+              </Layout>
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/colores"
+          element={
+            <ProtectedRoute>
+              <Layout>
+                <ColorsPage />
               </Layout>
             </ProtectedRoute>
           }

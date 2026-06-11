@@ -96,8 +96,9 @@ export const productService = {
    */
   async getProduct(id: string): Promise<Product> {
     try {
-      const response = await apiClient.get<Product>(`/products/${id}`)
-      return response.data
+      const response = await apiClient.get<Product | { product: Product }>(`/products/${id}`)
+      const data = response.data as any
+      return 'product' in data ? data.product : data
     } catch (error) {
       const message = getProductErrorMessage(error)
       throw new Error(message)

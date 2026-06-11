@@ -24,7 +24,10 @@ export const StatusBadge = ({ status }: StatusBadgeProps) => {
     },
   }
 
-  const config = statusConfig[status]
+  const config = statusConfig[status] ?? {
+    label: status ?? '—',
+    className: 'bg-gray-100 text-gray-500',
+  }
 
   return (
     <span

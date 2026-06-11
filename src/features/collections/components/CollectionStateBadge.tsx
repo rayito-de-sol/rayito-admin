@@ -28,7 +28,7 @@ const stateConfig: Record<
 }
 
 export const CollectionStateBadge = ({ state }: CollectionStateBadgeProps) => {
-  const config = stateConfig[state]
+  const config = stateConfig[state] ?? { label: state ?? '—', className: '' }
 
   return <Badge className={config.className}>{config.label}</Badge>
 }

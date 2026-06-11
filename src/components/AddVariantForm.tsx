@@ -1,20 +1,18 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Button } from './ui/button'
 import { Input } from './ui/input'
 import { Label } from './ui/label'
 import type { Size } from '@/types/size'
 import type { VariantImage } from '@/types/variant'
+import type { Color } from '@/types/color'
+import { colorService } from '@/services/colorService'
 
-/**
- * Props for AddVariantForm component
- */
 interface AddVariantFormProps {
   productId: string
   sizes: Size[]
   onAdd: (data: {
-    color: string
-    size_id: string
-    sku: string
+    color_id: string
+    size_id?: string
     stock: number
     initial_cost: number
     images: VariantImage[]
@@ -22,19 +20,15 @@ interface AddVariantFormProps {
   onCancel: () => void
 }
 
-/**
- * AddVariantForm
- * Form for creating product variants with image management
- */
 export const AddVariantForm = ({
   sizes,
   onAdd,
   onCancel,
 }: AddVariantFormProps) => {
+  const [colors, setColors] = useState<Color[]>([])
   const [formData, setFormData] = useState({
-    color: '',
+    color_id: '',
     size_id: '',
-    sku: '',
     stock: '',
     initial_cost: '',
   })
@@ -46,9 +40,10 @@ export const AddVariantForm = ({
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
-  /**
-   * Handle input change
-   */
+  useEffect(() => {
+    colorService.listColors().then(setColors).catch(() => {})
+  }, [])
+
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
@@ -56,44 +51,26 @@ export const AddVariantForm = ({
     setFormData((prev) => ({ ...prev, [name]: value }))
   }
 
-  /**
-   * Handle image field change
-   */
-  const handleImageChange = (
-    index: number,
-    field: 'url' | 'alt',
-    value: string
-  ) => {
+  const handleImageChange = (index: number, field: 'url' | 'alt', value: string) => {
     setImages((prev) =>
       prev.map((img, i) => (i === index ? { ...img, [field]: value } : img))
     )
   }
 
-  /**
-   * Handle primary image selection
-   */
   const handlePrimaryChange = (index: number) => {
     setImages((prev) =>
       prev.map((img, i) => ({ ...img, is_primary: i === index }))
     )
   }
 
-  /**
-   * Add new image
-   */
   const addImage = () => {
     setImages((prev) => [...prev, { url: '', alt: '', is_primary: false }])
   }
 
-  /**
-   * Remove image
-   */
   const removeImage = (index: number) => {
-    if (images.length === 1) return // Keep at least one
-
+    if (images.length === 1) return
     setImages((prev) => {
       const updated = prev.filter((_, i) => i !== index)
-      // If removed image was primary, make first image primary
       if (prev[index]?.is_primary && updated.length > 0) {
         updated[0]!.is_primary = true
       }
@@ -101,24 +78,12 @@ export const AddVariantForm = ({
     })
   }
 
-  /**
-   * Handle form submit
-   */
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setError(null)
 
-    // Validation
-    if (!formData.color.trim()) {
+    if (!formData.color_id) {
       setError('El color es requerido')
-      return
-    }
-    if (!formData.size_id) {
-      setError('La talla es requerida')
-      return
-    }
-    if (!formData.sku.trim()) {
-      setError('El SKU es requerido')
       return
     }
 
@@ -134,68 +99,53 @@ export const AddVariantForm = ({
       return
     }
 
-    // Filter out empty images
     const validImages = images.filter((img) => img.url.trim().length > 0)
 
     try {
       setLoading(true)
       await onAdd({
-        color: formData.color,
-        size_id: formData.size_id,
-        sku: formData.sku,
+        color_id: formData.color_id,
+        size_id: formData.size_id || undefined,
         stock,
         initial_cost: cost,
         images: validImages,
       })
     } catch (err) {
-      setError(
-        err instanceof Error ? err.message : 'Error al crear la variante'
-      )
+      setError(err instanceof Error ? err.message : 'Error al crear la variante')
     } finally {
       setLoading(false)
     }
-  }
-
-  // Check if sizes exist
-  if (sizes.length === 0) {
-    return (
-      <div className="space-y-4">
-        <div className="rounded-md bg-muted/50 p-4 text-center">
-          <p className="text-muted-foreground">
-            Primero debe crear una talla para este producto
-          </p>
-        </div>
-        <div className="flex justify-end">
-          <Button variant="outline" onClick={onCancel}>
-            Cerrar
-          </Button>
-        </div>
-      </div>
-    )
   }
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       {/* Color */}
       <div>
-        <Label htmlFor="color" className="mb-2">
+        <Label htmlFor="color_id" className="mb-2">
           Color *
         </Label>
-        <Input
-          id="color"
-          name="color"
-          value={formData.color}
+        <select
+          id="color_id"
+          name="color_id"
+          value={formData.color_id}
           onChange={handleChange}
-          placeholder="Ej: Rojo, Azul"
+          className="w-full rounded-md border border-input bg-background px-3 py-2"
           required
           disabled={loading}
-        />
+        >
+          <option value="">Seleccionar color</option>
+          {colors.map((c) => (
+            <option key={c.id} value={c.id}>
+              {c.name} ({c.sku})
+            </option>
+          ))}
+        </select>
       </div>
 
       {/* Size */}
       <div>
         <Label htmlFor="size_id" className="mb-2">
-          Talla *
+          Talla
         </Label>
         <select
           id="size_id"
@@ -203,32 +153,15 @@ export const AddVariantForm = ({
           value={formData.size_id}
           onChange={handleChange}
           className="w-full rounded-md border border-input bg-background px-3 py-2"
-          required
           disabled={loading}
         >
-          <option value="">Seleccionar talla</option>
+          <option value="">Sin talla</option>
           {sizes.map((size) => (
             <option key={size.id} value={size.id}>
               {size.label}
             </option>
           ))}
         </select>
-      </div>
-
-      {/* SKU */}
-      <div>
-        <Label htmlFor="sku" className="mb-2">
-          SKU *
-        </Label>
-        <Input
-          id="sku"
-          name="sku"
-          value={formData.sku}
-          onChange={handleChange}
-          placeholder="Ej: MONO-ROJO-NINA"
-          required
-          disabled={loading}
-        />
       </div>
 
       {/* Stock */}
@@ -282,10 +215,7 @@ export const AddVariantForm = ({
                     onChange={() => handlePrimaryChange(index)}
                     disabled={loading}
                   />
-                  <label
-                    htmlFor={`primary-${index}`}
-                    className="text-sm font-medium"
-                  >
+                  <label htmlFor={`primary-${index}`} className="text-sm font-medium">
                     Principal
                   </label>
                 </div>
@@ -305,17 +235,13 @@ export const AddVariantForm = ({
                 <Input
                   placeholder="URL de la imagen"
                   value={image.url}
-                  onChange={(e) =>
-                    handleImageChange(index, 'url', e.target.value)
-                  }
+                  onChange={(e) => handleImageChange(index, 'url', e.target.value)}
                   disabled={loading}
                 />
                 <Input
                   placeholder="Texto alternativo (opcional)"
                   value={image.alt}
-                  onChange={(e) =>
-                    handleImageChange(index, 'alt', e.target.value)
-                  }
+                  onChange={(e) => handleImageChange(index, 'alt', e.target.value)}
                   disabled={loading}
                 />
               </div>
@@ -334,21 +260,14 @@ export const AddVariantForm = ({
         </Button>
       </div>
 
-      {/* Error message */}
       {error && (
         <div className="rounded-md bg-destructive/10 p-3 text-sm text-destructive">
           {error}
         </div>
       )}
 
-      {/* Actions */}
       <div className="flex justify-end gap-3">
-        <Button
-          type="button"
-          variant="outline"
-          onClick={onCancel}
-          disabled={loading}
-        >
+        <Button type="button" variant="outline" onClick={onCancel} disabled={loading}>
           Cancelar
         </Button>
         <Button type="submit" disabled={loading}>
