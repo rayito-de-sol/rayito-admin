@@ -216,12 +216,12 @@ export const ProductsList = ({
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Nombre</TableHead>
                 <TableHead>SKU</TableHead>
+                <TableHead>Nombre</TableHead>
                 <TableHead>Categoría</TableHead>
-                <TableHead>Tipo</TableHead>
                 <TableHead>Estado</TableHead>
                 <TableHead className="text-right">Precio</TableHead>
+                <TableHead>Descripción</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -231,13 +231,10 @@ export const ProductsList = ({
                   onClick={() => onProductClick(product.id)}
                   className="cursor-pointer hover:bg-muted/50"
                 >
-                  <TableCell className="font-medium">{product.name}</TableCell>
                   <TableCell className="font-mono text-xs text-muted-foreground">{product.sku}</TableCell>
+                  <TableCell className="font-medium">{product.name}</TableCell>
                   <TableCell>
                     {categoryLabels[product.category] || product.category}
-                  </TableCell>
-                  <TableCell>
-                    {product.type === 'set' ? 'Set' : 'Simple'}
                   </TableCell>
                   <TableCell>
                     <StatusBadge status={product.status} />
@@ -246,6 +243,9 @@ export const ProductsList = ({
                     {product.current_price !== undefined
                       ? formatCurrency(product.current_price)
                       : '-'}
+                  </TableCell>
+                  <TableCell className="max-w-xs truncate text-muted-foreground">
+                    {product.description || '—'}
                   </TableCell>
                 </TableRow>
               ))}
