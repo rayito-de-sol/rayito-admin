@@ -298,9 +298,9 @@ export const ProductsDetail = ({ productId, onBack }: ProductsDetailProps) => {
             </div>
             <div>
               <p className="text-sm font-medium text-muted-foreground">
-                Prefijo SKU
+                SKU
               </p>
-              <p>{product.sku_prefix}</p>
+              <p>{product.sku}</p>
             </div>
             {product.package && (
               <div>

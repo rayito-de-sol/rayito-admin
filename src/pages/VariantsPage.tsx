@@ -142,7 +142,7 @@ export const VariantsPage = () => {
                       <TableRow key={variant.id}>
                         <TableCell className="font-medium">{variant.color?.name ?? '—'}</TableCell>
                         <TableCell className="font-mono text-sm">
-                          {[variant.product_sku_prefix, variant.color?.sku, variant.size?.sku]
+                          {[variant.product_sku, variant.color?.sku, variant.size?.sku]
                             .filter(Boolean)
                             .join('-') || '—'}
                         </TableCell>

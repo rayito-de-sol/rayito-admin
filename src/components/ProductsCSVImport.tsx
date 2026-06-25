@@ -28,7 +28,7 @@ const VALID_CATEGORIES = [
 const CSV_HEADERS = [
   'name',
   'slug',
-  'sku_prefix',
+  'sku',
   'description',
   'category',
   'initial_price',
@@ -50,7 +50,7 @@ const EXAMPLE_ROW = [
 interface BulkProductInput {
   name: string
   slug: string
-  sku_prefix: string
+  sku: string
   description: string
   category: string
   tags: string
@@ -74,7 +74,7 @@ function parseRow(rawValues: string[], index: number): ParsedRow {
 
   const name = get(0)
   const slug = get(1)
-  const skuPrefix = get(2)
+  const sku = get(2)
   const description = get(3)
   const category = get(4)
   const priceRaw = get(5)
@@ -85,8 +85,8 @@ function parseRow(rawValues: string[], index: number): ParsedRow {
 
   if (!name) return { index, data: emptyData, error: 'name es requerido' }
   if (!slug) return { index, data: emptyData, error: 'slug es requerido' }
-  if (!skuPrefix)
-    return { index, data: emptyData, error: 'sku_prefix es requerido' }
+  if (!sku)
+    return { index, data: emptyData, error: 'sku es requerido' }
   if (!category)
     return { index, data: emptyData, error: 'category es requerido' }
   if (!VALID_CATEGORIES.includes(category.toLowerCase()))
@@ -117,7 +117,7 @@ function parseRow(rawValues: string[], index: number): ParsedRow {
     data: {
       name,
       slug,
-      sku_prefix: skuPrefix,
+      sku: sku,
       description,
       category: category.toLowerCase(),
       tags,
@@ -283,7 +283,7 @@ export const ProductsCSVImport = ({
                   <TableHead>Fila</TableHead>
                   <TableHead>Nombre</TableHead>
                   <TableHead>Slug</TableHead>
-                  <TableHead>SKU Prefijo</TableHead>
+                  <TableHead>SKU</TableHead>
                   <TableHead>Categoría</TableHead>
                   <TableHead className="text-right">Precio</TableHead>
                   <TableHead className="text-right">Costo</TableHead>
@@ -300,7 +300,7 @@ export const ProductsCSVImport = ({
                     <TableCell>{row.error ? '—' : row.data.name}</TableCell>
                     <TableCell>{row.error ? '—' : row.data.slug}</TableCell>
                     <TableCell>
-                      {row.error ? '—' : row.data.sku_prefix}
+                      {row.error ? '—' : row.data.sku}
                     </TableCell>
                     <TableCell>{row.error ? '—' : row.data.category}</TableCell>
                     <TableCell className="text-right">

@@ -37,7 +37,7 @@ export interface Variant {
     sku?: string
   }
   product_name?: string
-  product_sku_prefix?: string
+  product_sku?: string
   product_price?: number
 }
 

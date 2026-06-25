@@ -274,7 +274,7 @@ export const productService = {
     products: {
       name: string
       slug: string
-      sku_prefix: string
+      sku: string
       description: string
       category: string
       tags: string

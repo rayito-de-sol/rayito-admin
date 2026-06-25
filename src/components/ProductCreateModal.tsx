@@ -35,7 +35,7 @@ export const ProductCreateModal = ({
     name: '',
     slug: '',
     description: '',
-    sku_prefix: '',
+    sku: '',
     category: 'mono' as ProductCategory,
     type: 'single' as ProductType,
     tags: '',
@@ -181,7 +181,7 @@ export const ProductCreateModal = ({
       setError('El slug debe contener solo letras, números y guiones')
       return
     }
-    if (!formData.sku_prefix.trim()) {
+    if (!formData.sku.trim()) {
       setError('El prefijo SKU es requerido')
       return
     }
@@ -225,7 +225,7 @@ export const ProductCreateModal = ({
         name: formData.name,
         slug: formData.slug,
         description: formData.description || undefined,
-        sku_prefix: formData.sku_prefix,
+        sku: formData.sku,
         category: formData.category,
         type: formData.type,
         tags: tags.length > 0 ? tags : undefined,
@@ -256,7 +256,7 @@ export const ProductCreateModal = ({
       name: '',
       slug: '',
       description: '',
-      sku_prefix: '',
+      sku: '',
       category: 'mono' as ProductCategory,
       type: 'single' as ProductType,
       tags: '',
@@ -344,13 +344,13 @@ export const ProductCreateModal = ({
 
           {/* SKU Prefix */}
           <div>
-            <Label htmlFor="sku_prefix" className="mb-2">
-              Prefijo SKU *
+            <Label htmlFor="sku" className="mb-2">
+              SKU *
             </Label>
             <Input
-              id="sku_prefix"
-              name="sku_prefix"
-              value={formData.sku_prefix}
+              id="sku"
+              name="sku"
+              value={formData.sku}
               onChange={handleChange}
               placeholder="MONO"
               required
@@ -458,7 +458,7 @@ export const ProductCreateModal = ({
                     >
                       {variants.map((variant) => (
                         <option key={variant.id} value={variant.id}>
-                          {variant.product_name} - {variant.color?.name ?? '—'} (SKU: {[variant.product_sku_prefix, variant.color?.sku, variant.size?.sku].filter(Boolean).join('-') || '—'})
+                          {variant.product_name} - {variant.color?.name ?? '—'} (SKU: {[variant.product_sku, variant.color?.sku, variant.size?.sku].filter(Boolean).join('-') || '—'})
                         </option>
                       ))}
                     </select>

@@ -42,7 +42,7 @@ export interface Product {
   name: string
   slug: string
   description: string | null
-  sku_prefix: string
+  sku: string
   category: ProductCategory
   type: ProductType
   status: ProductStatus
@@ -77,7 +77,7 @@ export interface CreateProductRequest {
   name: string
   slug: string
   description?: string
-  sku_prefix: string
+  sku: string
   category: ProductCategory
   type: ProductType
   tags?: string[]

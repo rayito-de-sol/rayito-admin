@@ -61,7 +61,7 @@ export const VariantCard = ({
                 {variant.size?.label || 'Sin talla'}
               </p>
               <p className="text-xs text-muted-foreground">
-                SKU: {[variant.product_sku_prefix, variant.color?.sku, variant.size?.sku].filter(Boolean).join('-') || '—'}
+                SKU: {[variant.product_sku, variant.color?.sku, variant.size?.sku].filter(Boolean).join('-') || '—'}
               </p>
             </div>
 

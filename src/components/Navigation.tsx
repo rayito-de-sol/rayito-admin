@@ -1,7 +1,7 @@
+import { useState } from 'react'
 import { NavLink } from 'react-router-dom'
 import {
   Home,
-  Users,
   Store,
   Package,
   Ruler,
@@ -11,6 +11,7 @@ import {
   Palette,
   ChevronLeft,
   ChevronRight,
+  ChevronDown,
 } from 'lucide-react'
 
 interface NavigationProps {
@@ -24,6 +25,8 @@ interface NavigationProps {
  * Supports collapsible state to show only icons
  */
 export const Navigation = ({ isCollapsed, onToggle }: NavigationProps) => {
+  const [productsOpen, setProductsOpen] = useState(true)
+
   const linkClass = ({ isActive }: { isActive: boolean }) =>
     `flex items-center ${isCollapsed ? 'justify-center' : 'gap-3'} rounded-lg px-3 py-2 text-sm font-medium transition-colors ${
       isActive
@@ -66,16 +69,6 @@ export const Navigation = ({ isCollapsed, onToggle }: NavigationProps) => {
         </li>
         <li>
           <NavLink
-            to="/users"
-            className={linkClass}
-            title={isCollapsed ? 'Usuarios' : undefined}
-          >
-            <Users className="h-4 w-4 flex-shrink-0" />
-            {!isCollapsed && <span>Usuarios</span>}
-          </NavLink>
-        </li>
-        <li>
-          <NavLink
             to="/tiendas"
             className={linkClass}
             title={isCollapsed ? 'Tiendas' : undefined}
@@ -84,57 +77,8 @@ export const Navigation = ({ isCollapsed, onToggle }: NavigationProps) => {
             {!isCollapsed && <span>Tiendas</span>}
           </NavLink>
         </li>
-        <li>
-          <NavLink
-            to="/productos"
-            className={linkClass}
-            title={isCollapsed ? 'Productos' : undefined}
-          >
-            <Package className="h-4 w-4 flex-shrink-0" />
-            {!isCollapsed && <span>Productos</span>}
-          </NavLink>
-        </li>
-        <li>
-          <NavLink
-            to="/colores"
-            className={linkClass}
-            title={isCollapsed ? 'Colores' : undefined}
-          >
-            <Palette className="h-4 w-4 flex-shrink-0" />
-            {!isCollapsed && <span>Colores</span>}
-          </NavLink>
-        </li>
-        <li>
-          <NavLink
-            to="/tallas"
-            className={linkClass}
-            title={isCollapsed ? 'Tallas' : undefined}
-          >
-            <Ruler className="h-4 w-4 flex-shrink-0" />
-            {!isCollapsed && <span>Tallas</span>}
-          </NavLink>
-        </li>
-        <li>
-          <NavLink
-            to="/variantes"
-            className={linkClass}
-            title={isCollapsed ? 'Crear Variantes' : undefined}
-          >
-            <Layers className="h-4 w-4 flex-shrink-0" />
-            {!isCollapsed && <span>Variantes</span>}
-          </NavLink>
-        </li>
-        <li>
-          <NavLink
-            to="/empaques"
-            className={linkClass}
-            title={isCollapsed ? 'Empaques' : undefined}
-          >
-            <Box className="h-4 w-4 flex-shrink-0" />
-            {!isCollapsed && <span>Empaques</span>}
-          </NavLink>
-        </li>
-        <li>
+
+        <li className="pt-2">
           <NavLink
             to="/ventas"
             className={linkClass}
@@ -144,6 +88,83 @@ export const Navigation = ({ isCollapsed, onToggle }: NavigationProps) => {
             {!isCollapsed && <span>Ventas</span>}
           </NavLink>
         </li>
+
+        {/* Productos group */}
+        {isCollapsed ? (
+          <li className="pt-2">
+            <div className="mx-auto h-px w-6 bg-white/20" />
+          </li>
+        ) : (
+          <li className="pt-2">
+            <button
+              onClick={() => setProductsOpen((open) => !open)}
+              className="flex w-full items-center justify-between rounded-lg px-3 py-2 text-xs font-semibold uppercase tracking-wider text-white/60 transition-colors hover:bg-white/10 hover:text-white"
+              aria-expanded={productsOpen}
+            >
+              <span>Productos</span>
+              <ChevronDown
+                className={`h-4 w-4 flex-shrink-0 transition-transform ${
+                  productsOpen ? '' : '-rotate-90'
+                }`}
+              />
+            </button>
+          </li>
+        )}
+
+        {(isCollapsed || productsOpen) && (
+          <>
+            <li>
+              <NavLink
+                to="/productos"
+                className={linkClass}
+                title={isCollapsed ? 'Productos' : undefined}
+              >
+                <Package className="h-4 w-4 flex-shrink-0" />
+                {!isCollapsed && <span>Productos</span>}
+              </NavLink>
+            </li>
+            <li>
+              <NavLink
+                to="/variantes"
+                className={linkClass}
+                title={isCollapsed ? 'Crear Variantes' : undefined}
+              >
+                <Layers className="h-4 w-4 flex-shrink-0" />
+                {!isCollapsed && <span>Variantes</span>}
+              </NavLink>
+            </li>
+            <li>
+              <NavLink
+                to="/colores"
+                className={linkClass}
+                title={isCollapsed ? 'Colores' : undefined}
+              >
+                <Palette className="h-4 w-4 flex-shrink-0" />
+                {!isCollapsed && <span>Colores</span>}
+              </NavLink>
+            </li>
+            <li>
+              <NavLink
+                to="/tallas"
+                className={linkClass}
+                title={isCollapsed ? 'Tallas' : undefined}
+              >
+                <Ruler className="h-4 w-4 flex-shrink-0" />
+                {!isCollapsed && <span>Tallas</span>}
+              </NavLink>
+            </li>
+            <li>
+              <NavLink
+                to="/empaques"
+                className={linkClass}
+                title={isCollapsed ? 'Empaques' : undefined}
+              >
+                <Box className="h-4 w-4 flex-shrink-0" />
+                {!isCollapsed && <span>Empaques</span>}
+              </NavLink>
+            </li>
+          </>
+        )}
       </ul>
     </nav>
   )

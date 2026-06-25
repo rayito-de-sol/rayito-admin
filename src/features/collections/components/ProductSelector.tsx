@@ -62,7 +62,7 @@ export const ProductSelector = ({
     const searchLower = search.toLowerCase()
     const productName = variant.product_name?.toLowerCase() || ''
     const color = (variant.color?.name ?? '').toLowerCase()
-    const sku = [variant.product_sku_prefix, variant.color?.sku, variant.size?.sku].filter(Boolean).join('-').toLowerCase()
+    const sku = [variant.product_sku, variant.color?.sku, variant.size?.sku].filter(Boolean).join('-').toLowerCase()
     const sizeName = variant.size?.label.toLowerCase() || ''
 
     return (
@@ -134,7 +134,7 @@ export const ProductSelector = ({
                     </div>
                     <div className="text-sm text-muted-foreground">
                       {variant.size?.label && `${variant.size.label} • `}
-                      SKU: {[variant.product_sku_prefix, variant.color?.sku, variant.size?.sku].filter(Boolean).join('-') || '—'}
+                      SKU: {[variant.product_sku, variant.color?.sku, variant.size?.sku].filter(Boolean).join('-') || '—'}
                     </div>
                   </div>
                   <div className="ml-4 text-sm text-muted-foreground">
