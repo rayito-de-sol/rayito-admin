@@ -1,6 +1,6 @@
 /**
  * Variant types for Rayito Admin
- * Product variants with color, size, SKU, stock, cost, and images
+ * Product variants with color, size, SKU, stock, and images
  */
 
 /**
@@ -10,17 +10,6 @@ export interface VariantImage {
   url: string
   alt: string
   is_primary: boolean
-}
-
-/**
- * Variant cost record
- */
-export interface VariantCost {
-  id: string
-  variant_id: string
-  amount: number
-  status: 'active' | 'superseded'
-  created_at: string
 }
 
 /**
@@ -47,7 +36,6 @@ export interface Variant {
     label: string
     sku?: string
   }
-  current_cost?: number
   product_name?: string
   product_sku_prefix?: string
   product_price?: number
@@ -60,7 +48,6 @@ export interface CreateVariantRequest {
   color_id: string
   size_id?: string
   stock: number
-  initial_cost: number
   images?: VariantImage[]
 }
 
@@ -71,7 +58,6 @@ export interface BulkVariantInput {
   color_id: string
   size_id?: string
   stock: number
-  initial_cost: number
   product_id?: string
 }
 

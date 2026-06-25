@@ -14,7 +14,6 @@ import { LoadingSpinner } from '@/components/LoadingSpinner'
 import { VariantCreateModal } from '@/components/VariantCreateModal'
 import { VariantsCSVImport } from '@/components/VariantsCSVImport'
 import { variantService } from '@/services/variantService'
-import { formatCurrency } from '@/utils/currency'
 import { useAuth } from '@/hooks/useAuth'
 import type { Variant } from '@/types/variant'
 
@@ -136,7 +135,6 @@ export const VariantsPage = () => {
                       <TableHead>SKU</TableHead>
                       <TableHead>Producto</TableHead>
                       <TableHead className="text-right">Stock</TableHead>
-                      <TableHead className="text-right">Costo Actual</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
@@ -152,11 +150,6 @@ export const VariantsPage = () => {
                           {variant.product_name ?? <span className="italic">Sin asignar</span>}
                         </TableCell>
                         <TableCell className="text-right">{variant.stock}</TableCell>
-                        <TableCell className="text-right">
-                          {variant.current_cost != null
-                            ? formatCurrency(variant.current_cost)
-                            : '—'}
-                        </TableCell>
                       </TableRow>
                     ))}
                   </TableBody>

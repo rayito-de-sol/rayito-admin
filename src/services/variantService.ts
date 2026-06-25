@@ -3,7 +3,6 @@ import type {
   Variant,
   CreateVariantRequest,
   BulkCreateVariantsRequest,
-  VariantCost,
 } from '@/types/variant'
 import { AxiosError } from 'axios'
 
@@ -134,32 +133,6 @@ export const variantService = {
   },
 
   /**
-   * Update variant cost (creates new cost record)
-   * @param productId Product UUID
-   * @param variantId Variant UUID
-   * @param amount New cost amount
-   * @returns Updated variant
-   */
-  async updateCost(
-    productId: string,
-    variantId: string,
-    amount: number
-  ): Promise<Variant> {
-    try {
-      const response = await apiClient.patch<Variant>(
-        `/products/${productId}/variants/${variantId}/cost`,
-        {
-          amount,
-        }
-      )
-      return response.data
-    } catch (error) {
-      const message = getVariantErrorMessage(error)
-      throw new Error(message)
-    }
-  },
-
-  /**
    * Bulk create variants without a product assignment
    * @param data Array of variant inputs
    * @returns Array of created variants
@@ -182,27 +155,6 @@ export const variantService = {
           throw new Error('Error de validación. Revisa los datos ingresados.')
         }
       }
-      const message = getVariantErrorMessage(error)
-      throw new Error(message)
-    }
-  },
-
-  /**
-   * Get variant cost history
-   * @param productId Product UUID
-   * @param variantId Variant UUID
-   * @returns Array of cost records
-   */
-  async getCostHistory(
-    productId: string,
-    variantId: string
-  ): Promise<VariantCost[]> {
-    try {
-      const response = await apiClient.get<VariantCost[]>(
-        `/products/${productId}/variants/${variantId}/cost-history`
-      )
-      return response.data
-    } catch (error) {
       const message = getVariantErrorMessage(error)
       throw new Error(message)
     }

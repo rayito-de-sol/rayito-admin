@@ -41,6 +41,7 @@ export const ProductCreateModal = ({
     tags: '',
     package_id: '',
     initial_price: '',
+    initial_cost: '',
   })
 
   const [packages, setPackages] = useState<Package[]>([])
@@ -189,6 +190,11 @@ export const ProductCreateModal = ({
       setError('El precio debe ser mayor o igual a cero')
       return
     }
+    const cost = parseFloat(formData.initial_cost)
+    if (isNaN(cost) || cost < 0) {
+      setError('El costo debe ser mayor o igual a cero')
+      return
+    }
 
     // Validate set items for set products
     if (formData.type === 'set') {
@@ -225,6 +231,7 @@ export const ProductCreateModal = ({
         tags: tags.length > 0 ? tags : undefined,
         package_id: formData.package_id || null,
         initial_price: price,
+        initial_cost: cost,
         set_items: formData.type === 'set' ? setItems : undefined,
       })
 
@@ -255,6 +262,7 @@ export const ProductCreateModal = ({
       tags: '',
       package_id: '',
       initial_price: '',
+      initial_cost: '',
     })
     setSetItems([])
     setError(null)
@@ -542,6 +550,24 @@ export const ProductCreateModal = ({
               min="0"
               step="0.01"
               value={formData.initial_price}
+              onChange={handleChange}
+              required
+              disabled={loading}
+            />
+          </div>
+
+          {/* Initial Cost */}
+          <div>
+            <Label htmlFor="initial_cost" className="mb-2">
+              Costo Inicial *
+            </Label>
+            <Input
+              id="initial_cost"
+              name="initial_cost"
+              type="number"
+              min="0"
+              step="0.01"
+              value={formData.initial_cost}
               onChange={handleChange}
               required
               disabled={loading}

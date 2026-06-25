@@ -9,7 +9,7 @@ import { AddSizeForm } from './AddSizeForm'
 import { VariantCard } from './VariantCard'
 import { AddVariantForm } from './AddVariantForm'
 import { VariantStockUpdateForm } from './VariantStockUpdateForm'
-import { VariantCostUpdateForm } from './VariantCostUpdateForm'
+import { ProductCostUpdateForm } from './ProductCostUpdateForm'
 import { CostHistoryModal } from './CostHistoryModal'
 import { SetCompositionForm } from './SetCompositionForm'
 import { LoadingSpinner } from './LoadingSpinner'
@@ -55,12 +55,12 @@ export const ProductsDetail = ({ productId, onBack }: ProductsDetailProps) => {
   const [showEditModal, setShowEditModal] = useState(false)
   const [showPriceForm, setShowPriceForm] = useState(false)
   const [showPriceHistory, setShowPriceHistory] = useState(false)
+  const [showCostForm, setShowCostForm] = useState(false)
+  const [showCostHistory, setShowCostHistory] = useState(false)
   const [showSizeForm, setShowSizeForm] = useState(false)
   const [showVariantForm, setShowVariantForm] = useState(false)
   const [selectedVariant, setSelectedVariant] = useState<Variant | null>(null)
   const [showVariantStockForm, setShowVariantStockForm] = useState(false)
-  const [showVariantCostForm, setShowVariantCostForm] = useState(false)
-  const [showVariantCostHistory, setShowVariantCostHistory] = useState(false)
 
   /**
    * Load product details
@@ -122,6 +122,17 @@ export const ProductsDetail = ({ productId, onBack }: ProductsDetailProps) => {
   }
 
   /**
+   * Handle cost update
+   */
+  const handleCostUpdate = async (cost: number) => {
+    if (!product) return
+    await productService.updateCost(product.id, cost)
+    toast.success('Costo actualizado exitosamente')
+    setShowCostForm(false)
+    await loadProduct()
+  }
+
+  /**
    * Handle size creation
    */
   const handleSizeAdd = async (label: string) => {
@@ -147,7 +158,6 @@ export const ProductsDetail = ({ productId, onBack }: ProductsDetailProps) => {
     color_id: string
     size_id?: string
     stock: number
-    initial_cost: number
     images: any[]
   }) => {
     if (!product) return
@@ -165,18 +175,6 @@ export const ProductsDetail = ({ productId, onBack }: ProductsDetailProps) => {
     await variantService.updateStock(product.id, selectedVariant.id, stock)
     toast.success('Stock actualizado exitosamente')
     setShowVariantStockForm(false)
-    setSelectedVariant(null)
-    await loadProduct()
-  }
-
-  /**
-   * Handle variant cost update
-   */
-  const handleVariantCostUpdate = async (cost: number) => {
-    if (!selectedVariant || !product) return
-    await variantService.updateCost(product.id, selectedVariant.id, cost)
-    toast.success('Costo actualizado exitosamente')
-    setShowVariantCostForm(false)
     setSelectedVariant(null)
     await loadProduct()
   }
@@ -394,6 +392,48 @@ export const ProductsDetail = ({ productId, onBack }: ProductsDetailProps) => {
           )}
         </Card>
 
+        {/* Cost */}
+        <Card className="p-4">
+          <div className="mb-4 flex items-center justify-between">
+            <h3 className="text-lg font-semibold">Costo</h3>
+            {canEdit && !showCostForm && (
+              <Button
+                size="sm"
+                variant="outline"
+                onClick={() => setShowCostForm(true)}
+              >
+                Actualizar Costo
+              </Button>
+            )}
+          </div>
+
+          {!showCostForm && (
+            <div>
+              <p className="text-2xl font-bold">
+                {product.current_cost !== undefined
+                  ? formatCurrency(product.current_cost)
+                  : '—'}
+              </p>
+              <Button
+                size="sm"
+                variant="link"
+                className="mt-2 p-0"
+                onClick={() => setShowCostHistory(true)}
+              >
+                Ver historial de costos
+              </Button>
+            </div>
+          )}
+
+          {showCostForm && (
+            <ProductCostUpdateForm
+              currentCost={product.current_cost ?? 0}
+              onUpdate={handleCostUpdate}
+              onCancel={() => setShowCostForm(false)}
+            />
+          )}
+        </Card>
+
         {/* Sizes */}
         <Card className="p-4">
           <div className="mb-4 flex items-center justify-between">
@@ -471,14 +511,6 @@ export const ProductsDetail = ({ productId, onBack }: ProductsDetailProps) => {
                     setSelectedVariant(v)
                     setShowVariantStockForm(true)
                   }}
-                  onUpdateCost={(v) => {
-                    setSelectedVariant(v)
-                    setShowVariantCostForm(true)
-                  }}
-                  onViewCostHistory={(v) => {
-                    setSelectedVariant(v)
-                    setShowVariantCostHistory(true)
-                  }}
                 />
               ))}
             </div>
@@ -505,24 +537,6 @@ export const ProductsDetail = ({ productId, onBack }: ProductsDetailProps) => {
             </div>
           )}
 
-          {/* Variant Cost Update Form */}
-          {showVariantCostForm &&
-            selectedVariant &&
-            selectedVariant.current_cost !== undefined && (
-              <div className="mt-4 rounded-lg border p-4">
-                <h4 className="mb-3 font-semibold">
-                  Actualizar Costo - {selectedVariant.color?.name ?? '—'}
-                </h4>
-                <VariantCostUpdateForm
-                  currentCost={selectedVariant.current_cost}
-                  onUpdate={handleVariantCostUpdate}
-                  onCancel={() => {
-                    setShowVariantCostForm(false)
-                    setSelectedVariant(null)
-                  }}
-                />
-              </div>
-            )}
         </Card>
 
         {/* Set Composition - Only for set products */}
@@ -626,21 +640,14 @@ export const ProductsDetail = ({ productId, onBack }: ProductsDetailProps) => {
         fetchHistory={productService.getPriceHistory}
       />
 
-      {/* Variant Cost History Modal */}
-      {selectedVariant && product && (
-        <CostHistoryModal
-          isOpen={showVariantCostHistory}
-          onClose={() => {
-            setShowVariantCostHistory(false)
-            setSelectedVariant(null)
-          }}
-          entityType="variant"
-          entityId={selectedVariant.id}
-          fetchHistory={(variantId: string) =>
-            variantService.getCostHistory(product.id, variantId)
-          }
-        />
-      )}
+      {/* Cost History Modal */}
+      <CostHistoryModal
+        isOpen={showCostHistory}
+        onClose={() => setShowCostHistory(false)}
+        entityType="product"
+        entityId={productId}
+        fetchHistory={productService.getCostHistory}
+      />
     </>
   )
 }

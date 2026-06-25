@@ -4,21 +4,21 @@ import { Input } from './ui/input'
 import { Label } from './ui/label'
 import { formatCurrency } from '@/utils/currency'
 
-interface VariantCostUpdateFormProps {
+interface ProductCostUpdateFormProps {
   currentCost: number
   onUpdate: (cost: number) => Promise<void>
   onCancel: () => void
 }
 
 /**
- * VariantCostUpdateForm
- * Inline form for updating variant cost
+ * ProductCostUpdateForm
+ * Inline form for updating product cost
  */
-export const VariantCostUpdateForm = ({
+export const ProductCostUpdateForm = ({
   currentCost,
   onUpdate,
   onCancel,
-}: VariantCostUpdateFormProps) => {
+}: ProductCostUpdateFormProps) => {
   const [cost, setCost] = useState(currentCost.toString())
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)

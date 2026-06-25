@@ -3,7 +3,6 @@ import { Card } from './ui/card'
 import { Button } from './ui/button'
 import { ImageGalleryModal } from './ImageGalleryModal'
 import type { Variant } from '@/types/variant'
-import { formatCurrency } from '@/utils/currency'
 
 /**
  * Props for VariantCard component
@@ -12,20 +11,16 @@ interface VariantCardProps {
   variant: Variant
   canEdit: boolean
   onUpdateStock: (variant: Variant) => void
-  onUpdateCost: (variant: Variant) => void
-  onViewCostHistory: (variant: Variant) => void
 }
 
 /**
  * VariantCard
- * Display variant summary with color, size, SKU, stock, cost, and primary image
+ * Display variant summary with color, size, SKU, stock, and primary image
  */
 export const VariantCard = ({
   variant,
   canEdit,
   onUpdateStock,
-  onUpdateCost,
-  onViewCostHistory,
 }: VariantCardProps) => {
   const [showImageGallery, setShowImageGallery] = useState(false)
 
@@ -74,12 +69,6 @@ export const VariantCard = ({
               <div>
                 <span className="font-medium">Stock:</span> {variant.stock}
               </div>
-              {variant.current_cost !== undefined && (
-                <div>
-                  <span className="font-medium">Costo:</span>{' '}
-                  {formatCurrency(variant.current_cost)}
-                </div>
-              )}
             </div>
 
             {canEdit && (
@@ -90,21 +79,6 @@ export const VariantCard = ({
                   onClick={() => onUpdateStock(variant)}
                 >
                   Actualizar Stock
-                </Button>
-                <Button
-                  size="sm"
-                  variant="outline"
-                  onClick={() => onUpdateCost(variant)}
-                >
-                  Actualizar Costo
-                </Button>
-                <Button
-                  size="sm"
-                  variant="link"
-                  className="p-0"
-                  onClick={() => onViewCostHistory(variant)}
-                >
-                  Ver historial
                 </Button>
               </div>
             )}

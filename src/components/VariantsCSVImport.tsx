@@ -19,11 +19,11 @@ import type { Color } from '@/types/color'
 import { Upload, Download } from 'lucide-react'
 
 // Required columns; product_slug is optional
-const REQUIRED_HEADERS = ['color_sku', 'stock', 'initial_cost']
+const REQUIRED_HEADERS = ['color_sku', 'stock']
 
 const EXAMPLE_ROWS = [
-  ['ROJO', '10', '5000', 'mono-rojo'],
-  ['AZUL', '5', '5000', ''],
+  ['ROJO', '10', 'mono-rojo'],
+  ['AZUL', '5', ''],
 ]
 
 interface ParsedRow {
@@ -41,8 +41,7 @@ function parseRow(
 
   const colorSKU = get(0)
   const stockRaw = get(1)
-  const costRaw = get(2)
-  const slug = hasSlugCol ? get(3) : ''
+  const slug = hasSlugCol ? get(2) : ''
 
   const empty = {} as BulkVariantInput
 
@@ -53,15 +52,10 @@ function parseRow(
     return { index, data: empty, error: 'stock debe ser un número mayor o igual a 0' }
   }
 
-  const initial_cost = parseFloat(costRaw)
-  if (costRaw === '' || isNaN(initial_cost) || initial_cost < 0) {
-    return { index, data: empty, error: 'initial_cost debe ser un número mayor o igual a 0' }
-  }
-
   // color_id will be resolved after we fetch colors; use placeholder
   return {
     index,
-    data: { color_id: '', stock, initial_cost, _slug: slug || undefined, _colorSKU: colorSKU },
+    data: { color_id: '', stock, _slug: slug || undefined, _colorSKU: colorSKU },
     error: null,
   }
 }
@@ -230,7 +224,7 @@ export const VariantsCSVImport = ({
             {fileName ? fileName : 'Haz clic para seleccionar un archivo CSV'}
           </p>
           <p className="mt-1 text-xs text-muted-foreground">
-            Requerido: color_sku, stock, initial_cost — Opcional: product_slug
+            Requerido: color_sku, stock — Opcional: product_slug
           </p>
           <input
             ref={fileInputRef}
@@ -266,7 +260,6 @@ export const VariantsCSVImport = ({
                   <TableHead>Fila</TableHead>
                   <TableHead>Color</TableHead>
                   <TableHead className="text-right">Stock</TableHead>
-                  <TableHead className="text-right">Costo Inicial</TableHead>
                   {hasSlugCol && <TableHead>Producto</TableHead>}
                   <TableHead>Estado</TableHead>
                 </TableRow>
@@ -287,9 +280,6 @@ export const VariantsCSVImport = ({
                     </TableCell>
                     <TableCell className="text-right">
                       {row.error ? '—' : row.data.stock}
-                    </TableCell>
-                    <TableCell className="text-right">
-                      {row.error ? '—' : `$${row.data.initial_cost.toLocaleString('es-CO')}`}
                     </TableCell>
                     {hasSlugCol && (
                       <TableCell className="text-sm text-muted-foreground">

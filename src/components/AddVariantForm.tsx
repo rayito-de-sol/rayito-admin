@@ -14,7 +14,6 @@ interface AddVariantFormProps {
     color_id: string
     size_id?: string
     stock: number
-    initial_cost: number
     images: VariantImage[]
   }) => Promise<void>
   onCancel: () => void
@@ -30,7 +29,6 @@ export const AddVariantForm = ({
     color_id: '',
     size_id: '',
     stock: '',
-    initial_cost: '',
   })
 
   const [images, setImages] = useState<VariantImage[]>([
@@ -93,12 +91,6 @@ export const AddVariantForm = ({
       return
     }
 
-    const cost = parseFloat(formData.initial_cost)
-    if (isNaN(cost) || cost < 0) {
-      setError('El costo debe ser mayor o igual a cero')
-      return
-    }
-
     const validImages = images.filter((img) => img.url.trim().length > 0)
 
     try {
@@ -107,7 +99,6 @@ export const AddVariantForm = ({
         color_id: formData.color_id,
         size_id: formData.size_id || undefined,
         stock,
-        initial_cost: cost,
         images: validImages,
       })
     } catch (err) {
@@ -175,24 +166,6 @@ export const AddVariantForm = ({
           type="number"
           min="0"
           value={formData.stock}
-          onChange={handleChange}
-          required
-          disabled={loading}
-        />
-      </div>
-
-      {/* Initial Cost */}
-      <div>
-        <Label htmlFor="initial_cost" className="mb-2">
-          Costo Inicial *
-        </Label>
-        <Input
-          id="initial_cost"
-          name="initial_cost"
-          type="number"
-          min="0"
-          step="0.01"
-          value={formData.initial_cost}
           onChange={handleChange}
           required
           disabled={loading}

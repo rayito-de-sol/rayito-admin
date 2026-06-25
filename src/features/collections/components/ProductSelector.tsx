@@ -138,8 +138,8 @@ export const ProductSelector = ({
                     </div>
                   </div>
                   <div className="ml-4 text-sm text-muted-foreground">
-                    {variant.current_cost !== undefined &&
-                      formatColombiaCurrency(variant.current_cost)}
+                    {variant.product_price !== undefined &&
+                      formatColombiaCurrency(variant.product_price)}
                   </div>
                 </button>
               ))}

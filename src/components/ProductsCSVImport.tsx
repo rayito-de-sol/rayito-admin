@@ -32,6 +32,7 @@ const CSV_HEADERS = [
   'description',
   'category',
   'initial_price',
+  'initial_cost',
   'tags',
 ]
 
@@ -42,6 +43,7 @@ const EXAMPLE_ROW = [
   'Turbante de tela premium',
   'turbante',
   '25000',
+  '12000',
   'nuevo;verano',
 ]
 
@@ -53,6 +55,7 @@ interface BulkProductInput {
   category: string
   tags: string
   initial_price: number
+  initial_cost: number
 }
 
 interface ParsedRow {
@@ -75,7 +78,8 @@ function parseRow(rawValues: string[], index: number): ParsedRow {
   const description = get(3)
   const category = get(4)
   const priceRaw = get(5)
-  const tags = get(6)
+  const costRaw = get(6)
+  const tags = get(7)
 
   const emptyData = {} as BulkProductInput
 
@@ -100,6 +104,14 @@ function parseRow(rawValues: string[], index: number): ParsedRow {
       error: 'initial_price debe ser un número mayor o igual a 0',
     }
 
+  const initialCost = parseFloat(costRaw)
+  if (costRaw === '' || isNaN(initialCost) || initialCost < 0)
+    return {
+      index,
+      data: emptyData,
+      error: 'initial_cost debe ser un número mayor o igual a 0',
+    }
+
   return {
     index,
     data: {
@@ -110,6 +122,7 @@ function parseRow(rawValues: string[], index: number): ParsedRow {
       category: category.toLowerCase(),
       tags,
       initial_price: initialPrice,
+      initial_cost: initialCost,
     },
     error: null,
   }
@@ -273,6 +286,7 @@ export const ProductsCSVImport = ({
                   <TableHead>SKU Prefijo</TableHead>
                   <TableHead>Categoría</TableHead>
                   <TableHead className="text-right">Precio</TableHead>
+                  <TableHead className="text-right">Costo</TableHead>
                   <TableHead>Estado</TableHead>
                 </TableRow>
               </TableHeader>
@@ -293,6 +307,11 @@ export const ProductsCSVImport = ({
                       {row.error
                         ? '—'
                         : `$${row.data.initial_price.toLocaleString('es-CO')}`}
+                    </TableCell>
+                    <TableCell className="text-right">
+                      {row.error
+                        ? '—'
+                        : `$${row.data.initial_cost.toLocaleString('es-CO')}`}
                     </TableCell>
                     <TableCell>
                       {row.error ? (

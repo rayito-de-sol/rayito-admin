@@ -21,7 +21,6 @@ interface FormState {
   color_id: string
   size_id: string
   stock: string
-  initial_cost: string
   product_id: string
 }
 
@@ -29,7 +28,6 @@ const emptyForm = (): FormState => ({
   color_id: '',
   size_id: '',
   stock: '0',
-  initial_cost: '0',
   product_id: '',
 })
 
@@ -81,17 +79,15 @@ export const VariantCreateModal = ({
 
     const color_id = form.color_id
     const stock = Number(form.stock)
-    const initial_cost = Number(form.initial_cost)
 
     if (!color_id) { setError('El color es requerido'); return }
     if (isNaN(stock) || stock < 0) { setError('El stock debe ser mayor o igual a cero'); return }
-    if (isNaN(initial_cost) || initial_cost < 0) { setError('El costo debe ser mayor o igual a cero'); return }
 
     setLoading(true)
     setError(null)
     try {
       const payload: Parameters<typeof variantService.bulkCreate>[0]['variants'][0] = {
-        color_id, stock, initial_cost,
+        color_id, stock,
       }
       if (form.size_id) payload.size_id = form.size_id
       if (form.product_id) payload.product_id = form.product_id
@@ -182,19 +178,6 @@ export const VariantCreateModal = ({
                 min="0"
                 value={form.stock}
                 onChange={(e) => handleChange('stock', e.target.value)}
-                disabled={loading}
-              />
-            </div>
-
-            <div>
-              <Label htmlFor="vc-cost" className="mb-2">Costo Inicial *</Label>
-              <Input
-                id="vc-cost"
-                type="number"
-                min="0"
-                step="0.01"
-                value={form.initial_cost}
-                onChange={(e) => handleChange('initial_cost', e.target.value)}
                 disabled={loading}
               />
             </div>

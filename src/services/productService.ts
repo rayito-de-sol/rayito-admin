@@ -4,6 +4,7 @@ import type {
   CreateProductRequest,
   UpdateProductRequest,
   ProductPrice,
+  ProductCost,
   SetCostResponse,
   SetStockResponse,
   ProductStatus,
@@ -196,6 +197,41 @@ export const productService = {
   },
 
   /**
+   * Update product cost (creates new cost record)
+   * @param id Product UUID
+   * @param amount New cost amount
+   * @returns Updated product
+   */
+  async updateCost(id: string, amount: number): Promise<Product> {
+    try {
+      const response = await apiClient.patch<Product>(`/products/${id}/cost`, {
+        amount,
+      })
+      return response.data
+    } catch (error) {
+      const message = getProductErrorMessage(error)
+      throw new Error(message)
+    }
+  },
+
+  /**
+   * Get product cost history
+   * @param id Product UUID
+   * @returns Array of cost records
+   */
+  async getCostHistory(id: string): Promise<ProductCost[]> {
+    try {
+      const response = await apiClient.get<ProductCost[]>(
+        `/products/${id}/cost-history`
+      )
+      return response.data
+    } catch (error) {
+      const message = getProductErrorMessage(error)
+      throw new Error(message)
+    }
+  },
+
+  /**
    * Get computed set cost
    * @param id Set product UUID
    * @returns Computed cost breakdown
@@ -243,6 +279,7 @@ export const productService = {
       category: string
       tags: string
       initial_price: number
+      initial_cost: number
     }[]
   ): Promise<BulkImportProductResult> {
     try {

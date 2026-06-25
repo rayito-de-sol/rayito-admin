@@ -57,6 +57,7 @@ export interface Product {
     current_cost: number
   }
   current_price?: number
+  current_cost?: number
   variants?: any[] // Will be properly typed when Variant type is available
   sizes?: any[] // Will be properly typed when Size type is available
 }
@@ -82,6 +83,7 @@ export interface CreateProductRequest {
   tags?: string[]
   package_id?: string | null
   initial_price: number
+  initial_cost: number
   set_items?: SetItemRequest[]
 }
 
@@ -141,6 +143,17 @@ export interface ProductPrice {
   product_id: string
   amount: number
   currency: string
+  status: 'active' | 'superseded'
+  created_at: string
+}
+
+/**
+ * Cost record
+ */
+export interface ProductCost {
+  id: string
+  product_id: string
+  amount: number
   status: 'active' | 'superseded'
   created_at: string
 }

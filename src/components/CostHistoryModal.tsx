@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Button } from './ui/button'
 import { Card } from './ui/card'
-import type { VariantCost } from '@/types/variant'
+import type { ProductCost } from '@/types/product'
 import type { PackageCost } from '@/types/package'
 import { formatCurrency } from '@/utils/currency'
 import { formatDateTime } from '@/utils/date'
@@ -9,12 +9,12 @@ import { formatDateTime } from '@/utils/date'
 interface CostHistoryModalProps {
   isOpen: boolean
   onClose: () => void
-  entityType: 'variant' | 'package'
+  entityType: 'product' | 'package'
   entityId: string
-  fetchHistory: (id: string) => Promise<VariantCost[] | PackageCost[]>
+  fetchHistory: (id: string) => Promise<ProductCost[] | PackageCost[]>
 }
 
-type CostRecord = VariantCost | PackageCost
+type CostRecord = ProductCost | PackageCost
 
 /**
  * CostHistoryModal
@@ -67,7 +67,7 @@ export const CostHistoryModal = ({
 
   if (!isOpen) return null
 
-  const entityName = entityType === 'variant' ? 'variante' : 'empaque'
+  const entityName = entityType === 'product' ? 'producto' : 'empaque'
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">

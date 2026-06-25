@@ -14,7 +14,6 @@ type View = 'form' | 'import'
 interface RowError {
   color_id?: string
   stock?: string
-  initial_cost?: string
 }
 
 interface Row extends BulkVariantInput {
@@ -25,7 +24,6 @@ const emptyRow = (id: number): Row => ({
   id,
   color_id: '',
   stock: 0,
-  initial_cost: 0,
 })
 
 let nextId = 1
@@ -46,7 +44,7 @@ export const VariantsBulkCreatePage = () => {
     setRows((prev) =>
       prev.map((row) => {
         if (row.id !== id) return row
-        if (field === 'stock' || field === 'initial_cost') {
+        if (field === 'stock') {
           return { ...row, [field]: value === '' ? 0 : Number(value) }
         }
         return { ...row, [field]: value }
@@ -92,10 +90,6 @@ export const VariantsBulkCreatePage = () => {
         rowErr.stock = 'El stock debe ser mayor o igual a cero'
         valid = false
       }
-      if (row.initial_cost < 0) {
-        rowErr.initial_cost = 'El costo debe ser mayor o igual a cero'
-        valid = false
-      }
       if (Object.keys(rowErr).length > 0) {
         errors[row.id] = rowErr
       }
@@ -114,11 +108,10 @@ export const VariantsBulkCreatePage = () => {
     try {
       setLoading(true)
       const created = await variantService.bulkCreate({
-        variants: rows.map(({ color_id, size_id, stock, initial_cost }) => ({
+        variants: rows.map(({ color_id, size_id, stock }) => ({
           color_id,
           size_id,
           stock,
-          initial_cost,
         })),
       })
       toast.success(`${created.length} variante${created.length !== 1 ? 's' : ''} creada${created.length !== 1 ? 's' : ''} exitosamente`)
@@ -174,7 +167,6 @@ export const VariantsBulkCreatePage = () => {
                   <th className="px-4 py-3 text-left font-medium text-foreground">#</th>
                   <th className="px-4 py-3 text-left font-medium text-foreground">Color *</th>
                   <th className="px-4 py-3 text-left font-medium text-foreground">Stock *</th>
-                  <th className="px-4 py-3 text-left font-medium text-foreground">Costo Inicial *</th>
                   <th className="px-4 py-3"></th>
                 </tr>
               </thead>
@@ -221,26 +213,6 @@ export const VariantsBulkCreatePage = () => {
                         {rowErrors[row.id]?.stock && (
                           <p className="mt-1 text-xs text-destructive">
                             {rowErrors[row.id]?.stock}
-                          </p>
-                        )}
-                      </div>
-                    </td>
-
-                    {/* Initial Cost */}
-                    <td className="px-4 py-3">
-                      <div className="min-w-[120px]">
-                        <Input
-                          type="number"
-                          min="0"
-                          step="0.01"
-                          value={row.initial_cost}
-                          onChange={(e) => updateRow(row.id, 'initial_cost', e.target.value)}
-                          disabled={loading}
-                          className={rowErrors[row.id]?.initial_cost ? 'border-destructive' : ''}
-                        />
-                        {rowErrors[row.id]?.initial_cost && (
-                          <p className="mt-1 text-xs text-destructive">
-                            {rowErrors[row.id]?.initial_cost}
                           </p>
                         )}
                       </div>

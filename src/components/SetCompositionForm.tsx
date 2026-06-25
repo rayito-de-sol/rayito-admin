@@ -3,7 +3,6 @@ import { Button } from './ui/button'
 import { Input } from './ui/input'
 import { Label } from './ui/label'
 import type { Variant } from '@/types/variant'
-import { formatCurrency } from '@/utils/currency'
 
 interface SetComponent {
   variant_id: string
@@ -109,9 +108,6 @@ export const SetCompositionForm = ({
       {/* Component List */}
       <div className="space-y-3">
         {components.map((component) => {
-          const lineTotal =
-            component.quantity * (component.variant.current_cost || 0)
-
           return (
             <div
               key={component.variant_id}
@@ -132,18 +128,6 @@ export const SetCompositionForm = ({
                     <span className="font-medium">Cantidad:</span>{' '}
                     {component.quantity}
                   </div>
-                  {component.variant.current_cost !== undefined && (
-                    <>
-                      <div>
-                        <span className="font-medium">Costo unitario:</span>{' '}
-                        {formatCurrency(component.variant.current_cost)}
-                      </div>
-                      <div>
-                        <span className="font-medium">Subtotal:</span>{' '}
-                        {formatCurrency(lineTotal)}
-                      </div>
-                    </>
-                  )}
                 </div>
               </div>
               {canEdit && (
