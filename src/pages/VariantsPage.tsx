@@ -131,8 +131,9 @@ export const VariantsPage = () => {
                 <Table>
                   <TableHeader>
                     <TableRow>
-                      <TableHead>Color</TableHead>
                       <TableHead>SKU</TableHead>
+                      <TableHead>Color</TableHead>
+                      <TableHead>Talla</TableHead>
                       <TableHead>Producto</TableHead>
                       <TableHead className="text-right">Stock</TableHead>
                     </TableRow>
@@ -140,12 +141,13 @@ export const VariantsPage = () => {
                   <TableBody>
                     {variants.map((variant) => (
                       <TableRow key={variant.id}>
-                        <TableCell className="font-medium">{variant.color?.name ?? '—'}</TableCell>
                         <TableCell className="font-mono text-sm">
                           {[variant.product_sku, variant.color?.sku, variant.size?.sku]
                             .filter(Boolean)
                             .join('-') || '—'}
                         </TableCell>
+                        <TableCell className="font-medium">{variant.color?.name ?? '—'}</TableCell>
+                        <TableCell className="text-muted-foreground">{variant.size?.label ?? 'Sin talla'}</TableCell>
                         <TableCell className="text-muted-foreground">
                           {variant.product_name ?? <span className="italic">Sin asignar</span>}
                         </TableCell>
