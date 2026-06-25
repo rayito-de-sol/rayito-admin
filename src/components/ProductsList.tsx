@@ -217,7 +217,7 @@ export const ProductsList = ({
             <TableHeader>
               <TableRow>
                 <TableHead>Nombre</TableHead>
-                <TableHead>Slug</TableHead>
+                <TableHead>SKU</TableHead>
                 <TableHead>Categoría</TableHead>
                 <TableHead>Tipo</TableHead>
                 <TableHead>Estado</TableHead>
@@ -232,7 +232,7 @@ export const ProductsList = ({
                   className="cursor-pointer hover:bg-muted/50"
                 >
                   <TableCell className="font-medium">{product.name}</TableCell>
-                  <TableCell className="font-mono text-xs text-muted-foreground">{product.slug}</TableCell>
+                  <TableCell className="font-mono text-xs text-muted-foreground">{product.sku}</TableCell>
                   <TableCell>
                     {categoryLabels[product.category] || product.category}
                   </TableCell>
