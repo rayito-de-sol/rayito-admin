@@ -3,6 +3,8 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { colorService } from '@/services/colorService'
+import { RawSortableTh } from '@/components/RawSortableTh'
+import { useSort } from '@/hooks/useSort'
 import type { Color } from '@/types/color'
 import { useAuth } from '@/hooks/useAuth'
 import { Pencil, Trash2, X, Check } from 'lucide-react'
@@ -14,6 +16,11 @@ export const ColorsPage = () => {
   const [colors, setColors] = useState<Color[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+
+  const { sorted: sortedColors, sortKey, sortDir, toggleSort } = useSort(colors, {
+    name: (c) => c.name,
+    sku: (c) => c.sku,
+  })
 
   const [newName, setNewName] = useState('')
   const [newSKU, setNewSKU] = useState('')
@@ -153,13 +160,13 @@ export const ColorsPage = () => {
           <table className="w-full text-sm">
             <thead className="border-b bg-muted/30">
               <tr>
-                <th className="px-4 py-3 text-left font-medium">Nombre</th>
-                <th className="px-4 py-3 text-left font-medium">SKU</th>
+                <RawSortableTh label="Nombre" sortKey="name" activeKey={sortKey} direction={sortDir} onSort={toggleSort} />
+                <RawSortableTh label="SKU" sortKey="sku" activeKey={sortKey} direction={sortDir} onSort={toggleSort} />
                 {canEdit && <th className="px-4 py-3 text-right font-medium">Acciones</th>}
               </tr>
             </thead>
             <tbody>
-              {colors.map((color) => (
+              {sortedColors.map((color) => (
                 <tr key={color.id} className="border-b last:border-0 hover:bg-muted/20">
                   {editingId === color.id ? (
                     <>

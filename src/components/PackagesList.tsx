@@ -5,11 +5,12 @@ import {
   Table,
   TableBody,
   TableCell,
-  TableHead,
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
 import { LoadingSpinner } from '@/components/LoadingSpinner'
+import { SortableHead } from '@/components/SortableHead'
+import { useSort } from '@/hooks/useSort'
 import { Plus } from 'lucide-react'
 import { formatCurrency } from '@/utils/currency'
 
@@ -36,6 +37,16 @@ export const PackagesList = ({
   onRetry,
   canEdit,
 }: PackagesListProps) => {
+  const { sorted: sortedPackages, sortKey, sortDir, toggleSort } = useSort(
+    packages,
+    {
+      name: (p) => p.name,
+      description: (p) => p.description,
+      cost: (p) => p.current_cost,
+      usage: (p) => p.usage_count ?? 0,
+    }
+  )
+
   // Loading state
   if (loading) {
     return (
@@ -96,14 +107,14 @@ export const PackagesList = ({
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Nombre</TableHead>
-              <TableHead>Descripción</TableHead>
-              <TableHead className="text-right">Costo Actual</TableHead>
-              <TableHead className="text-right">Uso</TableHead>
+              <SortableHead label="Nombre" sortKey="name" activeKey={sortKey} direction={sortDir} onSort={toggleSort} />
+              <SortableHead label="Descripción" sortKey="description" activeKey={sortKey} direction={sortDir} onSort={toggleSort} />
+              <SortableHead label="Costo Actual" sortKey="cost" activeKey={sortKey} direction={sortDir} onSort={toggleSort} align="right" />
+              <SortableHead label="Uso" sortKey="usage" activeKey={sortKey} direction={sortDir} onSort={toggleSort} align="right" />
             </TableRow>
           </TableHeader>
           <TableBody>
-            {packages.map((pkg) => (
+            {sortedPackages.map((pkg) => (
               <TableRow
                 key={pkg.id}
                 onClick={() => onPackageClick(pkg.id)}

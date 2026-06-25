@@ -5,12 +5,13 @@ import {
   Table,
   TableBody,
   TableCell,
-  TableHead,
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
 import { LoadingSpinner } from '@/components/LoadingSpinner'
 import { StatusBadge } from '@/components/StatusBadge'
+import { SortableHead } from '@/components/SortableHead'
+import { useSort } from '@/hooks/useSort'
 import { Plus, Upload, X } from 'lucide-react'
 import { formatCurrency } from '@/utils/currency'
 
@@ -64,6 +65,18 @@ export const ProductsList = ({
     diadema: 'Diadema',
     otro: 'Otro',
   }
+
+  const { sorted: sortedProducts, sortKey, sortDir, toggleSort } = useSort(
+    products,
+    {
+      sku: (p) => p.sku,
+      name: (p) => p.name,
+      category: (p) => categoryLabels[p.category] || p.category,
+      status: (p) => p.status,
+      price: (p) => p.current_price,
+      description: (p) => p.description,
+    }
+  )
 
   // Check if any filter is active
   const hasActiveFilters =
@@ -216,16 +229,16 @@ export const ProductsList = ({
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>SKU</TableHead>
-                <TableHead>Nombre</TableHead>
-                <TableHead>Categoría</TableHead>
-                <TableHead>Estado</TableHead>
-                <TableHead className="text-right">Precio</TableHead>
-                <TableHead>Descripción</TableHead>
+                <SortableHead label="SKU" sortKey="sku" activeKey={sortKey} direction={sortDir} onSort={toggleSort} />
+                <SortableHead label="Nombre" sortKey="name" activeKey={sortKey} direction={sortDir} onSort={toggleSort} />
+                <SortableHead label="Categoría" sortKey="category" activeKey={sortKey} direction={sortDir} onSort={toggleSort} />
+                <SortableHead label="Estado" sortKey="status" activeKey={sortKey} direction={sortDir} onSort={toggleSort} />
+                <SortableHead label="Precio" sortKey="price" activeKey={sortKey} direction={sortDir} onSort={toggleSort} align="right" />
+                <SortableHead label="Descripción" sortKey="description" activeKey={sortKey} direction={sortDir} onSort={toggleSort} />
               </TableRow>
             </TableHeader>
             <TableBody>
-              {products.map((product) => (
+              {sortedProducts.map((product) => (
                 <TableRow
                   key={product.id}
                   onClick={() => onProductClick(product.id)}

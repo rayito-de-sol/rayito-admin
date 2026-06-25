@@ -6,16 +6,20 @@ import {
   Table,
   TableBody,
   TableCell,
-  TableHead,
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
 import { LoadingSpinner } from '@/components/LoadingSpinner'
 import { VariantCreateModal } from '@/components/VariantCreateModal'
 import { VariantsCSVImport } from '@/components/VariantsCSVImport'
+import { SortableHead } from '@/components/SortableHead'
+import { useSort } from '@/hooks/useSort'
 import { variantService } from '@/services/variantService'
 import { useAuth } from '@/hooks/useAuth'
 import type { Variant } from '@/types/variant'
+
+const variantSKU = (v: Variant) =>
+  [v.product_sku, v.color?.sku, v.size?.sku].filter(Boolean).join('-')
 
 type View = 'list' | 'import'
 
@@ -28,6 +32,17 @@ export const VariantsPage = () => {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [showCreateModal, setShowCreateModal] = useState(false)
+
+  const { sorted: sortedVariants, sortKey, sortDir, toggleSort } = useSort(
+    variants,
+    {
+      sku: (v) => variantSKU(v),
+      color: (v) => v.color?.name,
+      size: (v) => v.size?.label,
+      product: (v) => v.product_name,
+      stock: (v) => v.stock,
+    }
+  )
 
   const fetchVariants = async (signal?: AbortSignal) => {
     try {
@@ -131,15 +146,15 @@ export const VariantsPage = () => {
                 <Table>
                   <TableHeader>
                     <TableRow>
-                      <TableHead>SKU</TableHead>
-                      <TableHead>Color</TableHead>
-                      <TableHead>Talla</TableHead>
-                      <TableHead>Producto</TableHead>
-                      <TableHead className="text-right">Stock</TableHead>
+                      <SortableHead label="SKU" sortKey="sku" activeKey={sortKey} direction={sortDir} onSort={toggleSort} />
+                      <SortableHead label="Color" sortKey="color" activeKey={sortKey} direction={sortDir} onSort={toggleSort} />
+                      <SortableHead label="Talla" sortKey="size" activeKey={sortKey} direction={sortDir} onSort={toggleSort} />
+                      <SortableHead label="Producto" sortKey="product" activeKey={sortKey} direction={sortDir} onSort={toggleSort} />
+                      <SortableHead label="Stock" sortKey="stock" activeKey={sortKey} direction={sortDir} onSort={toggleSort} align="right" />
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {variants.map((variant) => (
+                    {sortedVariants.map((variant) => (
                       <TableRow key={variant.id}>
                         <TableCell className="font-mono text-sm">
                           {[variant.product_sku, variant.color?.sku, variant.size?.sku]
