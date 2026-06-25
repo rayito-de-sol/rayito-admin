@@ -361,23 +361,26 @@ export const VariantsCSVImport = ({
       )}
 
       {/* Actions */}
-      {rows.length > 0 && !headerError && (
-        <div className="flex justify-end gap-3">
-          <Button variant="outline" onClick={onCancel} disabled={submitting}>
-            Cancelar
-          </Button>
+      <div className="flex justify-end gap-4">
+        <Button variant="outline" onClick={onCancel} disabled={submitting}>
+          {createdCount !== null ? 'Volver' : 'Cancelar'}
+        </Button>
+        {createdCount === null && (
           <Button
             onClick={handleSubmit}
             disabled={submitting || validRows.length === 0}
           >
             {submitting ? (
-              <><LoadingSpinner className="mr-2 h-4 w-4" /> Creando...</>
+              <>
+                <LoadingSpinner size="sm" className="mr-2" />
+                Importando...
+              </>
             ) : (
-              `Crear ${validRows.length} variante(s)`
+              `Importar ${validRows.length} variante${validRows.length !== 1 ? 's' : ''}`
             )}
           </Button>
-        </div>
-      )}
+        )}
+      </div>
     </div>
   )
 }
