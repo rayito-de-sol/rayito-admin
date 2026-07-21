@@ -10,6 +10,8 @@ import { StoresPage } from '@/pages/StoresPage'
 import { ProductsPage } from '@/pages/ProductsPage'
 import { PackagesPage } from '@/pages/PackagesPage'
 import { VentasPage } from '@/pages/VentasPage'
+import { GastosPage } from '@/pages/GastosPage'
+import { EstadosFinancierosPage } from '@/pages/EstadosFinancierosPage'
 import { VariantsPage } from '@/pages/VariantsPage'
 import { SizesPage } from '@/pages/SizesPage'
 import { ColorsPage } from '@/pages/ColorsPage'
@@ -95,6 +97,28 @@ function App() {
             <ProtectedRoute>
               <Layout>
                 <VentasPage />
+              </Layout>
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/finanzas/gastos"
+          element={
+            <ProtectedRoute>
+              <Layout>
+                <GastosPage />
+              </Layout>
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/finanzas/estados"
+          element={
+            <ProtectedRoute>
+              <Layout>
+                <EstadosFinancierosPage />
               </Layout>
             </ProtectedRoute>
           }

@@ -9,6 +9,8 @@ import {
   Box,
   ShoppingBag,
   Palette,
+  Receipt,
+  FileSpreadsheet,
   ChevronLeft,
   ChevronRight,
   ChevronDown,
@@ -26,6 +28,7 @@ interface NavigationProps {
  */
 export const Navigation = ({ isCollapsed, onToggle }: NavigationProps) => {
   const [productsOpen, setProductsOpen] = useState(true)
+  const [financesOpen, setFinancesOpen] = useState(true)
 
   const linkClass = ({ isActive }: { isActive: boolean }) =>
     `flex items-center ${isCollapsed ? 'justify-center' : 'gap-3'} rounded-lg px-3 py-2 text-sm font-medium transition-colors ${
@@ -88,6 +91,53 @@ export const Navigation = ({ isCollapsed, onToggle }: NavigationProps) => {
             {!isCollapsed && <span>Ventas</span>}
           </NavLink>
         </li>
+
+        {/* Finanzas group */}
+        {isCollapsed ? (
+          <li className="pt-2">
+            <div className="mx-auto h-px w-6 bg-white/20" />
+          </li>
+        ) : (
+          <li className="pt-2">
+            <button
+              onClick={() => setFinancesOpen((open) => !open)}
+              className="flex w-full items-center justify-between rounded-lg px-3 py-2 text-xs font-semibold uppercase tracking-wider text-white/60 transition-colors hover:bg-white/10 hover:text-white"
+              aria-expanded={financesOpen}
+            >
+              <span>Finanzas</span>
+              <ChevronDown
+                className={`h-4 w-4 flex-shrink-0 transition-transform ${
+                  financesOpen ? '' : '-rotate-90'
+                }`}
+              />
+            </button>
+          </li>
+        )}
+
+        {(isCollapsed || financesOpen) && (
+          <>
+            <li>
+              <NavLink
+                to="/finanzas/gastos"
+                className={linkClass}
+                title={isCollapsed ? 'Gastos' : undefined}
+              >
+                <Receipt className="h-4 w-4 flex-shrink-0" />
+                {!isCollapsed && <span>Gastos</span>}
+              </NavLink>
+            </li>
+            <li>
+              <NavLink
+                to="/finanzas/estados"
+                className={linkClass}
+                title={isCollapsed ? 'Estados financieros' : undefined}
+              >
+                <FileSpreadsheet className="h-4 w-4 flex-shrink-0" />
+                {!isCollapsed && <span>Estados</span>}
+              </NavLink>
+            </li>
+          </>
+        )}
 
         {/* Productos group */}
         {isCollapsed ? (
