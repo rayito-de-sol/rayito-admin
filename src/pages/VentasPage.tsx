@@ -3,12 +3,13 @@ import { Button } from '@/components/ui/button'
 import { SalesSummaryCards } from '@/components/SalesSummaryCards'
 import { OrdersList } from '@/components/OrdersList'
 import { ManualOrderModal } from '@/components/ManualOrderModal'
+import { OrdersCSVImport } from '@/components/OrdersCSVImport'
 import { ordersService, type OrderFilters } from '@/services/ordersService'
 import { shopifyService } from '@/services/shopifyService'
 import type { Order, OrdersSummary, OrderSource } from '@/types/order'
 import { useAuthStore } from '@/stores/useAuthStore'
 import { toast } from '@/utils/toast'
-import { RefreshCw, Plus, Settings } from 'lucide-react'
+import { RefreshCw, Plus, Settings, Upload } from 'lucide-react'
 
 type SourceFilter = OrderSource | 'all'
 
@@ -37,6 +38,7 @@ export const VentasPage = () => {
   const [syncing, setSyncing] = useState(false)
   const [settingUp, setSettingUp] = useState(false)
   const [showOrderModal, setShowOrderModal] = useState(false)
+  const [showImport, setShowImport] = useState(false)
 
   const fetchOrders = useCallback(
     async (signal?: AbortSignal) => {
@@ -124,6 +126,24 @@ export const VentasPage = () => {
     fetchSummary()
   }
 
+  if (showImport) {
+    return (
+      <div className="space-y-6 p-6">
+        <h1 className="text-2xl font-bold text-[var(--color-foreground)]">
+          Importar ventas históricas
+        </h1>
+        <OrdersCSVImport
+          onSuccess={() => {
+            toast.success('Ventas importadas')
+            fetchOrders()
+            fetchSummary()
+          }}
+          onCancel={() => setShowImport(false)}
+        />
+      </div>
+    )
+  }
+
   return (
     <div className="space-y-6 p-6">
       {/* Header */}
@@ -149,6 +169,14 @@ export const VentasPage = () => {
               >
                 <RefreshCw className={`mr-2 h-4 w-4 ${syncing ? 'animate-spin' : ''}`} />
                 {syncing ? 'Sincronizando...' : 'Sincronizar Shopify'}
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setShowImport(true)}
+              >
+                <Upload className="mr-2 h-4 w-4" />
+                Importar CSV
               </Button>
               <Button size="sm" onClick={() => setShowOrderModal(true)}>
                 <Plus className="mr-2 h-4 w-4" />

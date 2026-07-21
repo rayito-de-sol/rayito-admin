@@ -76,4 +76,35 @@ export const ordersService = {
       throw new Error(getOrderErrorMessage(error))
     }
   },
+
+  async bulkCreateOrders(rows: HistoricalOrderRow[]): Promise<BulkOrdersResult> {
+    try {
+      const res = await apiClient.post<BulkOrdersResult>('/orders/bulk', { rows })
+      return res.data
+    } catch (error) {
+      // 422 = errores de validación por fila; devolver el detalle para mostrarlo
+      if (error instanceof AxiosError && error.response?.status === 422) {
+        return error.response.data as BulkOrdersResult
+      }
+      throw new Error(getOrderErrorMessage(error))
+    }
+  },
+}
+
+// Historical sales import (CSV) types
+export interface HistoricalOrderRow {
+  date: string // YYYY-MM-DD
+  source: OrderSource
+  reference?: string
+  sku: string
+  quantity: number
+  unit_price: number
+  customer_name?: string
+  notes?: string
+}
+
+export interface BulkOrdersResult {
+  orders_created: number
+  skipped: number
+  errors: { row: number; error: string }[]
 }
