@@ -9,7 +9,7 @@ import {
 } from '@/components/ui/table'
 import { formatCurrency } from '@/utils/currency'
 import { MONTH_NAMES } from './MonthRangePicker'
-import type { CashFlow } from '../types/finance.types'
+import type { CashFlow, CashFlowMonth } from '../types/finance.types'
 
 interface CashFlowTableProps {
   cashFlow: CashFlow
@@ -18,74 +18,94 @@ interface CashFlowTableProps {
 const netClass = (value: number) =>
   value < 0 ? 'text-destructive font-medium' : 'font-medium'
 
+interface ConceptRow {
+  label: string
+  getValue: (m: CashFlowMonth) => number
+  rowClass?: string
+  cellClass?: (value: number) => string
+  // El acumulado no tiene total del periodo (es un saldo, no una suma)
+  showTotal?: boolean
+}
+
 /**
  * CashFlowTable
- * Flujo de caja mensual (método directo, base efectivo).
+ * Flujo de caja (método directo, base efectivo):
+ * conceptos como filas y meses como columnas.
  */
-export const CashFlowTable = ({ cashFlow }: CashFlowTableProps) => (
-  <Card className="p-0 overflow-hidden">
-    <div className="overflow-x-auto">
-      <Table>
-        <TableHeader>
-          <TableRow>
-            <TableHead>Mes</TableHead>
-            <TableHead className="text-right">Ventas directas</TableHead>
-            <TableHead className="text-right">Cuentas de cobro</TableHead>
-            <TableHead className="text-right">Entradas</TableHead>
-            <TableHead className="text-right">Salidas (gastos)</TableHead>
-            <TableHead className="text-right">Neto</TableHead>
-            <TableHead className="text-right">Acumulado</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {cashFlow.months.map((m) => (
-            <TableRow key={`${m.year}-${m.month}`}>
-              <TableCell>
-                {MONTH_NAMES[m.month - 1]} {m.year}
-              </TableCell>
-              <TableCell className="text-right">
-                {formatCurrency(m.sales_receipts)}
-              </TableCell>
-              <TableCell className="text-right">
-                {formatCurrency(m.collection_receipts)}
-              </TableCell>
-              <TableCell className="text-right">
-                {formatCurrency(m.total_in)}
-              </TableCell>
-              <TableCell className="text-right">
-                {formatCurrency(m.total_out)}
-              </TableCell>
-              <TableCell className={`text-right ${netClass(m.net)}`}>
-                {formatCurrency(m.net)}
-              </TableCell>
-              <TableCell className={`text-right ${netClass(m.cumulative)}`}>
-                {formatCurrency(m.cumulative)}
-              </TableCell>
+export const CashFlowTable = ({ cashFlow }: CashFlowTableProps) => {
+  const rows: ConceptRow[] = [
+    { label: 'Ventas directas', getValue: (m) => m.sales_receipts },
+    { label: 'Cuentas de cobro', getValue: (m) => m.collection_receipts },
+    {
+      label: 'Entradas',
+      getValue: (m) => m.total_in,
+      rowClass: 'border-t',
+      cellClass: () => 'font-medium',
+    },
+    { label: 'Salidas (gastos)', getValue: (m) => m.total_out },
+    {
+      label: 'Neto',
+      getValue: (m) => m.net,
+      rowClass: 'bg-muted/50',
+      cellClass: (v) => `font-semibold ${netClass(v)}`,
+    },
+    {
+      label: 'Acumulado',
+      getValue: (m) => m.cumulative,
+      cellClass: netClass,
+      showTotal: false,
+    },
+  ]
+
+  return (
+    <Card className="p-0 overflow-hidden">
+      <div className="overflow-x-auto">
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>Concepto</TableHead>
+              {cashFlow.months.map((m) => (
+                <TableHead
+                  key={`${m.year}-${m.month}`}
+                  className="text-right whitespace-nowrap"
+                >
+                  {MONTH_NAMES[m.month - 1]} {m.year}
+                </TableHead>
+              ))}
+              <TableHead className="text-right font-semibold">Total</TableHead>
             </TableRow>
-          ))}
-          <TableRow className="bg-muted/50">
-            <TableCell className="font-semibold">Total</TableCell>
-            <TableCell className="text-right font-semibold">
-              {formatCurrency(cashFlow.totals.sales_receipts)}
-            </TableCell>
-            <TableCell className="text-right font-semibold">
-              {formatCurrency(cashFlow.totals.collection_receipts)}
-            </TableCell>
-            <TableCell className="text-right font-semibold">
-              {formatCurrency(cashFlow.totals.total_in)}
-            </TableCell>
-            <TableCell className="text-right font-semibold">
-              {formatCurrency(cashFlow.totals.total_out)}
-            </TableCell>
-            <TableCell
-              className={`text-right font-semibold ${netClass(cashFlow.totals.net)}`}
-            >
-              {formatCurrency(cashFlow.totals.net)}
-            </TableCell>
-            <TableCell />
-          </TableRow>
-        </TableBody>
-      </Table>
-    </div>
-  </Card>
-)
+          </TableHeader>
+          <TableBody>
+            {rows.map((row) => (
+              <TableRow key={row.label} className={row.rowClass}>
+                <TableCell className="whitespace-nowrap">{row.label}</TableCell>
+                {cashFlow.months.map((m) => {
+                  const value = row.getValue(m)
+                  return (
+                    <TableCell
+                      key={`${m.year}-${m.month}`}
+                      className={`text-right ${row.cellClass?.(value) ?? ''}`}
+                    >
+                      {formatCurrency(value)}
+                    </TableCell>
+                  )
+                })}
+                <TableCell
+                  className={`text-right font-semibold ${
+                    row.showTotal === false
+                      ? ''
+                      : (row.cellClass?.(row.getValue(cashFlow.totals)) ?? '')
+                  }`}
+                >
+                  {row.showTotal === false
+                    ? '—'
+                    : formatCurrency(row.getValue(cashFlow.totals))}
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </div>
+    </Card>
+  )
+}
