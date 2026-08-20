@@ -1,3 +1,5 @@
+import { useState } from 'react'
+import { ChevronDown, ChevronRight } from 'lucide-react'
 import { Card } from '@/components/ui/card'
 import {
   Table,
@@ -23,6 +25,7 @@ interface ConceptRow {
   getValue: (m: CashFlowMonth) => number
   rowClass?: string
   cellClass?: (value: number) => string
+  indent?: boolean
   // El acumulado no tiene total del periodo (es un saldo, no una suma)
   showTotal?: boolean
 }
@@ -31,17 +34,31 @@ interface ConceptRow {
  * CashFlowTable
  * Flujo de caja (método directo, base efectivo):
  * conceptos como filas y meses como columnas.
+ * "Entradas" es expandible para ver su detalle (ventas directas + cuentas de cobro).
  */
 export const CashFlowTable = ({ cashFlow }: CashFlowTableProps) => {
+  const [showInflowDetail, setShowInflowDetail] = useState(false)
+
   const rows: ConceptRow[] = [
-    { label: 'Ventas directas', getValue: (m) => m.sales_receipts },
-    { label: 'Cuentas de cobro', getValue: (m) => m.collection_receipts },
     {
       label: 'Entradas',
       getValue: (m) => m.total_in,
-      rowClass: 'border-t',
       cellClass: () => 'font-medium',
     },
+    ...(showInflowDetail
+      ? [
+          {
+            label: 'Ventas directas',
+            getValue: (m: CashFlowMonth) => m.sales_receipts,
+            indent: true,
+          },
+          {
+            label: 'Cuentas de cobro',
+            getValue: (m: CashFlowMonth) => m.collection_receipts,
+            indent: true,
+          },
+        ]
+      : []),
     { label: 'Salidas (gastos)', getValue: (m) => m.total_out },
     {
       label: 'Neto',
@@ -78,7 +95,36 @@ export const CashFlowTable = ({ cashFlow }: CashFlowTableProps) => {
           <TableBody>
             {rows.map((row) => (
               <TableRow key={row.label} className={row.rowClass}>
-                <TableCell className="whitespace-nowrap">{row.label}</TableCell>
+                <TableCell
+                  className={
+                    row.indent
+                      ? 'pl-10 text-muted-foreground whitespace-nowrap'
+                      : 'whitespace-nowrap'
+                  }
+                >
+                  {row.label === 'Entradas' ? (
+                    <button
+                      type="button"
+                      onClick={() => setShowInflowDetail((v) => !v)}
+                      className="flex items-center gap-1 font-medium hover:text-primary"
+                      aria-expanded={showInflowDetail}
+                      aria-label={
+                        showInflowDetail
+                          ? 'Ocultar detalle de entradas'
+                          : 'Ver detalle de entradas'
+                      }
+                    >
+                      {showInflowDetail ? (
+                        <ChevronDown className="h-4 w-4" />
+                      ) : (
+                        <ChevronRight className="h-4 w-4" />
+                      )}
+                      {row.label}
+                    </button>
+                  ) : (
+                    row.label
+                  )}
+                </TableCell>
                 {cashFlow.months.map((m) => {
                   const value = row.getValue(m)
                   return (
