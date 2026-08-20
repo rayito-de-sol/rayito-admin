@@ -1,3 +1,5 @@
+import { useState } from 'react'
+import { ChevronDown, ChevronRight } from 'lucide-react'
 import { Card } from '@/components/ui/card'
 import {
   Table,
@@ -41,6 +43,8 @@ interface ConceptRow {
 export const IncomeStatementTable = ({
   statement,
 }: IncomeStatementTableProps) => {
+  const [showExpenseDetail, setShowExpenseDetail] = useState(false)
+
   const categories = Object.keys(
     statement.totals.expenses_by_category
   ) as ExpenseCategory[]
@@ -54,12 +58,14 @@ export const IncomeStatementTable = ({
       rowClass: 'border-t',
       cellClass: () => 'font-medium',
     },
-    ...categories.map((c) => ({
-      label: EXPENSE_CATEGORY_LABELS[c] ?? c,
-      getValue: (m: IncomeStatementMonth) => m.expenses_by_category[c] ?? 0,
-      indent: true,
-    })),
     { label: 'Gastos operativos', getValue: (m) => m.total_expenses },
+    ...(showExpenseDetail
+      ? categories.map((c) => ({
+          label: EXPENSE_CATEGORY_LABELS[c] ?? c,
+          getValue: (m: IncomeStatementMonth) => m.expenses_by_category[c] ?? 0,
+          indent: true,
+        }))
+      : []),
     {
       label: 'Utilidad neta',
       getValue: (m) => m.net_income,
@@ -92,11 +98,32 @@ export const IncomeStatementTable = ({
                 <TableCell
                   className={
                     row.indent
-                      ? 'pl-8 text-muted-foreground whitespace-nowrap'
+                      ? 'pl-10 text-muted-foreground whitespace-nowrap'
                       : 'whitespace-nowrap'
                   }
                 >
-                  {row.label}
+                  {row.label === 'Gastos operativos' ? (
+                    <button
+                      type="button"
+                      onClick={() => setShowExpenseDetail((v) => !v)}
+                      className="flex items-center gap-1 hover:text-primary"
+                      aria-expanded={showExpenseDetail}
+                      aria-label={
+                        showExpenseDetail
+                          ? 'Ocultar detalle de gastos'
+                          : 'Ver detalle de gastos'
+                      }
+                    >
+                      {showExpenseDetail ? (
+                        <ChevronDown className="h-4 w-4" />
+                      ) : (
+                        <ChevronRight className="h-4 w-4" />
+                      )}
+                      {row.label}
+                    </button>
+                  ) : (
+                    row.label
+                  )}
                 </TableCell>
                 {statement.months.map((m) => {
                   const value = row.getValue(m)
