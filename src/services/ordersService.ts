@@ -50,7 +50,7 @@ export const ordersService = {
       return res.data
     } catch (error) {
       if (error instanceof AxiosError && error.code === 'ERR_CANCELED') throw error
-      throw new Error(getOrderErrorMessage(error))
+      throw new Error(getOrderErrorMessage(error), { cause: error })
     }
   },
 
@@ -64,7 +64,7 @@ export const ordersService = {
       return res.data
     } catch (error) {
       if (error instanceof AxiosError && error.code === 'ERR_CANCELED') throw error
-      throw new Error(getOrderErrorMessage(error))
+      throw new Error(getOrderErrorMessage(error), { cause: error })
     }
   },
 
@@ -73,7 +73,7 @@ export const ordersService = {
       const res = await apiClient.post<Order>('/orders', data)
       return res.data
     } catch (error) {
-      throw new Error(getOrderErrorMessage(error))
+      throw new Error(getOrderErrorMessage(error), { cause: error })
     }
   },
 
@@ -86,7 +86,7 @@ export const ordersService = {
       if (error instanceof AxiosError && error.response?.status === 422) {
         return error.response.data as BulkOrdersResult
       }
-      throw new Error(getOrderErrorMessage(error))
+      throw new Error(getOrderErrorMessage(error), { cause: error })
     }
   },
 }
