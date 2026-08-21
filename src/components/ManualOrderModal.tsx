@@ -112,7 +112,11 @@ export const ManualOrderModal = ({ open, onClose, onSuccess, order }: ManualOrde
   }
 
   const handleRemoveItem = (index: number) => {
-    setItems((prev) => prev.filter((_, i) => i !== index))
+    setItems((prev) => {
+      const next = prev.filter((_, i) => i !== index)
+      // Siempre dejar al menos una fila vacía para seguir agregando
+      return next.length > 0 ? next : [{ variantId: '', quantity: 1 }]
+    })
   }
 
   const handleItemChange = (index: number, field: keyof LineItem, value: string | number) => {
@@ -265,16 +269,15 @@ export const ManualOrderModal = ({ open, onClose, onSuccess, order }: ManualOrde
                           handleItemChange(index, 'quantity', parseInt(e.target.value) || 1)
                         }
                       />
-                      {items.length > 1 && (
-                        <Button
-                          type="button"
-                          variant="ghost"
-                          size="icon"
-                          onClick={() => handleRemoveItem(index)}
-                        >
-                          <Trash2 className="h-4 w-4" />
-                        </Button>
-                      )}
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => handleRemoveItem(index)}
+                        aria-label="Quitar artículo"
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
                     </div>
                   ))}
                 </div>
