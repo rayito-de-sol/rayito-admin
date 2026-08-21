@@ -136,7 +136,11 @@ export const VentasPage = () => {
 
   const handleDeleteOrder = async (order: Order) => {
     const who = order.customer_name ?? ORDER_SOURCE_LABELS[order.source]
-    if (!window.confirm(`¿Eliminar el pedido de ${who} por ${formatCurrency(order.total)}?`)) {
+    if (
+      !window.confirm(
+        `¿Eliminar el pedido de ${who} por ${formatCurrency(order.total)}?\n\nEsta acción es permanente y no se puede deshacer.`,
+      )
+    ) {
       return
     }
     try {

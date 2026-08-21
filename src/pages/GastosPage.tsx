@@ -49,7 +49,11 @@ export const GastosPage = () => {
   const [editingExpense, setEditingExpense] = useState<Expense | null>(null)
 
   const handleDelete = async (expense: Expense) => {
-    if (!window.confirm(`¿Eliminar el gasto "${expense.description}"?`)) {
+    if (
+      !window.confirm(
+        `¿Eliminar el gasto "${expense.description}"?\n\nEsta acción es permanente y no se puede deshacer.`,
+      )
+    ) {
       return
     }
     try {

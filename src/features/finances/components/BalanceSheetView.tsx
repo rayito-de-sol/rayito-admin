@@ -51,7 +51,12 @@ export const BalanceSheetView = ({
   }
 
   const handleDelete = async (item: BalanceItem) => {
-    if (!window.confirm(`¿Eliminar "${item.name}" del balance?`)) return
+    if (
+      !window.confirm(
+        `¿Eliminar "${item.name}" del balance?\n\nEsta acción es permanente y no se puede deshacer.`,
+      )
+    )
+      return
     try {
       await financesApi.deleteBalanceItem(item.id)
       toast.success('Ítem eliminado')
