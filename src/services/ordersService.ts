@@ -3,6 +3,7 @@ import type {
   Order,
   OrdersSummary,
   CreateOrderRequest,
+  UpdateOrderRequest,
   OrderSource,
   OrderState,
 } from '@/types/order'
@@ -68,10 +69,36 @@ export const ordersService = {
     }
   },
 
+  async getOrder(id: string): Promise<Order> {
+    try {
+      const res = await apiClient.get<Order>(`/orders/${id}`)
+      return res.data
+    } catch (error) {
+      throw new Error(getOrderErrorMessage(error), { cause: error })
+    }
+  },
+
   async createOrder(data: CreateOrderRequest): Promise<Order> {
     try {
       const res = await apiClient.post<Order>('/orders', data)
       return res.data
+    } catch (error) {
+      throw new Error(getOrderErrorMessage(error), { cause: error })
+    }
+  },
+
+  async updateOrder(id: string, data: UpdateOrderRequest): Promise<Order> {
+    try {
+      const res = await apiClient.put<Order>(`/orders/${id}`, data)
+      return res.data
+    } catch (error) {
+      throw new Error(getOrderErrorMessage(error), { cause: error })
+    }
+  },
+
+  async deleteOrder(id: string): Promise<void> {
+    try {
+      await apiClient.delete(`/orders/${id}`)
     } catch (error) {
       throw new Error(getOrderErrorMessage(error), { cause: error })
     }

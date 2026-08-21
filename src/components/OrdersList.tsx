@@ -14,6 +14,7 @@ import {
 import { LoadingSpinner } from '@/components/LoadingSpinner'
 import { formatCurrency } from '@/utils/currency'
 import { formatDate } from '@/utils/currency'
+import { Pencil, Trash2 } from 'lucide-react'
 
 const SOURCE_BADGE_VARIANT: Record<OrderSource, 'default' | 'secondary' | 'outline'> = {
   store: 'default',
@@ -26,13 +27,25 @@ interface OrdersListProps {
   loading: boolean
   error: string | null
   onRetry: () => void
+  canEdit: boolean
+  onEdit: (order: Order) => void
+  onDelete: (order: Order) => void
 }
 
 /**
  * OrdersList component
- * Unified table of orders from all channels with source badge, state, total, and date
+ * Unified table of orders from all channels with source badge, state, total, and date.
+ * Store orders are collection mirrors, so they have no edit/delete actions.
  */
-export const OrdersList = ({ orders, loading, error, onRetry }: OrdersListProps) => {
+export const OrdersList = ({
+  orders,
+  loading,
+  error,
+  onRetry,
+  canEdit,
+  onEdit,
+  onDelete,
+}: OrdersListProps) => {
   if (loading) {
     return (
       <Card className="p-8">
@@ -75,6 +88,7 @@ export const OrdersList = ({ orders, loading, error, onRetry }: OrdersListProps)
             <TableHead>Artículos</TableHead>
             <TableHead>Estado</TableHead>
             <TableHead className="text-right">Total</TableHead>
+            {canEdit && <TableHead className="w-24" />}
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -94,6 +108,30 @@ export const OrdersList = ({ orders, loading, error, onRetry }: OrdersListProps)
               <TableCell className="text-right font-medium">
                 {formatCurrency(order.total)}
               </TableCell>
+              {canEdit && (
+                <TableCell>
+                  {order.source !== 'store' && (
+                    <div className="flex justify-end gap-1">
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => onEdit(order)}
+                        aria-label="Editar pedido"
+                      >
+                        <Pencil className="h-4 w-4" />
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => onDelete(order)}
+                        aria-label="Eliminar pedido"
+                      >
+                        <Trash2 className="h-4 w-4 text-destructive" />
+                      </Button>
+                    </div>
+                  )}
+                </TableCell>
+              )}
             </TableRow>
           ))}
         </TableBody>

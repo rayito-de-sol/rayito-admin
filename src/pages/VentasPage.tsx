@@ -7,7 +7,9 @@ import { OrdersCSVImport } from '@/components/OrdersCSVImport'
 import { ordersService, type OrderFilters } from '@/services/ordersService'
 import { shopifyService } from '@/services/shopifyService'
 import type { Order, OrdersSummary, OrderSource } from '@/types/order'
+import { ORDER_SOURCE_LABELS } from '@/types/order'
 import { useAuthStore } from '@/stores/useAuthStore'
+import { formatCurrency } from '@/utils/currency'
 import { toast } from '@/utils/toast'
 import { RefreshCw, Plus, Settings, Upload } from 'lucide-react'
 
@@ -38,6 +40,7 @@ export const VentasPage = () => {
   const [syncing, setSyncing] = useState(false)
   const [settingUp, setSettingUp] = useState(false)
   const [showOrderModal, setShowOrderModal] = useState(false)
+  const [editingOrder, setEditingOrder] = useState<Order | null>(null)
   const [showImport, setShowImport] = useState(false)
 
   const fetchOrders = useCallback(
@@ -126,6 +129,26 @@ export const VentasPage = () => {
     fetchSummary()
   }
 
+  const handleEditOrder = (order: Order) => {
+    setEditingOrder(order)
+    setShowOrderModal(true)
+  }
+
+  const handleDeleteOrder = async (order: Order) => {
+    const who = order.customer_name ?? ORDER_SOURCE_LABELS[order.source]
+    if (!window.confirm(`¿Eliminar el pedido de ${who} por ${formatCurrency(order.total)}?`)) {
+      return
+    }
+    try {
+      await ordersService.deleteOrder(order.id)
+      toast.success('Pedido eliminado')
+      fetchOrders()
+      fetchSummary()
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : 'Error al eliminar el pedido')
+    }
+  }
+
   if (showImport) {
     return (
       <div className="space-y-6 p-6">
@@ -178,7 +201,13 @@ export const VentasPage = () => {
                 <Upload className="mr-2 h-4 w-4" />
                 Importar CSV
               </Button>
-              <Button size="sm" onClick={() => setShowOrderModal(true)}>
+              <Button
+                size="sm"
+                onClick={() => {
+                  setEditingOrder(null)
+                  setShowOrderModal(true)
+                }}
+              >
                 <Plus className="mr-2 h-4 w-4" />
                 Nuevo pedido
               </Button>
@@ -213,12 +242,19 @@ export const VentasPage = () => {
         loading={loadingOrders}
         error={ordersError}
         onRetry={() => fetchOrders()}
+        canEdit={canWrite}
+        onEdit={handleEditOrder}
+        onDelete={handleDeleteOrder}
       />
 
-      {/* Manual order modal */}
+      {/* Manual order modal (create / edit) */}
       <ManualOrderModal
         open={showOrderModal}
-        onClose={() => setShowOrderModal(false)}
+        order={editingOrder}
+        onClose={() => {
+          setShowOrderModal(false)
+          setEditingOrder(null)
+        }}
         onSuccess={handleOrderCreated}
       />
     </div>

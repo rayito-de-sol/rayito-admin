@@ -66,6 +66,12 @@ export interface CreateOrderRequest {
   items: CreateOrderItemRequest[]
 }
 
+// Igual que crear, pero items es opcional: si se omite, el backend
+// conserva los artículos y totales existentes (pedidos históricos sin variante)
+export interface UpdateOrderRequest extends Omit<CreateOrderRequest, 'items'> {
+  items?: CreateOrderItemRequest[]
+}
+
 export const ORDER_SOURCE_LABELS: Record<OrderSource, string> = {
   store: 'Tienda',
   shopify: 'Shopify',
