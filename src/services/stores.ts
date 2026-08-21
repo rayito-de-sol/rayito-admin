@@ -18,7 +18,7 @@ import { AxiosError } from 'axios'
 const getStoreErrorMessage = (error: unknown): string => {
   if (error instanceof AxiosError) {
     const status = error.response?.status
-    const errorCode = error.response?.data?.code
+    const errorCode = error.response?.data?.error?.code
 
     // Handle store-specific error codes
     if (status === 409 || errorCode === 'DUPLICATE_IDENTITY') {
@@ -35,7 +35,7 @@ const getStoreErrorMessage = (error: unknown): string => {
 
     if (status === 400 || errorCode === 'VALIDATION_FAILED') {
       // Use backend validation message if available
-      const backendMessage = error.response?.data?.message
+      const backendMessage = error.response?.data?.error?.message
       if (backendMessage) return backendMessage
       return 'Datos inválidos. Por favor, verifique los campos'
     }
