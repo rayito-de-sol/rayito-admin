@@ -10,6 +10,7 @@ import {
 import { formatCurrency, formatDate } from '@/utils/currency'
 import { financesApi } from '../api/financesApi'
 import { BalanceItemFormModal } from './BalanceItemFormModal'
+import { ConfirmDialog } from '@/components/ConfirmDialog'
 import type {
   BalanceItem,
   BalanceItemType,
@@ -36,6 +37,8 @@ export const BalanceSheetView = ({
 }: BalanceSheetViewProps) => {
   const [formOpen, setFormOpen] = useState(false)
   const [editingItem, setEditingItem] = useState<BalanceItem | null>(null)
+  const [deletingItem, setDeletingItem] = useState<BalanceItem | null>(null)
+  const [deleting, setDeleting] = useState(false)
   const [defaultType, setDefaultType] = useState<BalanceItemType>('asset')
 
   const openCreate = (type: BalanceItemType) => {
@@ -50,20 +53,19 @@ export const BalanceSheetView = ({
     setFormOpen(true)
   }
 
-  const handleDelete = async (item: BalanceItem) => {
-    if (
-      !window.confirm(
-        `¿Eliminar "${item.name}" del balance?\n\nEsta acción es permanente y no se puede deshacer.`,
-      )
-    )
-      return
+  const handleConfirmDelete = async () => {
+    if (!deletingItem) return
+    setDeleting(true)
     try {
-      await financesApi.deleteBalanceItem(item.id)
+      await financesApi.deleteBalanceItem(deletingItem.id)
       toast.success('Ítem eliminado')
+      setDeletingItem(null)
       onRefresh()
     } catch (err) {
       console.error('Error eliminando ítem de balance:', err)
-      toast.error('Error al eliminar el ítem')
+      toast.error(err instanceof Error ? err.message : 'Error al eliminar el ítem')
+    } finally {
+      setDeleting(false)
     }
   }
 
@@ -92,7 +94,7 @@ export const BalanceSheetView = ({
             <Button
               variant="ghost"
               size="sm"
-              onClick={() => handleDelete(item)}
+              onClick={() => setDeletingItem(item)}
               aria-label="Eliminar ítem"
             >
               <Trash2 className="h-4 w-4 text-destructive" />
@@ -225,6 +227,16 @@ export const BalanceSheetView = ({
         defaultType={defaultType}
         onClose={() => setFormOpen(false)}
         onSuccess={onRefresh}
+      />
+
+      <ConfirmDialog
+        open={!!deletingItem}
+        title="Eliminar ítem del balance"
+        description={deletingItem ? `¿Eliminar "${deletingItem.name}" del balance?` : ''}
+        warning="Esta acción es permanente y no se puede deshacer."
+        loading={deleting}
+        onConfirm={handleConfirmDelete}
+        onClose={() => setDeletingItem(null)}
       />
     </div>
   )

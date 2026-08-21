@@ -3,6 +3,7 @@ import { Button } from '@/components/ui/button'
 import { SalesSummaryCards } from '@/components/SalesSummaryCards'
 import { OrdersList } from '@/components/OrdersList'
 import { ManualOrderModal } from '@/components/ManualOrderModal'
+import { ConfirmDialog } from '@/components/ConfirmDialog'
 import { OrdersCSVImport } from '@/components/OrdersCSVImport'
 import { ordersService, type OrderFilters } from '@/services/ordersService'
 import { shopifyService } from '@/services/shopifyService'
@@ -41,6 +42,8 @@ export const VentasPage = () => {
   const [settingUp, setSettingUp] = useState(false)
   const [showOrderModal, setShowOrderModal] = useState(false)
   const [editingOrder, setEditingOrder] = useState<Order | null>(null)
+  const [deletingOrder, setDeletingOrder] = useState<Order | null>(null)
+  const [deleting, setDeleting] = useState(false)
   const [showImport, setShowImport] = useState(false)
 
   const fetchOrders = useCallback(
@@ -134,22 +137,19 @@ export const VentasPage = () => {
     setShowOrderModal(true)
   }
 
-  const handleDeleteOrder = async (order: Order) => {
-    const who = order.customer_name ?? ORDER_SOURCE_LABELS[order.source]
-    if (
-      !window.confirm(
-        `¿Eliminar el pedido de ${who} por ${formatCurrency(order.total)}?\n\nEsta acción es permanente y no se puede deshacer.`,
-      )
-    ) {
-      return
-    }
+  const handleConfirmDeleteOrder = async () => {
+    if (!deletingOrder) return
+    setDeleting(true)
     try {
-      await ordersService.deleteOrder(order.id)
+      await ordersService.deleteOrder(deletingOrder.id)
       toast.success('Pedido eliminado')
+      setDeletingOrder(null)
       fetchOrders()
       fetchSummary()
     } catch (err) {
       toast.error(err instanceof Error ? err.message : 'Error al eliminar el pedido')
+    } finally {
+      setDeleting(false)
     }
   }
 
@@ -248,7 +248,22 @@ export const VentasPage = () => {
         onRetry={() => fetchOrders()}
         canEdit={canWrite}
         onEdit={handleEditOrder}
-        onDelete={handleDeleteOrder}
+        onDelete={setDeletingOrder}
+      />
+
+      {/* Delete confirmation */}
+      <ConfirmDialog
+        open={!!deletingOrder}
+        title="Eliminar pedido"
+        description={
+          deletingOrder
+            ? `¿Eliminar el pedido de ${deletingOrder.customer_name ?? ORDER_SOURCE_LABELS[deletingOrder.source]} por ${formatCurrency(deletingOrder.total)}?`
+            : ''
+        }
+        warning="Esta acción es permanente y no se puede deshacer."
+        loading={deleting}
+        onConfirm={handleConfirmDeleteOrder}
+        onClose={() => setDeletingOrder(null)}
       />
 
       {/* Manual order modal (create / edit) */}

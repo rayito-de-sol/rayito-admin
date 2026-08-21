@@ -21,6 +21,7 @@ import {
   type ExpenseCategory,
   type ExpenseClassification,
 } from '@/features/finances'
+import { ConfirmDialog } from '@/components/ConfirmDialog'
 import { useAuthStore } from '@/stores/useAuthStore'
 import { toast } from '@/utils/toast'
 import { Plus, Upload } from 'lucide-react'
@@ -47,22 +48,22 @@ export const GastosPage = () => {
   const [showImport, setShowImport] = useState(false)
   const [formOpen, setFormOpen] = useState(false)
   const [editingExpense, setEditingExpense] = useState<Expense | null>(null)
+  const [deletingExpense, setDeletingExpense] = useState<Expense | null>(null)
+  const [deleting, setDeleting] = useState(false)
 
-  const handleDelete = async (expense: Expense) => {
-    if (
-      !window.confirm(
-        `¿Eliminar el gasto "${expense.description}"?\n\nEsta acción es permanente y no se puede deshacer.`,
-      )
-    ) {
-      return
-    }
+  const handleConfirmDelete = async () => {
+    if (!deletingExpense) return
+    setDeleting(true)
     try {
-      await financesApi.deleteExpense(expense.id)
+      await financesApi.deleteExpense(deletingExpense.id)
       toast.success('Gasto eliminado')
+      setDeletingExpense(null)
       refetch()
     } catch (err) {
       console.error('Error eliminando gasto:', err)
-      toast.error('Error al eliminar el gasto')
+      toast.error(err instanceof Error ? err.message : 'Error al eliminar el gasto')
+    } finally {
+      setDeleting(false)
     }
   }
 
@@ -157,7 +158,7 @@ export const GastosPage = () => {
           setEditingExpense(expense)
           setFormOpen(true)
         }}
-        onDelete={handleDelete}
+        onDelete={setDeletingExpense}
       />
 
       <ExpenseFormModal
@@ -165,6 +166,18 @@ export const GastosPage = () => {
         expense={editingExpense}
         onClose={() => setFormOpen(false)}
         onSuccess={refetch}
+      />
+
+      <ConfirmDialog
+        open={!!deletingExpense}
+        title="Eliminar gasto"
+        description={
+          deletingExpense ? `¿Eliminar el gasto "${deletingExpense.description}"?` : ''
+        }
+        warning="Esta acción es permanente y no se puede deshacer."
+        loading={deleting}
+        onConfirm={handleConfirmDelete}
+        onClose={() => setDeletingExpense(null)}
       />
     </div>
   )
