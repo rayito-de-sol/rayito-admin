@@ -28,43 +28,104 @@ const monthLabel = (year: number, month: number) =>
 const netClass = (value: number) =>
   value < 0 ? 'text-destructive font-medium' : 'font-medium'
 
+const categoryLabel = (c: string) =>
+  EXPENSE_CATEGORY_LABELS[c as ExpenseCategory] ?? c
+
 interface ConceptRow {
   label: string
   getValue: (m: IncomeStatementMonth) => number
   rowClass?: string
   cellClass?: (value: number) => string
-  indent?: boolean
+  // Niveles de indentación para mostrar jerarquía (0 = concepto principal)
+  indent?: number
+  // Presente cuando la fila puede expandirse para mostrar su detalle
+  expand?: { open: boolean; toggle: () => void; label: string }
 }
+
+// Filas de detalle por categoría, indentadas bajo su concepto padre
+const categoryRows = (
+  categories: string[],
+  getMap: (m: IncomeStatementMonth) => Record<string, number>,
+  indent: number
+): ConceptRow[] =>
+  categories.map((c) => ({
+    label: categoryLabel(c),
+    getValue: (m: IncomeStatementMonth) => getMap(m)[c] ?? 0,
+    indent,
+  }))
 
 /**
  * IncomeStatementTable
  * Estado de resultados: conceptos como filas y meses como columnas.
+ * COGS proviene de gastos de producción; los gastos operativos se
+ * dividen en administrativos y de ventas, ambos expandibles.
  */
 export const IncomeStatementTable = ({
   statement,
 }: IncomeStatementTableProps) => {
+  const [showCogsDetail, setShowCogsDetail] = useState(false)
   const [showExpenseDetail, setShowExpenseDetail] = useState(false)
 
-  const categories = Object.keys(
-    statement.totals.expenses_by_category
-  ) as ExpenseCategory[]
+  const cogsCategories = Object.keys(statement.totals.cogs.by_category)
+  const adminCategories = Object.keys(
+    statement.totals.expenses.admin.by_category
+  )
+  const salesCategories = Object.keys(
+    statement.totals.expenses.sales.by_category
+  )
 
   const rows: ConceptRow[] = [
     { label: 'Ingresos', getValue: (m) => m.revenue },
-    { label: 'Costo de ventas', getValue: (m) => m.cogs },
+    {
+      label: 'Costo de ventas',
+      getValue: (m) => m.cogs.total,
+      expand: {
+        open: showCogsDetail,
+        toggle: () => setShowCogsDetail((v) => !v),
+        label: 'detalle de costo de ventas',
+      },
+    },
+    ...(showCogsDetail
+      ? categoryRows(cogsCategories, (m) => m.cogs.by_category, 1)
+      : []),
     {
       label: 'Utilidad bruta',
       getValue: (m) => m.gross_profit,
       rowClass: 'border-t',
       cellClass: () => 'font-medium',
     },
-    { label: 'Gastos operativos', getValue: (m) => m.total_expenses },
+    {
+      label: 'Gastos operativos',
+      getValue: (m) => m.expenses.total,
+      expand: {
+        open: showExpenseDetail,
+        toggle: () => setShowExpenseDetail((v) => !v),
+        label: 'detalle de gastos operativos',
+      },
+    },
     ...(showExpenseDetail
-      ? categories.map((c) => ({
-          label: EXPENSE_CATEGORY_LABELS[c] ?? c,
-          getValue: (m: IncomeStatementMonth) => m.expenses_by_category[c] ?? 0,
-          indent: true,
-        }))
+      ? [
+          {
+            label: 'Gastos administrativos',
+            getValue: (m: IncomeStatementMonth) => m.expenses.admin.total,
+            indent: 1,
+          },
+          ...categoryRows(
+            adminCategories,
+            (m) => m.expenses.admin.by_category,
+            2
+          ),
+          {
+            label: 'Gastos de ventas',
+            getValue: (m: IncomeStatementMonth) => m.expenses.sales.total,
+            indent: 1,
+          },
+          ...categoryRows(
+            salesCategories,
+            (m) => m.expenses.sales.by_category,
+            2
+          ),
+        ]
       : []),
     {
       label: 'Utilidad neta',
@@ -73,6 +134,12 @@ export const IncomeStatementTable = ({
       cellClass: (v) => `font-semibold ${netClass(v)}`,
     },
   ]
+
+  const indentClass = (indent?: number) => {
+    if (indent === 1) return 'pl-10 text-muted-foreground whitespace-nowrap'
+    if (indent === 2) return 'pl-16 text-muted-foreground whitespace-nowrap'
+    return 'whitespace-nowrap'
+  }
 
   return (
     <Card className="p-0 overflow-hidden">
@@ -93,28 +160,24 @@ export const IncomeStatementTable = ({
             </TableRow>
           </TableHeader>
           <TableBody>
-            {rows.map((row) => (
-              <TableRow key={row.label} className={row.rowClass}>
-                <TableCell
-                  className={
-                    row.indent
-                      ? 'pl-10 text-muted-foreground whitespace-nowrap'
-                      : 'whitespace-nowrap'
-                  }
-                >
-                  {row.label === 'Gastos operativos' ? (
+            {/* key por índice: una misma categoría (p. ej. Nómina) puede
+                aparecer en COGS y en gastos operativos a la vez */}
+            {rows.map((row, i) => (
+              <TableRow key={i} className={row.rowClass}>
+                <TableCell className={indentClass(row.indent)}>
+                  {row.expand ? (
                     <button
                       type="button"
-                      onClick={() => setShowExpenseDetail((v) => !v)}
+                      onClick={row.expand.toggle}
                       className="flex items-center gap-1 hover:text-primary"
-                      aria-expanded={showExpenseDetail}
+                      aria-expanded={row.expand.open}
                       aria-label={
-                        showExpenseDetail
-                          ? 'Ocultar detalle de gastos'
-                          : 'Ver detalle de gastos'
+                        row.expand.open
+                          ? `Ocultar ${row.expand.label}`
+                          : `Ver ${row.expand.label}`
                       }
                     >
-                      {showExpenseDetail ? (
+                      {row.expand.open ? (
                         <ChevronDown className="h-4 w-4" />
                       ) : (
                         <ChevronRight className="h-4 w-4" />

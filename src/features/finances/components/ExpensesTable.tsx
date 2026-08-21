@@ -13,6 +13,7 @@ import { SortableHead } from '@/components/SortableHead'
 import { useSort } from '@/hooks/useSort'
 import { formatCurrency } from '@/utils/currency'
 import { ExpenseCategoryBadge } from './ExpenseCategoryBadge'
+import { ExpenseClassificationBadge } from './ExpenseClassificationBadge'
 import {
   PAYMENT_METHOD_LABELS,
   type Expense,
@@ -56,6 +57,7 @@ export const ExpensesTable = ({
   const { sorted, sortKey, sortDir, toggleSort } = useSort(expenses, {
     date: (e) => e.expense_date,
     category: (e) => e.category,
+    classification: (e) => e.classification,
     description: (e) => e.description,
     amount: (e) => e.amount,
   })
@@ -111,6 +113,13 @@ export const ExpensesTable = ({
               onSort={toggleSort}
             />
             <SortableHead
+              label="Clasificación"
+              sortKey="classification"
+              activeKey={sortKey}
+              direction={sortDir}
+              onSort={toggleSort}
+            />
+            <SortableHead
               label="Descripción"
               sortKey="description"
               activeKey={sortKey}
@@ -135,6 +144,11 @@ export const ExpensesTable = ({
               <TableCell>{formatExpenseDate(expense.expense_date)}</TableCell>
               <TableCell>
                 <ExpenseCategoryBadge category={expense.category} />
+              </TableCell>
+              <TableCell>
+                <ExpenseClassificationBadge
+                  classification={expense.classification}
+                />
               </TableCell>
               <TableCell>
                 <div>{expense.description}</div>
@@ -177,7 +191,7 @@ export const ExpensesTable = ({
             </TableRow>
           ))}
           <TableRow>
-            <TableCell colSpan={4} className="font-semibold">
+            <TableCell colSpan={5} className="font-semibold">
               Total
             </TableCell>
             <TableCell className="text-right font-semibold">

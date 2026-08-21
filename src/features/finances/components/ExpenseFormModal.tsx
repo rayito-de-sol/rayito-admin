@@ -17,11 +17,15 @@ import {
 } from '@/components/ui/select'
 import { financesApi } from '../api/financesApi'
 import {
+  DEFAULT_CLASSIFICATION_BY_CATEGORY,
   EXPENSE_CATEGORIES,
   EXPENSE_CATEGORY_LABELS,
+  EXPENSE_CLASSIFICATION_LABELS,
+  EXPENSE_CLASSIFICATIONS,
   PAYMENT_METHOD_LABELS,
   type Expense,
   type ExpenseCategory,
+  type ExpenseClassification,
   type ExpensePaymentMethod,
 } from '../types/finance.types'
 import { toast } from '@/utils/toast'
@@ -45,6 +49,8 @@ export const ExpenseFormModal = ({
 }: ExpenseFormModalProps) => {
   const [expenseDate, setExpenseDate] = useState('')
   const [category, setCategory] = useState<ExpenseCategory>('materiales')
+  const [classification, setClassification] =
+    useState<ExpenseClassification>('produccion')
   const [description, setDescription] = useState('')
   const [amount, setAmount] = useState('')
   const [paymentMethod, setPaymentMethod] = useState<
@@ -60,6 +66,7 @@ export const ExpenseFormModal = ({
     if (expense) {
       setExpenseDate(expense.expense_date.slice(0, 10))
       setCategory(expense.category)
+      setClassification(expense.classification)
       setDescription(expense.description)
       setAmount(String(expense.amount))
       setPaymentMethod(expense.payment_method ?? 'none')
@@ -67,6 +74,7 @@ export const ExpenseFormModal = ({
     } else {
       setExpenseDate(new Date().toISOString().slice(0, 10))
       setCategory('materiales')
+      setClassification(DEFAULT_CLASSIFICATION_BY_CATEGORY['materiales'])
       setDescription('')
       setAmount('')
       setPaymentMethod('none')
@@ -95,6 +103,7 @@ export const ExpenseFormModal = ({
     const payload = {
       expense_date: expenseDate,
       category,
+      classification,
       description: description.trim(),
       amount: parsedAmount,
       payment_method: paymentMethod === 'none' ? undefined : paymentMethod,
@@ -144,7 +153,16 @@ export const ExpenseFormModal = ({
             <Label className="mb-2">Categoría *</Label>
             <Select
               value={category}
-              onValueChange={(v) => setCategory(v as ExpenseCategory)}
+              onValueChange={(v) => {
+                const newCategory = v as ExpenseCategory
+                setCategory(newCategory)
+                // Solo en creación: preseleccionar clasificación según categoría
+                if (!expense) {
+                  setClassification(
+                    DEFAULT_CLASSIFICATION_BY_CATEGORY[newCategory]
+                  )
+                }
+              }}
             >
               <SelectTrigger>
                 <SelectValue />
@@ -153,6 +171,27 @@ export const ExpenseFormModal = ({
                 {EXPENSE_CATEGORIES.map((c) => (
                   <SelectItem key={c} value={c}>
                     {EXPENSE_CATEGORY_LABELS[c]}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+
+          <div>
+            <Label className="mb-2">Clasificación *</Label>
+            <Select
+              value={classification}
+              onValueChange={(v) =>
+                setClassification(v as ExpenseClassification)
+              }
+            >
+              <SelectTrigger>
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {EXPENSE_CLASSIFICATIONS.map((c) => (
+                  <SelectItem key={c} value={c}>
+                    {EXPENSE_CLASSIFICATION_LABELS[c]}
                   </SelectItem>
                 ))}
               </SelectContent>

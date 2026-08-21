@@ -1,11 +1,19 @@
 import { useCallback, useEffect, useState } from 'react'
 import { financesApi } from '../api/financesApi'
-import type { Expense, ExpenseCategory } from '../types/finance.types'
+import type {
+  Expense,
+  ExpenseCategory,
+  ExpenseClassification,
+  ExpenseFilters,
+} from '../types/finance.types'
 
 /**
- * Hook para cargar gastos, con filtro opcional por categoría.
+ * Hook para cargar gastos, con filtros opcionales por categoría y clasificación.
  */
-export const useExpenses = (category: ExpenseCategory | 'all') => {
+export const useExpenses = (
+  category: ExpenseCategory | 'all',
+  classification: ExpenseClassification | 'all'
+) => {
   const [expenses, setExpenses] = useState<Expense[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -14,8 +22,11 @@ export const useExpenses = (category: ExpenseCategory | 'all') => {
     try {
       setIsLoading(true)
       setError(null)
+      const filters: ExpenseFilters = {}
+      if (category !== 'all') filters.category = category
+      if (classification !== 'all') filters.classification = classification
       const data = await financesApi.listExpenses(
-        category === 'all' ? undefined : { category }
+        Object.keys(filters).length > 0 ? filters : undefined
       )
       setExpenses(data)
     } catch (err) {
@@ -24,7 +35,7 @@ export const useExpenses = (category: ExpenseCategory | 'all') => {
     } finally {
       setIsLoading(false)
     }
-  }, [category])
+  }, [category, classification])
 
   useEffect(() => {
     fetchExpenses()

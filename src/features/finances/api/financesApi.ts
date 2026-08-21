@@ -20,6 +20,8 @@ export const financesApi = {
     if (filters?.from) params.append('from', filters.from)
     if (filters?.to) params.append('to', filters.to)
     if (filters?.category) params.append('category', filters.category)
+    if (filters?.classification)
+      params.append('classification', filters.classification)
 
     const queryString = params.toString()
     const url = queryString ? `/expenses?${queryString}` : '/expenses'

@@ -35,10 +35,45 @@ export const PAYMENT_METHOD_LABELS: Record<ExpensePaymentMethod, string> = {
   otro: 'Otro',
 }
 
+// Clasificación: producción alimenta el COGS del estado de resultados;
+// administrativo y ventas son gastos operativos.
+export type ExpenseClassification = 'produccion' | 'administrativo' | 'ventas'
+
+export const EXPENSE_CLASSIFICATIONS: ExpenseClassification[] = [
+  'produccion',
+  'administrativo',
+  'ventas',
+]
+
+export const EXPENSE_CLASSIFICATION_LABELS: Record<
+  ExpenseClassification,
+  string
+> = {
+  produccion: 'Producción',
+  administrativo: 'Administrativo',
+  ventas: 'Ventas',
+}
+
+// Preselección de clasificación al elegir categoría (solo conveniencia de UI;
+// el campo siempre se envía explícito y el usuario puede cambiarlo)
+export const DEFAULT_CLASSIFICATION_BY_CATEGORY: Record<
+  ExpenseCategory,
+  ExpenseClassification
+> = {
+  materiales: 'produccion',
+  nomina: 'administrativo',
+  arriendo: 'administrativo',
+  servicios: 'administrativo',
+  transporte: 'ventas',
+  marketing: 'ventas',
+  otros: 'administrativo',
+}
+
 export interface Expense {
   id: string
   expense_date: string
   category: ExpenseCategory
+  classification: ExpenseClassification
   description: string
   amount: number
   payment_method?: ExpensePaymentMethod
@@ -51,6 +86,7 @@ export interface Expense {
 export interface CreateExpenseRequest {
   expense_date: string // YYYY-MM-DD
   category: ExpenseCategory
+  classification: ExpenseClassification
   description: string
   amount: number
   payment_method?: ExpensePaymentMethod
@@ -61,6 +97,7 @@ export interface ExpenseFilters {
   from?: string
   to?: string
   category?: ExpenseCategory
+  classification?: ExpenseClassification
 }
 
 export interface BulkRowError {
@@ -92,14 +129,24 @@ export interface BalanceItemRequest {
   notes?: string
 }
 
+export interface CategoryBreakdown {
+  total: number
+  by_category: Record<string, number>
+}
+
+export interface ExpenseBreakdown {
+  total: number
+  admin: CategoryBreakdown
+  sales: CategoryBreakdown
+}
+
 export interface IncomeStatementMonth {
   year: number
   month: number
   revenue: number
-  cogs: number
+  cogs: CategoryBreakdown
   gross_profit: number
-  expenses_by_category: Record<string, number>
-  total_expenses: number
+  expenses: ExpenseBreakdown
   net_income: number
 }
 

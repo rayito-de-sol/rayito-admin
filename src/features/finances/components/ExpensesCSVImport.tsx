@@ -13,10 +13,12 @@ import { LoadingSpinner } from '@/components/LoadingSpinner'
 import { financesApi } from '../api/financesApi'
 import {
   EXPENSE_CATEGORIES,
+  EXPENSE_CLASSIFICATIONS,
   PAYMENT_METHOD_LABELS,
   type BulkCreateResult,
   type CreateExpenseRequest,
   type ExpenseCategory,
+  type ExpenseClassification,
   type ExpensePaymentMethod,
 } from '../types/finance.types'
 import { Upload, Download } from 'lucide-react'
@@ -24,6 +26,7 @@ import { Upload, Download } from 'lucide-react'
 const CSV_HEADERS = [
   'fecha',
   'categoria',
+  'clasificacion',
   'descripcion',
   'monto',
   'metodo_pago',
@@ -33,6 +36,7 @@ const CSV_HEADERS = [
 const EXAMPLE_ROW = [
   '2026-01-15',
   'materiales',
+  'produccion',
   'Compra de telas',
   '150000',
   'transferencia',
@@ -55,10 +59,11 @@ function parseRow(rawValues: string[], index: number): ParsedRow {
 
   const fecha = get(0)
   const categoria = get(1).toLowerCase()
-  const descripcion = get(2)
-  const montoRaw = get(3)
-  const metodoPago = get(4).toLowerCase()
-  const notas = get(5)
+  const clasificacion = get(2).toLowerCase()
+  const descripcion = get(3)
+  const montoRaw = get(4)
+  const metodoPago = get(5).toLowerCase()
+  const notas = get(6)
 
   const emptyData = {} as CreateExpenseRequest
 
@@ -69,6 +74,12 @@ function parseRow(rawValues: string[], index: number): ParsedRow {
       index,
       data: emptyData,
       error: `categoria inválida (debe ser: ${EXPENSE_CATEGORIES.join(', ')})`,
+    }
+  if (!EXPENSE_CLASSIFICATIONS.includes(clasificacion as ExpenseClassification))
+    return {
+      index,
+      data: emptyData,
+      error: `clasificacion inválida (debe ser: ${EXPENSE_CLASSIFICATIONS.join(', ')})`,
     }
   if (!descripcion)
     return { index, data: emptyData, error: 'descripcion es requerida' }
@@ -93,6 +104,7 @@ function parseRow(rawValues: string[], index: number): ParsedRow {
     data: {
       expense_date: fecha,
       category: categoria as ExpenseCategory,
+      classification: clasificacion as ExpenseClassification,
       description: descripcion,
       amount: monto,
       payment_method: metodoPago
@@ -259,6 +271,7 @@ export const ExpensesCSVImport = ({
                   <TableHead>Fila</TableHead>
                   <TableHead>Fecha</TableHead>
                   <TableHead>Categoría</TableHead>
+                  <TableHead>Clasificación</TableHead>
                   <TableHead>Descripción</TableHead>
                   <TableHead className="text-right">Monto</TableHead>
                   <TableHead>Estado</TableHead>
@@ -275,6 +288,9 @@ export const ExpensesCSVImport = ({
                       {row.error ? '—' : row.data.expense_date}
                     </TableCell>
                     <TableCell>{row.error ? '—' : row.data.category}</TableCell>
+                    <TableCell>
+                      {row.error ? '—' : row.data.classification}
+                    </TableCell>
                     <TableCell>
                       {row.error ? '—' : row.data.description}
                     </TableCell>

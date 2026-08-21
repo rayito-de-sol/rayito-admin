@@ -15,8 +15,11 @@ import {
   financesApi,
   EXPENSE_CATEGORIES,
   EXPENSE_CATEGORY_LABELS,
+  EXPENSE_CLASSIFICATIONS,
+  EXPENSE_CLASSIFICATION_LABELS,
   type Expense,
   type ExpenseCategory,
+  type ExpenseClassification,
 } from '@/features/finances'
 import { useAuthStore } from '@/stores/useAuthStore'
 import { toast } from '@/utils/toast'
@@ -33,7 +36,13 @@ export const GastosPage = () => {
   const [categoryFilter, setCategoryFilter] = useState<
     ExpenseCategory | 'all'
   >('all')
-  const { expenses, isLoading, error, refetch } = useExpenses(categoryFilter)
+  const [classificationFilter, setClassificationFilter] = useState<
+    ExpenseClassification | 'all'
+  >('all')
+  const { expenses, isLoading, error, refetch } = useExpenses(
+    categoryFilter,
+    classificationFilter
+  )
 
   const [showImport, setShowImport] = useState(false)
   const [formOpen, setFormOpen] = useState(false)
@@ -91,23 +100,47 @@ export const GastosPage = () => {
         )}
       </div>
 
-      <div className="w-56">
-        <Select
-          value={categoryFilter}
-          onValueChange={(v) => setCategoryFilter(v as ExpenseCategory | 'all')}
-        >
-          <SelectTrigger>
-            <SelectValue />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="all">Todas las categorías</SelectItem>
-            {EXPENSE_CATEGORIES.map((c) => (
-              <SelectItem key={c} value={c}>
-                {EXPENSE_CATEGORY_LABELS[c]}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
+      <div className="flex gap-3">
+        <div className="w-56">
+          <Select
+            value={categoryFilter}
+            onValueChange={(v) =>
+              setCategoryFilter(v as ExpenseCategory | 'all')
+            }
+          >
+            <SelectTrigger>
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">Todas las categorías</SelectItem>
+              {EXPENSE_CATEGORIES.map((c) => (
+                <SelectItem key={c} value={c}>
+                  {EXPENSE_CATEGORY_LABELS[c]}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+        <div className="w-56">
+          <Select
+            value={classificationFilter}
+            onValueChange={(v) =>
+              setClassificationFilter(v as ExpenseClassification | 'all')
+            }
+          >
+            <SelectTrigger>
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">Todas las clasificaciones</SelectItem>
+              {EXPENSE_CLASSIFICATIONS.map((c) => (
+                <SelectItem key={c} value={c}>
+                  {EXPENSE_CLASSIFICATION_LABELS[c]}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
       </div>
 
       <ExpensesTable
