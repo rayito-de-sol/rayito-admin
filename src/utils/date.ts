@@ -88,3 +88,48 @@ export const formatRelativeTime = (
   const diffInYears = Math.floor(diffInMonths / 12)
   return `hace ${diffInYears} ${diffInYears === 1 ? 'año' : 'años'}`
 }
+
+/**
+ * Convierte una fecha a YYYY-MM-DD usando la hora local.
+ * No usar toISOString(): devuelve la fecha en UTC, que en Colombia (UTC-5)
+ * adelanta un día durante la tarde y la noche.
+ */
+const toISODate = (date: Date): string => {
+  const year = date.getFullYear()
+  const month = String(date.getMonth() + 1).padStart(2, '0')
+  const day = String(date.getDate()).padStart(2, '0')
+  return `${year}-${month}-${day}`
+}
+
+/**
+ * Hoy en formato YYYY-MM-DD (hora local)
+ */
+export const todayISO = (): string => toISODate(new Date())
+
+/**
+ * Fecha dentro de N días en formato YYYY-MM-DD (hora local)
+ */
+export const addDaysISO = (days: number): string => {
+  const date = new Date()
+  date.setDate(date.getDate() + days)
+  return toISODate(date)
+}
+
+/**
+ * Formatea una fecha sin hora (YYYY-MM-DD) como DD/MM/YYYY.
+ * Trabaja sobre el texto para evitar el corrimiento de zona horaria que
+ * produce new Date('2026-10-17') (medianoche UTC = día anterior en Colombia).
+ */
+export const formatDateOnly = (
+  value: string | null | undefined,
+  fallback = '—'
+): string => {
+  const [year, month, day] = (value ?? '').split('-')
+  return year && month && day ? `${day}/${month}/${year}` : fallback
+}
+
+/**
+ * Indica si una fecha sin hora (YYYY-MM-DD) ya pasó.
+ * La comparación lexicográfica es válida para este formato.
+ */
+export const isPastDateOnly = (value: string): boolean => value < todayISO()
