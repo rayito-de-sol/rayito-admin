@@ -21,25 +21,23 @@ import { useCollections } from '../hooks/useCollections'
 import { collectionsApi } from '../api/collectionsApi'
 import { formatColombiaCurrency } from '../utils/currency'
 import type { CollectionState } from '../types/collection.types'
-import { Plus, FileText, ArrowUpDown, Loader2 } from 'lucide-react'
+import { FileText, ArrowUpDown, Loader2 } from 'lucide-react'
 
 interface CollectionsTableProps {
-  storeId: string
-  onCreateClick: () => void
+  customerId: string
 }
 
 type SortField = 'collection_number' | 'created_at'
 type SortDirection = 'asc' | 'desc'
 
 export const CollectionsTable = ({
-  storeId,
-  onCreateClick,
+  customerId,
 }: CollectionsTableProps) => {
   const [stateFilter, setStateFilter] = useState<CollectionState | 'all'>('all')
   const [sortField, setSortField] = useState<SortField>('created_at')
   const [sortDirection, setSortDirection] = useState<SortDirection>('desc')
 
-  const { collections, isLoading, error, refetch } = useCollections(storeId, {
+  const { collections, isLoading, error, refetch } = useCollections(customerId, {
     state: stateFilter === 'all' ? undefined : stateFilter,
   })
 
@@ -105,10 +103,6 @@ export const CollectionsTable = ({
       {/* Header */}
       <div className="flex items-center justify-between">
         <h2 className="text-2xl font-bold">Cuentas de Cobro</h2>
-        <Button onClick={onCreateClick}>
-          <Plus className="mr-2 h-4 w-4" />
-          Crear cuenta de cobro
-        </Button>
       </div>
 
       {/* Filters */}
@@ -152,7 +146,7 @@ export const CollectionsTable = ({
         <div className="rounded-md border border-dashed p-12 text-center">
           <div className="text-sm text-muted-foreground">
             {stateFilter === 'all'
-              ? 'No hay cuentas de cobro. Crea la primera cuenta de cobro para este comercio.'
+              ? 'No hay cuentas de cobro. Se crean automáticamente al registrar una venta a esta tienda.'
               : 'No hay cuentas de cobro con este estado.'}
           </div>
         </div>

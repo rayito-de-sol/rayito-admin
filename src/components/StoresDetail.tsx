@@ -5,7 +5,6 @@ import { Card } from '@/components/ui/card'
 import { LoadingSpinner } from '@/components/LoadingSpinner'
 import { storesService } from '@/services/stores'
 import { CollectionsTable } from '@/features/collections/components/CollectionsTable'
-import { CreateCollectionModal } from '@/features/collections/components/CreateCollectionModal'
 import { Check, X } from 'lucide-react'
 
 interface StoresDetailProps {
@@ -26,7 +25,6 @@ export const StoresDetail = ({
   const [store, setStore] = useState<Store | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
-  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false)
 
   useEffect(() => {
     const fetchStore = async () => {
@@ -247,18 +245,8 @@ export const StoresDetail = ({
 
       {/* Collections Section */}
       <div className="mt-8">
-        <CollectionsTable
-          storeId={storeId}
-          onCreateClick={() => setIsCreateModalOpen(true)}
-        />
+        <CollectionsTable customerId={storeId} />
       </div>
-
-      {/* Create Collection Modal */}
-      <CreateCollectionModal
-        storeId={storeId}
-        isOpen={isCreateModalOpen}
-        onClose={() => setIsCreateModalOpen(false)}
-      />
     </div>
   )
 }

@@ -5,7 +5,9 @@ export type CollectionState = 'draft' | 'active' | 'paid' | 'cancelled';
 export interface Collection {
   id: string;
   collection_number: number;
-  store_id: string;
+  customer_id: string;
+  /** Pedido que factura esta cuenta de cobro */
+  order_id?: string;
 
   // Pricing
   subtotal_before_discount: number;
@@ -41,7 +43,6 @@ export interface Collection {
 
   // Relations
   items?: CollectionItem[];
-  store?: any; // Store type from stores feature
 }
 
 // Collection item interface
@@ -64,22 +65,6 @@ export interface CollectionItem {
 }
 
 // API request types
-export interface CreateCollectionRequest {
-  store_id: string;
-  items: CollectionItemRequest[];
-  notes?: string;
-  payment_due_date?: string;
-}
-
-export interface CollectionItemRequest {
-  variant_id: string;
-  quantity: number;
-}
-
-export interface UpdateCollectionItemsRequest {
-  items: CollectionItemRequest[];
-}
-
 export interface UpdateCollectionMetadataRequest {
   notes?: string;
   payment_due_date?: string;
@@ -94,7 +79,7 @@ export interface UpdateCollectionStateRequest {
 
 // Filters
 export interface CollectionFilters {
-  store_id?: string;
+  customer_id?: string;
   state?: CollectionState;
   from_date?: string;
   to_date?: string;

@@ -1,15 +1,15 @@
 import { apiClient } from '@/services/api/client'
 import type {
   Collection,
-  CreateCollectionRequest,
-  UpdateCollectionItemsRequest,
   UpdateCollectionMetadataRequest,
   UpdateCollectionStateRequest,
   CollectionFilters,
 } from '../types/collection.types'
 
 /**
- * Collections API endpoints
+ * Endpoints de cuentas de cobro.
+ * Se crean automáticamente al registrar una venta a una tienda: no hay alta ni
+ * edición de items. `finalize` solo sirve para reintentar un PDF que falló.
  */
 export const collectionsApi = {
   /**
@@ -18,8 +18,8 @@ export const collectionsApi = {
   async list(filters?: CollectionFilters): Promise<Collection[]> {
     const params = new URLSearchParams()
 
-    if (filters?.store_id) {
-      params.append('store_id', filters.store_id)
+    if (filters?.customer_id) {
+      params.append('customer_id', filters.customer_id)
     }
     if (filters?.state) {
       params.append('state', filters.state)
@@ -39,38 +39,10 @@ export const collectionsApi = {
   },
 
   /**
-   * Create a new collection (draft state)
-   */
-  async create(data: CreateCollectionRequest): Promise<Collection> {
-    const payload = {
-      ...data,
-      payment_due_date: data.payment_due_date
-        ? new Date(data.payment_due_date).toISOString()
-        : undefined,
-    }
-    const response = await apiClient.post<Collection>('/collections', payload)
-    return response.data
-  },
-
-  /**
    * Get collection by ID
    */
   async get(id: string): Promise<Collection> {
     const response = await apiClient.get<Collection>(`/collections/${id}`)
-    return response.data
-  },
-
-  /**
-   * Update collection items (draft only)
-   */
-  async updateItems(
-    id: string,
-    data: UpdateCollectionItemsRequest
-  ): Promise<Collection> {
-    const response = await apiClient.put<Collection>(
-      `/collections/${id}/items`,
-      data
-    )
     return response.data
   },
 

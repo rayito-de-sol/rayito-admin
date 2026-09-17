@@ -12,16 +12,15 @@ import { FinalizeCollectionDialog } from './FinalizeCollectionDialog'
 import { MarkAsPaidDialog } from './MarkAsPaidDialog'
 import { CancelCollectionDialog } from './CancelCollectionDialog'
 import { CollectionDetailsModal } from './CollectionDetailsModal'
-import { EditCollectionModal } from './EditCollectionModal'
 import type { Collection } from '../types/collection.types'
-import { MoreVertical, Eye, Edit, CheckCircle, Ban, FileCheck } from 'lucide-react'
+import { MoreVertical, Eye, CheckCircle, Ban, FileCheck } from 'lucide-react'
 
 interface CollectionActionsProps {
   collection: Collection
   onUpdate?: () => void
 }
 
-type DialogType = 'details' | 'edit' | 'finalize' | 'paid' | 'cancel' | null
+type DialogType = 'details' | 'finalize' | 'paid' | 'cancel' | null
 
 export const CollectionActions = ({
   collection,
@@ -59,10 +58,6 @@ export const CollectionActions = ({
           {isDraft && (
             <>
               <DropdownMenuSeparator />
-              <DropdownMenuItem onClick={() => setOpenDialog('edit')}>
-                <Edit className="mr-2 h-4 w-4" />
-                Editar
-              </DropdownMenuItem>
               <DropdownMenuItem onClick={() => setOpenDialog('finalize')}>
                 <FileCheck className="mr-2 h-4 w-4" />
                 Finalizar
@@ -102,14 +97,6 @@ export const CollectionActions = ({
           collection={collection}
           isOpen
           onClose={handleClose}
-        />
-      )}
-      {openDialog === 'edit' && (
-        <EditCollectionModal
-          collection={collection}
-          isOpen
-          onClose={handleClose}
-          onSuccess={handleSuccess}
         />
       )}
       {openDialog === 'finalize' && (

@@ -6,7 +6,6 @@ interface CollectionsState {
   isLoading: boolean
   error: string | null
   setCollections: (collections: Collection[]) => void
-  addCollection: (collection: Collection) => void
   updateCollection: (id: string, updates: Partial<Collection>) => void
   removeCollection: (id: string) => void
   setLoading: (isLoading: boolean) => void
@@ -20,11 +19,6 @@ export const useCollectionsStore = create<CollectionsState>((set) => ({
   error: null,
 
   setCollections: (collections) => set({ collections }),
-
-  addCollection: (collection) =>
-    set((state) => ({
-      collections: [collection, ...state.collections],
-    })),
 
   updateCollection: (id, updates) =>
     set((state) => ({

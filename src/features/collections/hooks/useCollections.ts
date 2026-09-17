@@ -4,9 +4,9 @@ import { useCollectionsStore } from '../store/collectionsStore'
 import type { CollectionFilters } from '../types/collection.types'
 
 /**
- * Hook to fetch and manage collections for a store
+ * Carga las cuentas de cobro de un cliente tipo tienda
  */
-export const useCollections = (storeId: string, filters?: CollectionFilters) => {
+export const useCollections = (customerId: string, filters?: CollectionFilters) => {
   const {
     collections,
     isLoading,
@@ -23,7 +23,7 @@ export const useCollections = (storeId: string, filters?: CollectionFilters) => 
 
       const data = await collectionsApi.list({
         ...filters,
-        store_id: storeId,
+        customer_id: customerId,
       })
 
       setCollections(data)
@@ -37,11 +37,11 @@ export const useCollections = (storeId: string, filters?: CollectionFilters) => 
   }
 
   useEffect(() => {
-    if (storeId) {
+    if (customerId) {
       fetchCollections()
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [storeId, filters?.state])
+  }, [customerId, filters?.state])
 
   return {
     collections,
