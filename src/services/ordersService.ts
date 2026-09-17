@@ -6,6 +6,9 @@ import type {
   UpdateOrderRequest,
   OrderSource,
   OrderState,
+  CreateOrderResult,
+  PayOrderRequest,
+  CancelOrderRequest,
 } from '@/types/order'
 import { AxiosError } from 'axios'
 
@@ -31,7 +34,7 @@ const getOrderErrorMessage = (error: unknown): string => {
 export interface OrderFilters {
   source?: OrderSource
   state?: OrderState
-  store_id?: string
+  customer_id?: string
   from?: string
   to?: string
 }
@@ -42,7 +45,7 @@ export const ordersService = {
       const params = new URLSearchParams()
       if (filters.source) params.set('source', filters.source)
       if (filters.state) params.set('state', filters.state)
-      if (filters.store_id) params.set('store_id', filters.store_id)
+      if (filters.customer_id) params.set('customer_id', filters.customer_id)
       if (filters.from) params.set('from', filters.from)
       if (filters.to) params.set('to', filters.to)
 
@@ -78,9 +81,29 @@ export const ordersService = {
     }
   },
 
-  async createOrder(data: CreateOrderRequest): Promise<Order> {
+  async createOrder(data: CreateOrderRequest): Promise<CreateOrderResult> {
     try {
-      const res = await apiClient.post<Order>('/orders', data)
+      const res = await apiClient.post<CreateOrderResult>('/orders', data)
+      return res.data
+    } catch (error) {
+      throw new Error(getOrderErrorMessage(error), { cause: error })
+    }
+  },
+
+  /** Registra el pago del pedido y, si existe, de su cuenta de cobro */
+  async payOrder(id: string, data: PayOrderRequest = {}): Promise<Order> {
+    try {
+      const res = await apiClient.patch<Order>(`/orders/${id}/pay`, data)
+      return res.data
+    } catch (error) {
+      throw new Error(getOrderErrorMessage(error), { cause: error })
+    }
+  },
+
+  /** Cancela el pedido, devuelve el stock y cancela su cuenta de cobro */
+  async cancelOrder(id: string, data: CancelOrderRequest = {}): Promise<Order> {
+    try {
+      const res = await apiClient.patch<Order>(`/orders/${id}/cancel`, data)
       return res.data
     } catch (error) {
       throw new Error(getOrderErrorMessage(error), { cause: error })

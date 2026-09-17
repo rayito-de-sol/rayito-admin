@@ -4,8 +4,12 @@ import { SalesSummaryCards } from '@/components/SalesSummaryCards'
 import { OrdersList } from '@/components/OrdersList'
 import { ManualOrderModal } from '@/components/ManualOrderModal'
 import { ConfirmDialog } from '@/components/ConfirmDialog'
+import { MarkOrderPaidDialog } from '@/components/MarkOrderPaidDialog'
+import { CancelOrderDialog } from '@/components/CancelOrderDialog'
 import { OrdersCSVImport } from '@/components/OrdersCSVImport'
 import { ordersService, type OrderFilters } from '@/services/ordersService'
+import { customersService } from '@/services/customers'
+import type { Customer } from '@/types/customer'
 import { shopifyService } from '@/services/shopifyService'
 import type { Order, OrdersSummary, OrderSource } from '@/types/order'
 import { ORDER_SOURCE_LABELS } from '@/types/order'
@@ -45,6 +49,9 @@ export const VentasPage = () => {
   const [deletingOrder, setDeletingOrder] = useState<Order | null>(null)
   const [deleting, setDeleting] = useState(false)
   const [showImport, setShowImport] = useState(false)
+  const [customers, setCustomers] = useState<Customer[]>([])
+  const [payingOrder, setPayingOrder] = useState<Order | null>(null)
+  const [cancellingOrder, setCancellingOrder] = useState<Order | null>(null)
 
   const fetchOrders = useCallback(
     async (signal?: AbortSignal) => {
@@ -64,6 +71,15 @@ export const VentasPage = () => {
     },
     [activeTab],
   )
+
+  const fetchCustomers = useCallback(async (signal?: AbortSignal) => {
+    try {
+      const data = await customersService.listCustomers(undefined, signal)
+      setCustomers(data ?? [])
+    } catch {
+      // La lista de clientes no es crítica: la tabla cae al nombre guardado
+    }
+  }, [])
 
   const fetchSummary = useCallback(async (signal?: AbortSignal) => {
     setLoadingSummary(true)
@@ -88,6 +104,21 @@ export const VentasPage = () => {
     fetchSummary(controller.signal)
     return () => controller.abort()
   }, [fetchSummary])
+
+  useEffect(() => {
+    const controller = new AbortController()
+    fetchCustomers(controller.signal)
+    return () => controller.abort()
+  }, [fetchCustomers])
+
+  const customersById = new Map<string, Customer>(
+    customers.map((customer) => [customer.id, customer])
+  )
+
+  const customerName = (order: Order) =>
+    (order.customer_id && customersById.get(order.customer_id)?.name) ||
+    order.customer_name ||
+    ORDER_SOURCE_LABELS[order.source]
 
   const handleShopifySync = async () => {
     setSyncing(true)
@@ -247,8 +278,11 @@ export const VentasPage = () => {
         error={ordersError}
         onRetry={() => fetchOrders()}
         canEdit={canWrite}
+        customersById={customersById}
         onEdit={handleEditOrder}
         onDelete={setDeletingOrder}
+        onMarkPaid={setPayingOrder}
+        onCancel={setCancellingOrder}
       />
 
       {/* Delete confirmation */}
@@ -257,7 +291,7 @@ export const VentasPage = () => {
         title="Eliminar pedido"
         description={
           deletingOrder
-            ? `¿Eliminar el pedido de ${deletingOrder.customer_name ?? ORDER_SOURCE_LABELS[deletingOrder.source]} por ${formatCurrency(deletingOrder.total)}?`
+            ? `¿Eliminar el pedido de ${customerName(deletingOrder)} por ${formatCurrency(deletingOrder.total)}?`
             : ''
         }
         warning="Esta acción es permanente y no se puede deshacer."
@@ -270,11 +304,35 @@ export const VentasPage = () => {
       <ManualOrderModal
         open={showOrderModal}
         order={editingOrder}
+        customers={customers}
+        onCustomerCreated={(customer) =>
+          setCustomers((previous) => [...previous, customer])
+        }
         onClose={() => {
           setShowOrderModal(false)
           setEditingOrder(null)
         }}
         onSuccess={handleOrderCreated}
+      />
+
+      {/* Registrar pago */}
+      <MarkOrderPaidDialog
+        order={payingOrder}
+        onClose={() => setPayingOrder(null)}
+        onSuccess={() => {
+          fetchOrders()
+          fetchSummary()
+        }}
+      />
+
+      {/* Cancelar pedido */}
+      <CancelOrderDialog
+        order={cancellingOrder}
+        onClose={() => setCancellingOrder(null)}
+        onSuccess={() => {
+          fetchOrders()
+          fetchSummary()
+        }}
       />
     </div>
   )

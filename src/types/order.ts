@@ -18,7 +18,8 @@ export interface Order {
   source: OrderSource
   external_id?: string
   state: OrderState
-  store_id?: string
+  customer_id?: string
+  /** Nombre guardado al registrar la venta; también cubre pedidos históricos sin cliente */
   customer_name?: string
   customer_phone?: string
   notes?: string
@@ -27,6 +28,13 @@ export interface Order {
   total: number
   currency: string
   order_date: string
+  /** Pagado si tiene valor; un pedido confirmado sin él es una cuenta por cobrar */
+  paid_at?: string
+  /** Fecha de vencimiento (YYYY-MM-DD) de los pedidos por cobrar */
+  payment_due_date?: string
+  /** Cuenta de cobro que factura el pedido (solo ventas a tiendas) */
+  collection_id?: string
+  collection_document_id?: string
   created_by?: string
   created_at: string
   updated_at: string
@@ -58,18 +66,40 @@ export interface CreateOrderItemRequest {
 }
 
 export interface CreateOrderRequest {
+  customer_id: string
   source: OrderSource
-  store_id?: string
-  customer_name?: string
-  customer_phone?: string
+  /** Pagado de contado. Por defecto sí para personas, no para tiendas */
+  paid: boolean
+  /** Obligatoria cuando el pedido no está pagado (YYYY-MM-DD) */
+  payment_due_date?: string
   notes?: string
   items: CreateOrderItemRequest[]
 }
 
-// Igual que crear, pero items es opcional: si se omite, el backend
-// conserva los artículos y totales existentes (pedidos históricos sin variante)
-export interface UpdateOrderRequest extends Omit<CreateOrderRequest, 'items'> {
+// Igual que crear pero sin `paid` (el pago se registra desde la lista) y con
+// items opcional: si se omite, el backend conserva los artículos y totales
+// existentes (pedidos históricos sin variante)
+export interface UpdateOrderRequest {
+  customer_id: string
+  source: OrderSource
+  payment_due_date?: string
+  notes?: string
   items?: CreateOrderItemRequest[]
+}
+
+/** Respuesta de creación: el pedido y, si falló el PDF de la cuenta de cobro, un aviso */
+export interface CreateOrderResult {
+  order: Order
+  warning?: string
+}
+
+export interface PayOrderRequest {
+  payment_method?: string
+  payment_reference?: string
+}
+
+export interface CancelOrderRequest {
+  cancel_reason?: string
 }
 
 export const ORDER_SOURCE_LABELS: Record<OrderSource, string> = {
@@ -83,3 +113,13 @@ export const ORDER_STATE_LABELS: Record<OrderState, string> = {
   confirmed: 'Confirmado',
   cancelled: 'Cancelado',
 }
+
+/** Un pedido está pagado cuando tiene fecha de pago */
+export const isOrderPaid = (order: Order): boolean => !!order.paid_at
+
+/**
+ * Los pedidos facturados con cuenta de cobro no se editan ni se eliminan:
+ * el documento ya salió hacia la tienda.
+ */
+export const isOrderLocked = (order: Order): boolean =>
+  !!order.collection_id || order.source === 'store'
