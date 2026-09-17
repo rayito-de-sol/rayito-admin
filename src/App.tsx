@@ -6,7 +6,7 @@ import { Layout } from '@/components/Layout'
 import { GlobalLoading } from '@/components/GlobalLoading'
 import { LoginPage } from '@/pages/LoginPage'
 import { DashboardPage } from '@/pages/DashboardPage'
-import { StoresPage } from '@/pages/StoresPage'
+import { CustomersPage } from '@/pages/CustomersPage'
 import { ProductsPage } from '@/pages/ProductsPage'
 import { PackagesPage } from '@/pages/PackagesPage'
 import { VentasPage } from '@/pages/VentasPage'
@@ -59,11 +59,11 @@ function App() {
         />
 
         <Route
-          path="/tiendas"
+          path="/clientes"
           element={
             <ProtectedRoute>
               <Layout>
-                <StoresPage />
+                <CustomersPage />
               </Layout>
             </ProtectedRoute>
           }
@@ -158,6 +158,9 @@ function App() {
         />
 
         {/* 404 Not Found */}
+        {/* Ruta anterior: /tiendas pasó a ser /clientes */}
+        <Route path="/tiendas" element={<Navigate to="/clientes" replace />} />
+
         <Route path="*" element={<NotFoundPage />} />
       </Routes>
     </BrowserRouter>

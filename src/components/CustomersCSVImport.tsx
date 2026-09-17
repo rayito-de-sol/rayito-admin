@@ -10,8 +10,8 @@ import {
   TableRow,
 } from '@/components/ui/table'
 import { LoadingSpinner } from '@/components/LoadingSpinner'
-import { storesService } from '@/services/stores'
-import type { CreateStoreRequest, BulkImportResult } from '@/types/store'
+import { customersService } from '@/services/customers'
+import type { CreateCustomerRequest, BulkImportResult } from '@/types/customer'
 import { Upload, Download } from 'lucide-react'
 
 const IDENTITY_TYPES = ['NIT', 'RUT', 'CC', 'CE', 'RFC']
@@ -64,11 +64,11 @@ const EXAMPLE_ROW = [
 
 interface ParsedRow {
   index: number
-  data: CreateStoreRequest
+  data: CreateCustomerRequest
   error: string | null
 }
 
-interface StoresCSVImportProps {
+interface CustomersCSVImportProps {
   onSuccess: () => void
   onCancel: () => void
 }
@@ -100,25 +100,27 @@ function parseRow(
   const discountPercentage = discountRaw === '' ? 0 : parseFloat(discountRaw)
 
   // Client-side validation
-  if (!identityNumber) return { index, data: {} as CreateStoreRequest, error: 'identity_number es requerido' }
+  if (!identityNumber) return { index, data: {} as CreateCustomerRequest, error: 'identity_number es requerido' }
   if (!IDENTITY_TYPES.includes(identityType))
-    return { index, data: {} as CreateStoreRequest, error: `identity_type inválido (debe ser uno de: ${IDENTITY_TYPES.join(', ')})` }
-  if (!name) return { index, data: {} as CreateStoreRequest, error: 'name es requerido' }
-  if (!legalName) return { index, data: {} as CreateStoreRequest, error: 'legal_name es requerido' }
-  if (!line1) return { index, data: {} as CreateStoreRequest, error: 'line1 es requerido' }
-  if (!city) return { index, data: {} as CreateStoreRequest, error: 'city es requerido' }
-  if (!state) return { index, data: {} as CreateStoreRequest, error: 'state es requerido' }
-  if (!postalCode) return { index, data: {} as CreateStoreRequest, error: 'postal_code es requerido' }
+    return { index, data: {} as CreateCustomerRequest, error: `identity_type inválido (debe ser uno de: ${IDENTITY_TYPES.join(', ')})` }
+  if (!name) return { index, data: {} as CreateCustomerRequest, error: 'name es requerido' }
+  if (!legalName) return { index, data: {} as CreateCustomerRequest, error: 'legal_name es requerido' }
+  if (!line1) return { index, data: {} as CreateCustomerRequest, error: 'line1 es requerido' }
+  if (!city) return { index, data: {} as CreateCustomerRequest, error: 'city es requerido' }
+  if (!state) return { index, data: {} as CreateCustomerRequest, error: 'state es requerido' }
+  if (!postalCode) return { index, data: {} as CreateCustomerRequest, error: 'postal_code es requerido' }
   if (!/^[A-Za-z]{2}$/.test(country))
-    return { index, data: {} as CreateStoreRequest, error: 'country debe ser un código ISO de 2 letras (ej: CO)' }
+    return { index, data: {} as CreateCustomerRequest, error: 'country debe ser un código ISO de 2 letras (ej: CO)' }
   if (!contactPersonName)
-    return { index, data: {} as CreateStoreRequest, error: 'contact_person_name es requerido' }
+    return { index, data: {} as CreateCustomerRequest, error: 'contact_person_name es requerido' }
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(contactPersonEmail))
-    return { index, data: {} as CreateStoreRequest, error: 'contact_person_email tiene formato inválido' }
+    return { index, data: {} as CreateCustomerRequest, error: 'contact_person_email tiene formato inválido' }
   if (isNaN(discountPercentage) || discountPercentage < 0 || discountPercentage > 100)
-    return { index, data: {} as CreateStoreRequest, error: 'discount_percentage debe estar entre 0 y 100' }
+    return { index, data: {} as CreateCustomerRequest, error: 'discount_percentage debe estar entre 0 y 100' }
 
-  const data: CreateStoreRequest = {
+  const data: CreateCustomerRequest = {
+    // La importación masiva es siempre de tiendas
+    type: 'store',
     identity_number: identityNumber,
     identity_type: identityType,
     name,
@@ -187,7 +189,7 @@ function downloadTemplate() {
   URL.revokeObjectURL(url)
 }
 
-export const StoresCSVImport = ({ onSuccess, onCancel }: StoresCSVImportProps) => {
+export const CustomersCSVImport = ({ onSuccess, onCancel }: CustomersCSVImportProps) => {
   const fileInputRef = useRef<HTMLInputElement>(null)
   const [rows, setRows] = useState<ParsedRow[]>([])
   const [headerError, setHeaderError] = useState<string | null>(null)
@@ -221,7 +223,7 @@ export const StoresCSVImport = ({ onSuccess, onCancel }: StoresCSVImportProps) =
     setSubmitting(true)
     setApiError(null)
     try {
-      const res = await storesService.bulkCreateStores(validRows.map((r) => r.data))
+      const res = await customersService.bulkCreateCustomers(validRows.map((r) => r.data))
       setResult(res)
       if (res.failed === 0) {
         onSuccess()

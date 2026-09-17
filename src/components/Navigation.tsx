@@ -1,8 +1,8 @@
 import { useState } from 'react'
 import { NavLink } from 'react-router-dom'
 import {
+  Users,
   Home,
-  Store,
   Package,
   Ruler,
   Layers,
@@ -72,12 +72,12 @@ export const Navigation = ({ isCollapsed, onToggle }: NavigationProps) => {
         </li>
         <li>
           <NavLink
-            to="/tiendas"
+            to="/clientes"
             className={linkClass}
-            title={isCollapsed ? 'Tiendas' : undefined}
+            title={isCollapsed ? 'Clientes' : undefined}
           >
-            <Store className="h-4 w-4 flex-shrink-0" />
-            {!isCollapsed && <span>Tiendas</span>}
+            <Users className="h-4 w-4 flex-shrink-0" />
+            {!isCollapsed && <span>Clientes</span>}
           </NavLink>
         </li>
 
