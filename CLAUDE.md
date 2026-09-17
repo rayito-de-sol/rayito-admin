@@ -37,6 +37,7 @@ rayito-admin/
 ├── public/              # Static assets (logo, etc.)
 ├── src/
 │   ├── components/      # Reusable UI components
+│   ├── features/       # Cohesive domains: features/<name>/{api,components,hooks,store,types}
 │   ├── hooks/          # Custom React hooks
 │   ├── pages/          # Page-level components
 │   ├── services/       # API clients, auth, external services
@@ -49,11 +50,45 @@ rayito-admin/
 └── CLAUDE.md          # This file
 ```
 
+## Domain Naming
+
+**Clientes = personas + tiendas.** Both live in one `Customer` type, told apart by
+`customer.type`. A person buys at retail and pays cash; a tienda buys wholesale, is
+billed with a "cuenta de cobro" and pays later.
+
+Watch the word "Tienda" in Ventas: there it means the wholesale **channel**
+(`order.source === 'store'`), not the customer. The channel tabs and summary cards
+keep that label on purpose.
+
+Cuentas de cobro are never created by hand. Registering a sale to a tienda produces
+one, so the collections feature only lists them and changes their state.
+
+An order is paid when `paid_at` is set; a confirmed order without it is money owed.
+Use the `isOrderPaid` and `isOrderLocked` helpers in `src/types/order.ts` rather than
+comparing states.
+
+## Dates Without Time
+
+`payment_due_date` is a `YYYY-MM-DD` string with no time. Never put it through
+`new Date()`: that parses as midnight UTC, which in Colombia (UTC-5) renders as the
+previous day. Use `todayISO`, `addDaysISO`, `formatDateOnly` and `isPastDateOnly`
+from `src/utils/date.ts`, which work on the string.
+
+## Searchable Dropdowns
+
+`src/components/SearchableSelect.tsx` is the app's combobox: a Popover with an input
+that filters the list. Use it wherever the options outgrow a plain Radix `Select`,
+which cannot filter. `cmdk` is installed but deliberately unused; the Popover
+pattern was already in the codebase and needs no new dependency.
+
 ## Theme & Color System
 
 ### Using Color Tokens
 
 **IMPORTANT**: Always use tokenized colors from `src/index.css`. Never hardcode color values in components.
+
+There are no success or warning tokens. For status, use `Badge` variants: `secondary`
+for something settled, `outline` for pending, `destructive` for overdue or dangerous.
 
 **Available Color Tokens:**
 
@@ -587,5 +622,5 @@ Update this CLAUDE.md when you:
 
 ---
 
-Last Updated: 2026-04-02
-Created during initial setup with Claude Sonnet 4.5
+Last Updated: 2026-09-17
+Updated with the Clientes refactor and order payment tracking by Claude Opus 5
