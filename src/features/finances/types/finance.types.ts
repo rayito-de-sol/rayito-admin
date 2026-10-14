@@ -5,6 +5,9 @@ export type ExpenseCategory =
   | 'servicios'
   | 'transporte'
   | 'marketing'
+  | 'pauta'
+  | 'envios'
+  | 'bancos'
   | 'otros'
 
 export type ExpensePaymentMethod = 'efectivo' | 'transferencia' | 'otro'
@@ -16,6 +19,9 @@ export const EXPENSE_CATEGORIES: ExpenseCategory[] = [
   'servicios',
   'transporte',
   'marketing',
+  'pauta',
+  'envios',
+  'bancos',
   'otros',
 ]
 
@@ -26,6 +32,9 @@ export const EXPENSE_CATEGORY_LABELS: Record<ExpenseCategory, string> = {
   servicios: 'Servicios',
   transporte: 'Transporte',
   marketing: 'Marketing',
+  pauta: 'Pauta',
+  envios: 'Envíos',
+  bancos: 'Bancos',
   otros: 'Otros',
 }
 
@@ -66,6 +75,9 @@ export const DEFAULT_CLASSIFICATION_BY_CATEGORY: Record<
   servicios: 'administrativo',
   transporte: 'ventas',
   marketing: 'ventas',
+  pauta: 'ventas',
+  envios: 'ventas',
+  bancos: 'administrativo',
   otros: 'administrativo',
 }
 
