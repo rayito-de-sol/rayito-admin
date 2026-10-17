@@ -119,6 +119,8 @@ export interface BulkRowError {
 
 export interface BulkCreateResult {
   created: number
+  // Filas (1-based) omitidas por repetir un gasto existente o una fila anterior
+  skipped_rows: number[]
   errors: BulkRowError[]
 }
 

@@ -72,8 +72,13 @@ export const GastosPage = () => {
       <div className="space-y-6">
         <h1 className="text-3xl font-bold">Importar gastos</h1>
         <ExpensesCSVImport
-          onSuccess={() => {
-            toast.success('Gastos importados')
+          onSuccess={({ created, skipped_rows }) => {
+            const skipped = skipped_rows.length
+            toast.success(
+              skipped > 0
+                ? `${created} gastos importados, ${skipped} omitidos por repetidos`
+                : `${created} gastos importados`
+            )
             refetch()
           }}
           onCancel={() => setShowImport(false)}

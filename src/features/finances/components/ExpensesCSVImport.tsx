@@ -50,7 +50,7 @@ interface ParsedRow {
 }
 
 interface ExpensesCSVImportProps {
-  onSuccess: () => void
+  onSuccess: (result: BulkCreateResult) => void
   onCancel: () => void
 }
 
@@ -206,7 +206,7 @@ export const ExpensesCSVImport = ({
       )
       setResult(res)
       if (res.errors.length === 0) {
-        onSuccess()
+        onSuccess(res)
       }
     } catch (err) {
       console.error('Error importando gastos:', err)
@@ -236,7 +236,8 @@ export const ExpensesCSVImport = ({
             {fileName ? fileName : 'Haz clic para seleccionar un archivo CSV'}
           </p>
           <p className="mt-1 text-xs text-muted-foreground">
-            Fechas en formato YYYY-MM-DD. La importación es todo o nada.
+            Fechas en formato YYYY-MM-DD. Una fila con errores bloquea la
+            importación; las filas repetidas se omiten.
           </p>
           <input
             ref={fileInputRef}
@@ -316,8 +317,8 @@ export const ExpensesCSVImport = ({
 
           {invalidRows.length > 0 && (
             <p className="mt-3 text-sm text-destructive">
-              Corrige las filas con errores antes de importar (la importación
-              es todo o nada).
+              Corrige las filas con errores antes de importar: una sola fila con
+              errores bloquea toda la importación.
             </p>
           )}
         </Card>
@@ -327,6 +328,64 @@ export const ExpensesCSVImport = ({
         <div className="rounded-md bg-destructive/10 p-3 text-sm text-destructive">
           {apiError}
         </div>
+      )}
+
+      {result && result.errors.length === 0 && (
+        <Card className="p-6">
+          <h3 className="mb-4 text-lg font-semibold">
+            Resultado de importación
+          </h3>
+          <div className="mb-4 flex gap-6 text-sm">
+            <span className="text-green-600">
+              Gastos creados: <strong>{result.created}</strong>
+            </span>
+            {result.skipped_rows.length > 0 && (
+              <span className="text-muted-foreground">
+                Omitidos (repetidos):{' '}
+                <strong>{result.skipped_rows.length}</strong>
+              </span>
+            )}
+          </div>
+
+          {result.skipped_rows.length > 0 && (
+            <>
+              <p className="mb-3 text-sm text-muted-foreground">
+                Estas filas no se guardaron porque ya existe un gasto con la
+                misma fecha, categoría, clasificación, descripción y monto, o
+                porque aparecen más de una vez en el archivo.
+              </p>
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Fila</TableHead>
+                    <TableHead>Fecha</TableHead>
+                    <TableHead>Descripción</TableHead>
+                    <TableHead className="text-right">Monto</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {result.skipped_rows.map((rowNumber) => {
+                    // Se enviaron todas las filas válidas en orden, así que la
+                    // fila N del servidor es validRows[N - 1]
+                    const data = validRows[rowNumber - 1]?.data
+                    return (
+                      <TableRow key={rowNumber}>
+                        <TableCell>{rowNumber}</TableCell>
+                        <TableCell>{data?.expense_date ?? '—'}</TableCell>
+                        <TableCell>{data?.description ?? '—'}</TableCell>
+                        <TableCell className="text-right">
+                          {data
+                            ? `$${data.amount.toLocaleString('es-CO')}`
+                            : '—'}
+                        </TableCell>
+                      </TableRow>
+                    )
+                  })}
+                </TableBody>
+              </Table>
+            </>
+          )}
+        </Card>
       )}
 
       {result && result.errors.length > 0 && (
