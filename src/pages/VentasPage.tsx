@@ -6,6 +6,7 @@ import { ManualOrderModal } from '@/components/ManualOrderModal'
 import { ConfirmDialog } from '@/components/ConfirmDialog'
 import { MarkOrderPaidDialog } from '@/components/MarkOrderPaidDialog'
 import { CancelOrderDialog } from '@/components/CancelOrderDialog'
+import { DateRangeFilter } from '@/components/DateRangeFilter'
 import { OrdersCSVImport } from '@/components/OrdersCSVImport'
 import { ordersService, type OrderFilters } from '@/services/ordersService'
 import { customersService } from '@/services/customers'
@@ -15,6 +16,7 @@ import type { Order, OrdersSummary, OrderSource } from '@/types/order'
 import { ORDER_SOURCE_LABELS } from '@/types/order'
 import { useAuthStore } from '@/stores/useAuthStore'
 import { formatCurrency } from '@/utils/currency'
+import { formatDateOnly } from '@/utils/date'
 import { toast } from '@/utils/toast'
 import { RefreshCw, Plus, Settings, Upload } from 'lucide-react'
 
@@ -37,6 +39,10 @@ export const VentasPage = () => {
   const canWrite = user?.role === 'admin' || user?.role === 'manager'
 
   const [activeTab, setActiveTab] = useState<SourceFilter>('all')
+  // Días calendario en Colombia (YYYY-MM-DD), ambos incluidos; '' = sin límite.
+  // Filtran la tabla y las tarjetas de resumen.
+  const [fromDate, setFromDate] = useState('')
+  const [toDate, setToDate] = useState('')
   const [orders, setOrders] = useState<Order[]>([])
   const [summary, setSummary] = useState<OrdersSummary | null>(null)
   const [loadingOrders, setLoadingOrders] = useState(false)
@@ -59,6 +65,8 @@ export const VentasPage = () => {
       setOrdersError(null)
       const filters: OrderFilters = {}
       if (activeTab !== 'all') filters.source = activeTab
+      if (fromDate) filters.from = fromDate
+      if (toDate) filters.to = toDate
       try {
         const data = await ordersService.listOrders(filters, signal)
         setOrders(data ?? [])
@@ -69,7 +77,7 @@ export const VentasPage = () => {
         if (!signal?.aborted) setLoadingOrders(false)
       }
     },
-    [activeTab],
+    [activeTab, fromDate, toDate],
   )
 
   const fetchCustomers = useCallback(async (signal?: AbortSignal) => {
@@ -84,14 +92,18 @@ export const VentasPage = () => {
   const fetchSummary = useCallback(async (signal?: AbortSignal) => {
     setLoadingSummary(true)
     try {
-      const data = await ordersService.getOrdersSummary(undefined, undefined, signal)
+      const data = await ordersService.getOrdersSummary(
+        fromDate || undefined,
+        toDate || undefined,
+        signal,
+      )
       setSummary(data)
     } catch {
       // Summary is non-critical; silently ignore
     } finally {
       if (!signal?.aborted) setLoadingSummary(false)
     }
-  }, [])
+  }, [fromDate, toDate])
 
   useEffect(() => {
     const controller = new AbortController()
@@ -202,6 +214,16 @@ export const VentasPage = () => {
     )
   }
 
+  // Sin fechas, el API resume el último mes; con alguna, el mismo rango que la tabla
+  const summaryPeriod =
+    fromDate && toDate
+      ? `${formatDateOnly(fromDate)} – ${formatDateOnly(toDate)}`
+      : fromDate
+        ? `desde ${formatDateOnly(fromDate)}`
+        : toDate
+          ? `hasta ${formatDateOnly(toDate)}`
+          : 'último mes'
+
   return (
     <div className="space-y-6 p-6">
       {/* Header */}
@@ -251,6 +273,21 @@ export const VentasPage = () => {
         </div>
       </div>
 
+      {/* Rango de fechas: filtra las tarjetas de resumen y la tabla */}
+      <div className="flex flex-wrap items-center gap-3">
+        <DateRangeFilter
+          from={fromDate}
+          to={toDate}
+          onChange={(from, to) => {
+            setFromDate(from)
+            setToDate(to)
+          }}
+        />
+        <span className="ml-auto text-sm text-[var(--color-muted-foreground)]">
+          Resumen: {summaryPeriod}
+        </span>
+      </div>
+
       {/* Summary cards */}
       <SalesSummaryCards summary={summary} loading={loadingSummary} />
 
@@ -283,7 +320,7 @@ export const VentasPage = () => {
         onDelete={setDeletingOrder}
         onMarkPaid={setPayingOrder}
         onCancel={setCancellingOrder}
-        resetPageOn={[activeTab]}
+        resetPageOn={[activeTab, fromDate, toDate]}
       />
 
       {/* Delete confirmation */}

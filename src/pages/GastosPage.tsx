@@ -1,7 +1,5 @@
 import { useState } from 'react'
 import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
 import {
   Select,
   SelectContent,
@@ -24,6 +22,7 @@ import {
   type ExpenseClassification,
 } from '@/features/finances'
 import { ConfirmDialog } from '@/components/ConfirmDialog'
+import { DateRangeFilter } from '@/components/DateRangeFilter'
 import { useAuthStore } from '@/stores/useAuthStore'
 import { toast } from '@/utils/toast'
 import { Plus, Upload } from 'lucide-react'
@@ -158,44 +157,14 @@ export const GastosPage = () => {
             </SelectContent>
           </Select>
         </div>
-        <div className="flex items-center gap-2">
-          <Label htmlFor="expenses-from" className="text-muted-foreground">
-            Desde
-          </Label>
-          <Input
-            id="expenses-from"
-            type="date"
-            className="w-40"
-            value={fromDate}
-            max={toDate || undefined}
-            onChange={(e) => setFromDate(e.target.value)}
-          />
-        </div>
-        <div className="flex items-center gap-2">
-          <Label htmlFor="expenses-to" className="text-muted-foreground">
-            Hasta
-          </Label>
-          <Input
-            id="expenses-to"
-            type="date"
-            className="w-40"
-            value={toDate}
-            min={fromDate || undefined}
-            onChange={(e) => setToDate(e.target.value)}
-          />
-        </div>
-        {(fromDate || toDate) && (
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => {
-              setFromDate('')
-              setToDate('')
-            }}
-          >
-            Limpiar fechas
-          </Button>
-        )}
+        <DateRangeFilter
+          from={fromDate}
+          to={toDate}
+          onChange={(from, to) => {
+            setFromDate(from)
+            setToDate(to)
+          }}
+        />
       </div>
 
       <ExpensesTable
