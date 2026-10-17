@@ -8,11 +8,14 @@ import type {
 } from '../types/finance.types'
 
 /**
- * Hook para cargar gastos, con filtros opcionales por categoría y clasificación.
+ * Hook para cargar gastos, con filtros opcionales por categoría, clasificación
+ * y rango de fechas (YYYY-MM-DD, ambos extremos incluidos; '' = sin límite).
  */
 export const useExpenses = (
   category: ExpenseCategory | 'all',
-  classification: ExpenseClassification | 'all'
+  classification: ExpenseClassification | 'all',
+  from: string,
+  to: string
 ) => {
   const [expenses, setExpenses] = useState<Expense[]>([])
   const [isLoading, setIsLoading] = useState(true)
@@ -25,6 +28,8 @@ export const useExpenses = (
       const filters: ExpenseFilters = {}
       if (category !== 'all') filters.category = category
       if (classification !== 'all') filters.classification = classification
+      if (from) filters.from = from
+      if (to) filters.to = to
       const data = await financesApi.listExpenses(
         Object.keys(filters).length > 0 ? filters : undefined
       )
@@ -35,7 +40,7 @@ export const useExpenses = (
     } finally {
       setIsLoading(false)
     }
-  }, [category, classification])
+  }, [category, classification, from, to])
 
   useEffect(() => {
     fetchExpenses()

@@ -1,5 +1,7 @@
 import { useState } from 'react'
 import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
 import {
   Select,
   SelectContent,
@@ -40,9 +42,16 @@ export const GastosPage = () => {
   const [classificationFilter, setClassificationFilter] = useState<
     ExpenseClassification | 'all'
   >('all')
+  // Rango de fechas YYYY-MM-DD, ambos extremos incluidos; '' = sin límite
+  const [fromDate, setFromDate] = useState('')
+  const [toDate, setToDate] = useState('')
+  // Cualquier cambio de filtro vuelve a la primera página
+  const [page, setPage] = useState(1)
   const { expenses, isLoading, error, refetch } = useExpenses(
     categoryFilter,
-    classificationFilter
+    classificationFilter,
+    fromDate,
+    toDate
   )
 
   const [showImport, setShowImport] = useState(false)
@@ -110,13 +119,14 @@ export const GastosPage = () => {
         )}
       </div>
 
-      <div className="flex gap-3">
+      <div className="flex flex-wrap items-center gap-3">
         <div className="w-56">
           <Select
             value={categoryFilter}
-            onValueChange={(v) =>
+            onValueChange={(v) => {
               setCategoryFilter(v as ExpenseCategory | 'all')
-            }
+              setPage(1)
+            }}
           >
             <SelectTrigger>
               <SelectValue />
@@ -134,9 +144,10 @@ export const GastosPage = () => {
         <div className="w-56">
           <Select
             value={classificationFilter}
-            onValueChange={(v) =>
+            onValueChange={(v) => {
               setClassificationFilter(v as ExpenseClassification | 'all')
-            }
+              setPage(1)
+            }}
           >
             <SelectTrigger>
               <SelectValue />
@@ -151,6 +162,51 @@ export const GastosPage = () => {
             </SelectContent>
           </Select>
         </div>
+        <div className="flex items-center gap-2">
+          <Label htmlFor="expenses-from" className="text-muted-foreground">
+            Desde
+          </Label>
+          <Input
+            id="expenses-from"
+            type="date"
+            className="w-40"
+            value={fromDate}
+            max={toDate || undefined}
+            onChange={(e) => {
+              setFromDate(e.target.value)
+              setPage(1)
+            }}
+          />
+        </div>
+        <div className="flex items-center gap-2">
+          <Label htmlFor="expenses-to" className="text-muted-foreground">
+            Hasta
+          </Label>
+          <Input
+            id="expenses-to"
+            type="date"
+            className="w-40"
+            value={toDate}
+            min={fromDate || undefined}
+            onChange={(e) => {
+              setToDate(e.target.value)
+              setPage(1)
+            }}
+          />
+        </div>
+        {(fromDate || toDate) && (
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => {
+              setFromDate('')
+              setToDate('')
+              setPage(1)
+            }}
+          >
+            Limpiar fechas
+          </Button>
+        )}
       </div>
 
       <ExpensesTable
@@ -164,6 +220,8 @@ export const GastosPage = () => {
           setFormOpen(true)
         }}
         onDelete={setDeletingExpense}
+        page={page}
+        onPageChange={setPage}
       />
 
       <ExpenseFormModal
