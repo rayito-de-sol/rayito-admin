@@ -283,6 +283,7 @@ export const VentasPage = () => {
         onDelete={setDeletingOrder}
         onMarkPaid={setPayingOrder}
         onCancel={setCancellingOrder}
+        resetPageOn={[activeTab]}
       />
 
       {/* Delete confirmation */}

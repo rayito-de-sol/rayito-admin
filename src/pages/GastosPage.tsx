@@ -45,8 +45,6 @@ export const GastosPage = () => {
   // Rango de fechas YYYY-MM-DD, ambos extremos incluidos; '' = sin límite
   const [fromDate, setFromDate] = useState('')
   const [toDate, setToDate] = useState('')
-  // Cualquier cambio de filtro vuelve a la primera página
-  const [page, setPage] = useState(1)
   const { expenses, isLoading, error, refetch } = useExpenses(
     categoryFilter,
     classificationFilter,
@@ -123,10 +121,9 @@ export const GastosPage = () => {
         <div className="w-56">
           <Select
             value={categoryFilter}
-            onValueChange={(v) => {
+            onValueChange={(v) =>
               setCategoryFilter(v as ExpenseCategory | 'all')
-              setPage(1)
-            }}
+            }
           >
             <SelectTrigger>
               <SelectValue />
@@ -144,10 +141,9 @@ export const GastosPage = () => {
         <div className="w-56">
           <Select
             value={classificationFilter}
-            onValueChange={(v) => {
+            onValueChange={(v) =>
               setClassificationFilter(v as ExpenseClassification | 'all')
-              setPage(1)
-            }}
+            }
           >
             <SelectTrigger>
               <SelectValue />
@@ -172,10 +168,7 @@ export const GastosPage = () => {
             className="w-40"
             value={fromDate}
             max={toDate || undefined}
-            onChange={(e) => {
-              setFromDate(e.target.value)
-              setPage(1)
-            }}
+            onChange={(e) => setFromDate(e.target.value)}
           />
         </div>
         <div className="flex items-center gap-2">
@@ -188,10 +181,7 @@ export const GastosPage = () => {
             className="w-40"
             value={toDate}
             min={fromDate || undefined}
-            onChange={(e) => {
-              setToDate(e.target.value)
-              setPage(1)
-            }}
+            onChange={(e) => setToDate(e.target.value)}
           />
         </div>
         {(fromDate || toDate) && (
@@ -201,7 +191,6 @@ export const GastosPage = () => {
             onClick={() => {
               setFromDate('')
               setToDate('')
-              setPage(1)
             }}
           >
             Limpiar fechas
@@ -220,8 +209,7 @@ export const GastosPage = () => {
           setFormOpen(true)
         }}
         onDelete={setDeletingExpense}
-        page={page}
-        onPageChange={setPage}
+        resetPageOn={[categoryFilter, classificationFilter, fromDate, toDate]}
       />
 
       <ExpenseFormModal

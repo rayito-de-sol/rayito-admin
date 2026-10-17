@@ -11,6 +11,8 @@ import {
 import { LoadingSpinner } from '@/components/LoadingSpinner'
 import { StatusBadge } from '@/components/StatusBadge'
 import { SortableHead } from '@/components/SortableHead'
+import { TablePagination } from '@/components/TablePagination'
+import { usePagination } from '@/hooks/usePagination'
 import { useSort } from '@/hooks/useSort'
 import { Plus, Upload, X } from 'lucide-react'
 import { formatCurrency } from '@/utils/currency'
@@ -77,6 +79,14 @@ export const ProductsList = ({
       description: (p) => p.description,
     }
   )
+  // Al cambiar filtros u orden se vuelve a la primera página
+  const { pageItems, pagination } = usePagination(sortedProducts, [
+    statusFilter,
+    categoryFilter,
+    typeFilter,
+    sortKey,
+    sortDir,
+  ])
 
   // Check if any filter is active
   const hasActiveFilters =
@@ -238,7 +248,7 @@ export const ProductsList = ({
               </TableRow>
             </TableHeader>
             <TableBody>
-              {sortedProducts.map((product) => (
+              {pageItems.map((product) => (
                 <TableRow
                   key={product.id}
                   onClick={() => onProductClick(product.id)}
@@ -264,6 +274,7 @@ export const ProductsList = ({
               ))}
             </TableBody>
           </Table>
+          <TablePagination {...pagination} />
         </Card>
       )}
     </div>

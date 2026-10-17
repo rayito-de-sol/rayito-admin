@@ -25,6 +25,8 @@ import {
   TableRow,
 } from '@/components/ui/table'
 import { LoadingSpinner } from '@/components/LoadingSpinner'
+import { TablePagination } from '@/components/TablePagination'
+import { usePagination } from '@/hooks/usePagination'
 import { collectionsApi } from '@/features/collections/api/collectionsApi'
 import { cn } from '@/lib/utils'
 import { formatCurrency, formatDate } from '@/utils/currency'
@@ -57,6 +59,8 @@ interface OrdersListProps {
   onDelete: (order: Order) => void
   onMarkPaid: (order: Order) => void
   onCancel: (order: Order) => void
+  /** Filtros activos (pestaña de canal): al cambiar se vuelve a la primera página */
+  resetPageOn: unknown[]
 }
 
 /**
@@ -110,7 +114,10 @@ export const OrdersList = ({
   onDelete,
   onMarkPaid,
   onCancel,
+  resetPageOn,
 }: OrdersListProps) => {
+  const { pageItems, pagination } = usePagination(orders, resetPageOn)
+
   const openCollectionPdf = async (documentId: string) => {
     try {
       const url = await collectionsApi.getDocumentDownloadUrl(documentId)
@@ -169,7 +176,7 @@ export const OrdersList = ({
           </TableRow>
         </TableHeader>
         <TableBody>
-          {orders.map((order) => {
+          {pageItems.map((order) => {
             const paid = isOrderPaid(order)
             const cancelled = order.state === 'cancelled'
             const locked = isOrderLocked(order)
@@ -261,6 +268,7 @@ export const OrdersList = ({
           })}
         </TableBody>
       </Table>
+      <TablePagination {...pagination} />
     </Card>
   )
 }

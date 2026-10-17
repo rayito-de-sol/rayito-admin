@@ -1,4 +1,3 @@
-import { useState } from 'react'
 import { Card } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import {
@@ -9,15 +8,10 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select'
 import { LoadingSpinner } from '@/components/LoadingSpinner'
 import { SortableHead } from '@/components/SortableHead'
+import { TablePagination } from '@/components/TablePagination'
+import { usePagination } from '@/hooks/usePagination'
 import { useSort } from '@/hooks/useSort'
 import { formatCurrency } from '@/utils/currency'
 import { ExpenseCategoryBadge } from './ExpenseCategoryBadge'
@@ -26,10 +20,7 @@ import {
   PAYMENT_METHOD_LABELS,
   type Expense,
 } from '../types/finance.types'
-import { ChevronLeft, ChevronRight, Pencil, Trash2 } from 'lucide-react'
-
-const PAGE_SIZE_OPTIONS = [10, 20, 50, 100]
-const DEFAULT_PAGE_SIZE = 20
+import { Pencil, Trash2 } from 'lucide-react'
 
 interface ExpensesTableProps {
   expenses: Expense[]
@@ -39,8 +30,8 @@ interface ExpensesTableProps {
   onRetry: () => void
   onEdit: (expense: Expense) => void
   onDelete: (expense: Expense) => void
-  page: number
-  onPageChange: (page: number) => void
+  /** Filtros activos: al cambiar alguno se vuelve a la primera página */
+  resetPageOn: unknown[]
 }
 
 const formatExpenseDate = (dateString: string) => {
@@ -67,8 +58,7 @@ export const ExpensesTable = ({
   onRetry,
   onEdit,
   onDelete,
-  page,
-  onPageChange,
+  resetPageOn,
 }: ExpensesTableProps) => {
   const { sorted, sortKey, sortDir, toggleSort } = useSort(expenses, {
     date: (e) => e.expense_date,
@@ -77,7 +67,11 @@ export const ExpensesTable = ({
     description: (e) => e.description,
     amount: (e) => e.amount,
   })
-  const [pageSize, setPageSize] = useState(DEFAULT_PAGE_SIZE)
+  const { pageItems, pagination } = usePagination(sorted, [
+    ...resetPageOn,
+    sortKey,
+    sortDir,
+  ])
 
   if (loading) {
     return (
@@ -110,19 +104,6 @@ export const ExpensesTable = ({
 
   const total = expenses.reduce((sum, e) => sum + e.amount, 0)
 
-  // Se ordena la lista completa y luego se pagina, así el orden abarca todas
-  // las páginas. Si se eliminó el último gasto de la última página, se muestra
-  // la anterior.
-  const totalPages = Math.ceil(sorted.length / pageSize)
-  const currentPage = Math.min(page, totalPages)
-  const start = (currentPage - 1) * pageSize
-  const pageExpenses = sorted.slice(start, start + pageSize)
-
-  const handleSort = (key: string) => {
-    toggleSort(key)
-    onPageChange(1)
-  }
-
   return (
     <Card className="p-0 overflow-hidden">
       <Table>
@@ -133,28 +114,28 @@ export const ExpensesTable = ({
               sortKey="date"
               activeKey={sortKey}
               direction={sortDir}
-              onSort={handleSort}
+              onSort={toggleSort}
             />
             <SortableHead
               label="Categoría"
               sortKey="category"
               activeKey={sortKey}
               direction={sortDir}
-              onSort={handleSort}
+              onSort={toggleSort}
             />
             <SortableHead
               label="Clasificación"
               sortKey="classification"
               activeKey={sortKey}
               direction={sortDir}
-              onSort={handleSort}
+              onSort={toggleSort}
             />
             <SortableHead
               label="Descripción"
               sortKey="description"
               activeKey={sortKey}
               direction={sortDir}
-              onSort={handleSort}
+              onSort={toggleSort}
             />
             <TableHead>Método de pago</TableHead>
             <SortableHead
@@ -162,14 +143,14 @@ export const ExpensesTable = ({
               sortKey="amount"
               activeKey={sortKey}
               direction={sortDir}
-              onSort={handleSort}
+              onSort={toggleSort}
               align="right"
             />
             {canEdit && <TableHead className="w-24" />}
           </TableRow>
         </TableHeader>
         <TableBody>
-          {pageExpenses.map((expense) => (
+          {pageItems.map((expense) => (
             <TableRow key={expense.id}>
               <TableCell>{formatExpenseDate(expense.expense_date)}</TableCell>
               <TableCell>
@@ -233,59 +214,7 @@ export const ExpensesTable = ({
         </TableBody>
       </Table>
 
-      {/* Siempre visible: si se ocultara con una sola página, el selector de
-          filas por página desaparecería y no se podría volver a cambiar */}
-      <div className="flex flex-wrap items-center justify-between gap-3 border-t border-border px-4 py-3 text-sm">
-        <span className="text-muted-foreground">
-          Mostrando {start + 1}–{start + pageExpenses.length} de {sorted.length}
-        </span>
-        <div className="flex flex-wrap items-center gap-4">
-          <div className="flex items-center gap-2">
-            <span className="text-muted-foreground">Filas por página</span>
-            <Select
-              value={String(pageSize)}
-              onValueChange={(v) => {
-                setPageSize(Number(v))
-                onPageChange(1)
-              }}
-            >
-              <SelectTrigger className="w-20" aria-label="Filas por página">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                {PAGE_SIZE_OPTIONS.map((size) => (
-                  <SelectItem key={size} value={String(size)}>
-                    {size}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-          <div className="flex items-center gap-2">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => onPageChange(currentPage - 1)}
-              disabled={currentPage === 1}
-            >
-              <ChevronLeft className="h-4 w-4" />
-              Anterior
-            </Button>
-            <span className="text-muted-foreground">
-              Página {currentPage} de {totalPages}
-            </span>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => onPageChange(currentPage + 1)}
-              disabled={currentPage === totalPages}
-            >
-              Siguiente
-              <ChevronRight className="h-4 w-4" />
-            </Button>
-          </div>
-        </div>
-      </div>
+      <TablePagination {...pagination} />
     </Card>
   )
 }

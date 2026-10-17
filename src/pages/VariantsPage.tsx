@@ -13,6 +13,8 @@ import { LoadingSpinner } from '@/components/LoadingSpinner'
 import { VariantCreateModal } from '@/components/VariantCreateModal'
 import { VariantsCSVImport } from '@/components/VariantsCSVImport'
 import { SortableHead } from '@/components/SortableHead'
+import { TablePagination } from '@/components/TablePagination'
+import { usePagination } from '@/hooks/usePagination'
 import { useSort } from '@/hooks/useSort'
 import { variantService } from '@/services/variantService'
 import { useAuth } from '@/hooks/useAuth'
@@ -43,6 +45,11 @@ export const VariantsPage = () => {
       stock: (v) => v.stock,
     }
   )
+  // Al cambiar el orden se vuelve a la primera página
+  const { pageItems, pagination } = usePagination(sortedVariants, [
+    sortKey,
+    sortDir,
+  ])
 
   const fetchVariants = async (signal?: AbortSignal) => {
     try {
@@ -154,7 +161,7 @@ export const VariantsPage = () => {
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {sortedVariants.map((variant) => (
+                    {pageItems.map((variant) => (
                       <TableRow key={variant.id}>
                         <TableCell className="font-mono text-sm">
                           {[variant.product_sku, variant.color?.sku, variant.size?.sku]
@@ -172,6 +179,7 @@ export const VariantsPage = () => {
                   </TableBody>
                 </Table>
               </div>
+              <TablePagination {...pagination} />
             </Card>
           )}
         </>

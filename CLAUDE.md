@@ -81,6 +81,20 @@ that filters the list. Use it wherever the options outgrow a plain Radix `Select
 which cannot filter. `cmdk` is installed but deliberately unused; the Popover
 pattern was already in the codebase and needs no new dependency.
 
+## Table Pagination
+
+Tables paginate in the browser: the API returns the whole list and
+`usePagination` (`src/hooks/usePagination.ts`) cuts out the visible page, with
+`<TablePagination {...pagination} />` (`src/components/TablePagination.tsx`) as the
+footer inside the table's Card. This keeps the API free of pagination, as the
+backend guidelines ask, and lets sorting and totals cover every row.
+
+- Pass the already-sorted list, so the order spans all pages.
+- Pass the active filters, tab and sort as `resetOn`: changing any of them returns to
+  page 1, while refetching the same list (after an edit) keeps the page.
+- Call the hook before any early return (loading, error, empty), like any hook.
+- The footer stays visible on a single page so the rows-per-page selector can't vanish.
+
 ## Theme & Color System
 
 ### Using Color Tokens
@@ -622,5 +636,5 @@ Update this CLAUDE.md when you:
 
 ---
 
-Last Updated: 2026-09-17
-Updated with the Clientes refactor and order payment tracking by Claude Opus 5
+Last Updated: 2026-10-17
+Updated with shared table pagination by Claude Opus 5.5

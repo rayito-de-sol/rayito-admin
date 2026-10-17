@@ -9,6 +9,8 @@ import {
   TableRow,
 } from '@/components/ui/table'
 import { LoadingSpinner } from '@/components/LoadingSpinner'
+import { TablePagination } from '@/components/TablePagination'
+import { usePagination } from '@/hooks/usePagination'
 import type { Customer, CustomerType } from '@/types/customer'
 
 interface CustomersListProps {
@@ -35,6 +37,8 @@ export const CustomersList = ({
   onRetry,
 }: CustomersListProps) => {
   const isStore = type === 'store'
+  // Al cambiar de pestaña (personas/tiendas) se vuelve a la primera página
+  const { pageItems, pagination } = usePagination(customers, [type])
 
   if (loading) {
     return (
@@ -86,7 +90,7 @@ export const CustomersList = ({
           </TableRow>
         </TableHeader>
         <TableBody>
-          {customers.map((customer) => (
+          {pageItems.map((customer) => (
             <TableRow
               key={customer.id}
               onClick={() => onCustomerClick(customer.id)}
@@ -111,6 +115,7 @@ export const CustomersList = ({
           ))}
         </TableBody>
       </Table>
+      <TablePagination {...pagination} />
     </Card>
   )
 }
